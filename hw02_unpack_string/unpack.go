@@ -13,15 +13,29 @@ func Unpack(input string) (string, error) {
 	var result strings.Builder
 
 	var prevChar string
+	var startBackslash bool
 
 	for _, char := range input {
+		isBackslash := string(char) == "\\"
 		isDigit := unicode.IsDigit(char)
-		isPrevEmpty := prevChar == ""
 
 		switch {
-		case isDigit && isPrevEmpty:
+		case isBackslash && startBackslash:
+			prevChar = "\\"
+			startBackslash = false
+		case isBackslash && prevChar == "":
+			startBackslash = true
+		case isBackslash && prevChar != "":
+			result.WriteString(prevChar)
+			prevChar = ""
+			startBackslash = true
+
+		case isDigit && startBackslash:
+			prevChar = string(char)
+			startBackslash = false
+		case isDigit && prevChar == "":
 			return "", ErrInvalidString
-		case isDigit && !isPrevEmpty:
+		case isDigit && prevChar != "":
 			num, e := strconv.Atoi(string(char))
 			if e != nil {
 				return "", e
@@ -30,12 +44,19 @@ func Unpack(input string) (string, error) {
 				result.WriteString(prevChar)
 			}
 			prevChar = ""
-		case !isDigit && isPrevEmpty:
+
+		case !isDigit && startBackslash:
+			return "", ErrInvalidString
+		case !isDigit && prevChar == "":
 			prevChar = string(char)
-		case !isDigit && !isPrevEmpty:
+		case !isDigit && prevChar != "":
 			result.WriteString(prevChar)
 			prevChar = string(char)
 		}
+	}
+
+	if startBackslash {
+		return "", ErrInvalidString
 	}
 
 	if prevChar != "" {
