@@ -40,9 +40,7 @@ func Unpack(input string) (string, error) {
 			if e != nil {
 				return "", e
 			}
-			for i := 0; i < num; i++ {
-				result.WriteString(prevChar)
-			}
+			result.WriteString(strings.Repeat(prevChar, num))
 			prevChar = ""
 
 		case !isDigit && startBackslash:
