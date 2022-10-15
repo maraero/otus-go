@@ -97,7 +97,11 @@ func (l *list) Remove(i *ListItem) {
 	l.len--
 }
 
-func (l *list) MoveToFront(i *ListItem) {}
+func (l *list) MoveToFront(i *ListItem) {
+	// 1. Get value
+	// 2. Remove
+	// 3. PushFront
+}
 
 func NewList() List {
 	return new(list)
