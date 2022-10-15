@@ -143,3 +143,81 @@ func TestPushBack(t *testing.T) {
 		require.Nil(t, l.Front().Prev)
 	})
 }
+
+func TestRemove(t *testing.T) {
+	t.Run("last element", func(t *testing.T) {
+		l := NewList()
+		val := 10
+		toRemove := l.PushFront(val) // [10]
+		l.Remove(toRemove) // []
+		require.Equal(t, 0, l.Len())
+		require.Nil(t, l.Front())
+		require.Nil(t, l.Back())
+	})
+
+	t.Run("first of two", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		l.PushFront(val1) // [10]
+		toRemove := l.PushFront(val2) // [20, 10]
+		l.Remove(toRemove) // [10]
+		require.Equal(t, 1, l.Len())
+		require.Equal(t, val1, l.Front().Value)
+		require.Equal(t, val1, l.Back().Value)
+	})
+
+	t.Run("last of two", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		toRemove := l.PushFront(val1) // [10]
+		l.PushFront(val2) // [20, 10]
+		l.Remove(toRemove) // [20]
+		require.Equal(t, 1, l.Len())
+		require.Equal(t, val2, l.Front().Value)
+		require.Equal(t, val2, l.Back().Value)
+	})
+
+	t.Run("in the middle", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		val3 := 30
+		l.PushFront(val1) // [10]
+		toRemove := l.PushFront(val2) // [20, 10]
+		l.PushFront(val3) // [30, 20, 10]
+		l.Remove(toRemove) // [30, 10]
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, val3, l.Front().Value)
+		require.Equal(t, val1, l.Back().Value)
+	})
+
+	t.Run("first of many", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		val3 := 30
+		l.PushFront(val1) // [10]
+		l.PushFront(val2) // [20, 10]
+		toRemove := l.PushFront(val3) // [30, 20, 10]
+		l.Remove(toRemove) // [20, 10]
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, val2, l.Front().Value)
+		require.Equal(t, val1, l.Back().Value)
+	})
+
+	t.Run("first of many", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		val3 := 30
+		toRemove := l.PushFront(val1) // [10]
+		l.PushFront(val2) // [20, 10]
+		l.PushFront(val3) // [30, 20, 10]
+		l.Remove(toRemove) // [30, 20]
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, val3, l.Front().Value)
+		require.Equal(t, val2, l.Back().Value)
+	})
+}

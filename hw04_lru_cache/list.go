@@ -76,7 +76,26 @@ func (l *list) PushBack(v interface{}) *ListItem {
 	return elem
 }
 
-func (l *list) Remove(i *ListItem) {}
+func (l *list) Remove(i *ListItem) {
+	switch l.Len() {
+	case 1:
+		l.front = nil
+		l.back = nil
+	default:
+		prev := i.Prev
+		next := i.Next
+
+		if prev == nil {
+			l.front = i.Next
+		} else if next == nil {
+			l.back = i.Prev
+		} else {
+			prev.Next = i.Next
+			next.Prev = i.Prev
+		}
+	}
+	l.len--
+}
 
 func (l *list) MoveToFront(i *ListItem) {}
 
