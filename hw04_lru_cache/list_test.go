@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestList(t *testing.T) {
+func _TestList(t *testing.T) {
 	t.Run("empty list", func(t *testing.T) {
 		l := NewList()
 
@@ -47,5 +47,99 @@ func TestList(t *testing.T) {
 			elems = append(elems, i.Value.(int))
 		}
 		require.Equal(t, []int{70, 80, 60, 40, 10, 30, 50}, elems)
+	})
+}
+
+func TestPushFront(t *testing.T) {
+	t.Run("empty list", func(t *testing.T) {
+		l := NewList()
+		val := 10
+		front := l.PushFront(val) // [10]
+		require.Equal(t, 1, l.Len())
+		require.Equal(t, val, l.Front().Value)
+		require.Equal(t, val, l.Back().Value)
+		require.Equal(t, front, l.Front())
+		require.Nil(t, front.Next)
+		require.Nil(t, front.Prev)
+	})
+
+	t.Run("list with single element", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		l.PushFront(val1) // [10]
+		front := l.PushFront(val2) // [20, 10]
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, val2, l.Front().Value)
+		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, val1, l.Front().Next.Value)
+		require.Equal(t, val2, l.Back().Prev.Value)
+		require.Equal(t, front, l.Front())
+	})
+
+	t.Run("list with multiple elements", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		val3 := 30
+		l.PushFront(val1) // [10]
+		l.PushFront(val2) // [20, 10]
+		front := l.PushFront(val3) // [30, 20, 10]
+		require.Equal(t, 3, l.Len())
+		require.Equal(t, val3, l.Front().Value)
+		require.Equal(t, val2, l.Front().Next.Value)
+		require.Equal(t, val1, l.Front().Next.Next.Value)
+		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, val2, l.Back().Prev.Value)
+		require.Equal(t, val3, l.Back().Prev.Prev.Value)
+		require.Equal(t, front, l.Front())
+	})
+}
+
+func TestPushBack(t *testing.T) {
+	t.Run("empty list", func(t *testing.T) {
+		l := NewList()
+		val := 10
+		back := l.PushBack(val) // [10]
+		require.Equal(t, 1, l.Len())
+		require.Equal(t, val, l.Front().Value)
+		require.Equal(t, val, l.Back().Value)
+		require.Equal(t, back, l.Back())
+		require.Nil(t, l.Back().Next)
+		require.Nil(t, l.Back().Prev)
+	})
+
+	t.Run("list with single element", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		l.PushFront(val1) // [10]
+		back := l.PushBack(val2) // [10, 20]
+		require.Equal(t, 2, l.Len())
+		require.Equal(t, back, l.Back())
+		require.Equal(t, val2, l.Back().Value)
+		require.Equal(t, val1, l.Front().Value)
+		require.Equal(t, val1, l.Back().Prev.Value)
+		require.Equal(t, val2, l.Front().Next.Value)
+		require.Nil(t, l.Back().Next)
+		require.Nil(t, l.Front().Prev)
+	})
+
+	t.Run("list with multiple elements", func(t *testing.T) {
+		l := NewList()
+		val1 := 10
+		val2 := 20
+		val3 := 30
+		l.PushFront(val1) // [10]
+		l.PushFront(val2) // [20, 10]
+		back := l.PushBack(val3) // [20, 10, 30]
+		require.Equal(t, 3, l.Len())
+		require.Equal(t, back, l.Back())
+		require.Equal(t, val3, l.Back().Value)
+		require.Equal(t, val1, l.Back().Prev.Value)
+		require.Equal(t, val2, l.Front().Value)
+		require.Equal(t, val1, l.Front().Next.Value)
+		require.Nil(t, l.Back().Next)
+		require.Nil(t, l.Front().Prev)
 	})
 }
