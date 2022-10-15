@@ -84,7 +84,7 @@ func TestTop10(t *testing.T) {
 		text = "aaa"
 		expected := []string{"aaa"}
 		require.Equal(t, expected, Top10(text))
-	}) 
+	})
 
 	t.Run("repeating word", func(t *testing.T) {
 		text = "a a a"
