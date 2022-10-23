@@ -1,6 +1,7 @@
 package hw03frequencyanalysis
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 )
@@ -18,8 +19,19 @@ func calcWords(text string) map[string]int {
 	return freqByWords
 }
 
+type WordFreqPair struct {
+	freq int
+	word string
+}
+
 func Top10(input string) []string {
 	freqByWords := calcWords(input)
+	wordFreqPairs := make([]WordFreqPair, len(freqByWords))
+	for word, freq := range freqByWords {
+		pair := WordFreqPair{freq: freq, word: word}
+		wordFreqPairs = append(wordFreqPairs, pair)
+	}
+	fmt.Println(wordFreqPairs)
 
 	wordsByFreq := make(map[int][]string)
 
