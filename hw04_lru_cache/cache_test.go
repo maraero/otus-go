@@ -20,7 +20,7 @@ func TestCache(t *testing.T) {
 
 	t.Run("add single value", func(t *testing.T) {
 		c := NewCache(10)
-		success := c.Set("aaa", 10) // [{aaa, 10}] 
+		success := c.Set("aaa", 10) // [{aaa, 10}]
 		require.False(t, success)
 		val, ok := c.Get("aaa") // [{aaa, 10}]
 		require.True(t, ok)
@@ -29,8 +29,8 @@ func TestCache(t *testing.T) {
 
 	t.Run("update single value", func(t *testing.T) {
 		c := NewCache(10)
-		c.Set("aaa", 10) // [{aaa, 10}]
-		c.Set("aaa", 20) // [{aaa, 20}]
+		c.Set("aaa", 10)        // [{aaa, 10}]
+		c.Set("aaa", 20)        // [{aaa, 20}]
 		val, ok := c.Get("aaa") // [{aaa, 20}]
 		require.True(t, ok)
 		require.Equal(t, val, 20)
@@ -38,9 +38,9 @@ func TestCache(t *testing.T) {
 
 	t.Run("update value", func(t *testing.T) {
 		c := NewCache(10)
-		c.Set("aaa", 10) // [{aaa, 10}]
-		c.Set("bbb", 20) // [{bbb, 20}, {aaa: 10}]
-		c.Set("aaa", 30) // [{aaa, 30}, {bbb: 20}]
+		c.Set("aaa", 10)        // [{aaa, 10}]
+		c.Set("bbb", 20)        // [{bbb, 20}, {aaa: 10}]
+		c.Set("aaa", 30)        // [{aaa, 30}, {bbb: 20}]
 		val, ok := c.Get("aaa") // [{aaa, 30}, {bbb: 20}]
 		require.True(t, ok)
 		require.Equal(t, val, 30)
@@ -48,9 +48,9 @@ func TestCache(t *testing.T) {
 
 	t.Run("exceed capacity", func(t *testing.T) {
 		c := NewCache(1)
-		c.Set("aaa", 10) // [{aaa, 10}]
-		c.Set("bbb", 20) // [{bbb, 20}]
-		_, ok := c.Get("aaa") // [{bbb, 20}] 
+		c.Set("aaa", 10)      // [{aaa, 10}]
+		c.Set("bbb", 20)      // [{bbb, 20}]
+		_, ok := c.Get("aaa") // [{bbb, 20}]
 		require.False(t, ok)
 		val, ok := c.Get("bbb") // [{bbb, 20}]
 		require.True(t, ok)

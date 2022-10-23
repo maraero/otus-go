@@ -18,8 +18,8 @@ type ListItem struct {
 
 type list struct {
 	front *ListItem
-	back *ListItem
-	len int
+	back  *ListItem
+	len   int
 }
 
 func (l *list) Len() int {
@@ -50,7 +50,7 @@ func (l *list) PushFront(v interface{}) *ListItem {
 		l.front.Prev = elem
 		l.front = elem
 	}
-	
+
 	l.len++
 	return elem
 }
