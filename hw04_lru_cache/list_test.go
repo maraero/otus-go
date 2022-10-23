@@ -10,7 +10,7 @@ func _TestList(t *testing.T) {
 	t.Run("empty list", func(t *testing.T) {
 		l := NewList()
 
-		require.Equal(t, 0, l.Len())
+		require.Equal(t, l.Len(), 0)
 		require.Nil(t, l.Front())
 		require.Nil(t, l.Back())
 	})
@@ -150,7 +150,7 @@ func TestRemove(t *testing.T) {
 		val := 10
 		toRemove := l.PushFront(val) // [10]
 		l.Remove(toRemove) // []
-		require.Equal(t, 0, l.Len())
+		require.Equal(t, l.Len(), 0)
 		require.Nil(t, l.Front())
 		require.Nil(t, l.Back())
 	})
@@ -162,9 +162,13 @@ func TestRemove(t *testing.T) {
 		l.PushFront(val1) // [10]
 		toRemove := l.PushFront(val2) // [20, 10]
 		l.Remove(toRemove) // [10]
-		require.Equal(t, 1, l.Len())
-		require.Equal(t, val1, l.Front().Value)
-		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, l.Len(), 1)
+		require.Equal(t, l.Front().Value, val1)
+		require.Equal(t, l.Back().Value, val1)
+		require.Nil(t, l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Nil(t, l.Back().Next)
+		require.Nil(t, l.Back().Prev)
 	})
 
 	t.Run("last of two", func(t *testing.T) {
@@ -174,9 +178,13 @@ func TestRemove(t *testing.T) {
 		toRemove := l.PushFront(val1) // [10]
 		l.PushFront(val2) // [20, 10]
 		l.Remove(toRemove) // [20]
-		require.Equal(t, 1, l.Len())
-		require.Equal(t, val2, l.Front().Value)
-		require.Equal(t, val2, l.Back().Value)
+		require.Equal(t, l.Len(), 1)
+		require.Equal(t, l.Front().Value, val2)
+		require.Equal(t, l.Back().Value, val2)
+		require.Nil(t, l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Nil(t, l.Back().Next)
+		require.Nil(t, l.Back().Prev)
 	})
 
 	t.Run("in the middle", func(t *testing.T) {
@@ -188,9 +196,13 @@ func TestRemove(t *testing.T) {
 		toRemove := l.PushFront(val2) // [20, 10]
 		l.PushFront(val3) // [30, 20, 10]
 		l.Remove(toRemove) // [30, 10]
-		require.Equal(t, 2, l.Len())
-		require.Equal(t, val3, l.Front().Value)
-		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, l.Len(), 2)
+		require.Equal(t, l.Front().Value, val3)
+		require.Equal(t, l.Back().Value, val1)
+		require.Equal(t, l.Back(), l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Equal(t, l.Front(), l.Back().Prev)
+		require.Nil(t, l.Back().Next)
 	})
 
 	t.Run("first of many", func(t *testing.T) {
@@ -202,9 +214,13 @@ func TestRemove(t *testing.T) {
 		l.PushFront(val2) // [20, 10]
 		toRemove := l.PushFront(val3) // [30, 20, 10]
 		l.Remove(toRemove) // [20, 10]
-		require.Equal(t, 2, l.Len())
-		require.Equal(t, val2, l.Front().Value)
-		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, l.Len(), 2)
+		require.Equal(t, l.Front().Value, val2)
+		require.Equal(t, l.Back().Value, val1)
+		require.Equal(t, l.Back(), l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Equal(t, l.Front(), l.Back().Prev)
+		require.Nil(t, l.Back().Next)
 	})
 
 	t.Run("last of many", func(t *testing.T) {
@@ -216,9 +232,13 @@ func TestRemove(t *testing.T) {
 		l.PushFront(val2) // [20, 10]
 		l.PushFront(val3) // [30, 20, 10]
 		l.Remove(toRemove) // [30, 20]
-		require.Equal(t, 2, l.Len())
-		require.Equal(t, val3, l.Front().Value)
-		require.Equal(t, val2, l.Back().Value)
+		require.Equal(t, l.Len(), 2)
+		require.Equal(t, l.Front().Value, val3)
+		require.Equal(t, l.Back().Value, val2)
+		require.Equal(t, l.Back(), l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Equal(t, l.Front(), l.Back().Prev)
+		require.Nil(t, l.Back().Next)
 	})
 }
 
@@ -228,9 +248,12 @@ func TestMoveToFront(t *testing.T) {
 		val := 10
 		toMove := l.PushFront(val) // [10]
 		l.MoveToFront(toMove) // [10]
-		require.Equal(t, 1, l.Len())
-		require.Equal(t, val, l.Front().Value)
-		require.Equal(t, val, l.Back().Value)
+		require.Equal(t, l.Len(), 1)
+		require.Equal(t, l.Front(), l.Back())
+		require.Nil(t, l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Nil(t, l.Back().Next)
+		require.Nil(t, l.Back().Prev)
 	})
 
 	t.Run("first of two", func(t *testing.T) {
@@ -240,9 +263,13 @@ func TestMoveToFront(t *testing.T) {
 		l.PushFront(val1) // [10]
 		toMove := l.PushFront(val2) // [20, 10]
 		l.MoveToFront(toMove) // [20, 10]
-		require.Equal(t, 2, l.Len())
-		require.Equal(t, val2, l.Front().Value)
-		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, l.Len(), 2)
+		require.Equal(t, l.Front().Value, val2)
+		require.Equal(t, l.Back().Value, val1)
+		require.Equal(t, l.Back(), l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Equal(t, l.Front(), l.Back().Prev)
+		require.Nil(t, l.Back().Next)
 	})
 
 	t.Run("last of two", func(t *testing.T) {
@@ -252,9 +279,13 @@ func TestMoveToFront(t *testing.T) {
 		toMove := l.PushFront(val1) // [10]
 		l.PushFront(val2) // [20, 10]
 		l.MoveToFront(toMove) // [10, 20]
-		require.Equal(t, 2, l.Len())
-		require.Equal(t, val1, l.Front().Value)
-		require.Equal(t, val2, l.Back().Value)
+		require.Equal(t, l.Len(), 2)
+		require.Equal(t, l.Front().Value, val1)
+		require.Equal(t, l.Back().Value, val2)
+		require.Equal(t, l.Back(), l.Front().Next)
+		require.Nil(t, l.Front().Prev)
+		require.Equal(t, l.Front(), l.Back().Prev)
+		require.Nil(t, l.Back().Next)
 	})
 
 	t.Run("from the middle", func(t *testing.T) {
@@ -266,9 +297,11 @@ func TestMoveToFront(t *testing.T) {
 		toMove := l.PushFront(val2) // [20, 10]
 		l.PushFront(val3) // [30, 20, 10]
 		l.MoveToFront(toMove) // [20, 30, 10]
-		require.Equal(t, 3, l.Len())
-		require.Equal(t, val2, l.Front().Value)
-		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, l.Len(), 3)
+		require.Equal(t, l.Front().Value, val2)
+		require.Equal(t, l.Back().Value, val1)
+		require.Equal(t, l.Front().Next.Value, val3)
+		require.Equal(t, l.Back().Prev.Value, val3)
 	})
 
 	t.Run("first of many", func(t *testing.T) {
@@ -280,9 +313,11 @@ func TestMoveToFront(t *testing.T) {
 		l.PushFront(val2) // [20, 10]
 		toMove := l.PushFront(val3) // [30, 20, 10]
 		l.MoveToFront(toMove) // [30, 20, 10]
-		require.Equal(t, 3, l.Len())
-		require.Equal(t, val3, l.Front().Value)
-		require.Equal(t, val1, l.Back().Value)
+		require.Equal(t, l.Len(), 3)
+		require.Equal(t, l.Front().Value, val3)
+		require.Equal(t, l.Back().Value, val1)
+		require.Equal(t, l.Front().Next.Value, val2)
+		require.Equal(t, l.Back().Prev.Value, val2)
 	})
 
 	t.Run("last of many", func(t *testing.T) {
@@ -294,8 +329,10 @@ func TestMoveToFront(t *testing.T) {
 		l.PushFront(val2) // [20, 10]
 		l.PushFront(val3) // [30, 20, 10]
 		l.MoveToFront(toMove) // [10, 30, 20]
-		require.Equal(t, 3, l.Len())
-		require.Equal(t, val1, l.Front().Value)
-		require.Equal(t, val2, l.Back().Value)
+		require.Equal(t, l.Len(), 3)
+		require.Equal(t, l.Front().Value, val1)
+		require.Equal(t, l.Back().Value, val2)
+		require.Equal(t, l.Front().Next.Value, val3)
+		require.Equal(t, l.Back().Prev.Value, val3)
 	})
 }
