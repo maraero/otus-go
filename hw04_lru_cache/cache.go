@@ -29,17 +29,20 @@ func NewCache(capacity int) Cache {
 	}
 }
 
-func (c *lruCache) Set(key Key, value interface{}) bool {
-	if item, ok := c.items[key]; ok {
-		item.Value = cacheItem{key: key, value: value}
-		c.queue.MoveToFront(item)
-		fmt.Println(c.queue, c.queue.Front(), c.queue.Back())
-		return true
-	}
-
+func (c *lruCache) addItem(key Key, value interface{}) {
 	item := cacheItem{key: key, value: value}
 	listItemPtr := c.queue.PushFront(item)
 	c.items[key] = listItemPtr
+}
+
+func (c *lruCache) Set(key Key, value interface{}) bool {
+	if item, ok := c.items[key]; ok {
+		c.queue.Remove(item)
+		c.addItem(key, value)
+		return true
+	}
+
+	c.addItem(key, value)
 
 	if c.queue.Len() > c.capacity {
 		lastItem := c.queue.Back()
@@ -55,6 +58,7 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 
 func (c *lruCache) Get(key Key) (interface{}, bool) {
 	if item, ok := c.items[key]; ok {
+		fmt.Println(item, c.queue)
 		c.queue.MoveToFront(item)
 
 		if valWithKey, ok := item.Value.(cacheItem); ok {
