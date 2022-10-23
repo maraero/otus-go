@@ -9,7 +9,7 @@ const maxNumber = 10
 
 func Top10(input string) []string {
 	freqByWords := calcWords(input)
-	wordFreqPairs := getSortedWordList(freqByWords)
+	wordFreqPairs := getWordFrequencyPairs(freqByWords)
 	return getMostFrequentWordsByLimit(wordFreqPairs, maxNumber)
 }
 
@@ -31,18 +31,17 @@ type WordFreqPair struct {
 
 type FrequencyComparator []WordFreqPair
 
-func (a FrequencyComparator) Len() int {return len(a)}
-func (a FrequencyComparator) Swap(i, j int) {a[i], a[j] = a[j], a[i]}
+func (a FrequencyComparator) Len() int      { return len(a) }
+func (a FrequencyComparator) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a FrequencyComparator) Less(i, j int) bool {
 	if a[i].freq == a[j].freq {
 		return a[i].word > a[j].word
 	}
 
-
 	return a[i].freq < a[j].freq
 }
 
-func getSortedWordList(freqByWords map[string]int) []WordFreqPair {
+func getWordFrequencyPairs(freqByWords map[string]int) []WordFreqPair {
 	wordFreqPairs := []WordFreqPair{}
 	for word, freq := range freqByWords {
 		pair := WordFreqPair{freq: freq, word: word}
