@@ -141,4 +141,33 @@ func TestRun(t *testing.T) {
 		require.Equal(t, runTasksCount, int32(tasksCount), "not all tasks were completed")
 		require.LessOrEqual(t, int64(elapsedTime), int64(sumTime/2), "tasks were run sequentially?")
 	})
+
+	t.Run("tasks without errors (without sleep)", func(t *testing.T) {
+		const tasksCount = 50
+		const workersCount = 5
+		tasks := make([]Task, 0, tasksCount)
+		waitCh := make(chan struct{})
+		var runTasksCount int32
+
+		for i := 0; i < tasksCount; i++ {
+			tasks = append(tasks, func() error {
+				atomic.AddInt32(&runTasksCount, 1)
+				<-waitCh // to hold the function until the channel is closed
+				return nil
+			})
+		}
+
+		runErr := make(chan error)
+
+		go func() {
+			runErr <- Run(tasks, workersCount, tasksCount)
+		}()
+
+		require.Eventually(t, func() bool {
+			return atomic.LoadInt32(&runTasksCount) == workersCount
+		}, time.Second, time.Millisecond)
+
+		close(waitCh)
+		require.NoError(t, <-runErr)
+	})
 }

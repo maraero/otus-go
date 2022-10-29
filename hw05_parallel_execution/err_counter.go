@@ -5,7 +5,7 @@ import "sync"
 type errCounter struct {
 	mu      sync.Mutex
 	counter int
-	limit int
+	limit   int
 }
 
 func (c *errCounter) inc() {

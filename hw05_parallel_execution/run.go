@@ -28,7 +28,7 @@ func Run(tasks []Task, n, m int) error {
 
 	for _, task := range tasks {
 		if errCounter.exceedsLimit() {
-			break;
+			break
 		}
 		ch <- task
 	}
