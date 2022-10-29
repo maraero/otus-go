@@ -15,7 +15,7 @@ func (c *errCounter) inc() {
 }
 
 func (c *errCounter) exceedsLimit() bool {
-	if c.limit == 0 {
+	if c.limit <= 0 {
 		return false
 	}
 
