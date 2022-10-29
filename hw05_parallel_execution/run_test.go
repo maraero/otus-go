@@ -18,7 +18,6 @@ func TestRun(t *testing.T) {
 	t.Run("if were errors in first M tasks, than finished not more N+M tasks", func(t *testing.T) {
 		tasksCount := 50
 		tasks := make([]Task, 0, tasksCount)
-
 		var runTasksCount int32
 
 		for i := 0; i < tasksCount; i++ {
@@ -41,7 +40,6 @@ func TestRun(t *testing.T) {
 	t.Run("if errors < max errors amount, then finished all the tasks", func(t *testing.T) {
 		tasksCount := 50
 		tasks := make([]Task, 0, tasksCount)
-
 		var runTasksCount int32
 
 		for i := 0; i < tasksCount; i++ {
@@ -69,7 +67,6 @@ func TestRun(t *testing.T) {
 	t.Run("if errors are not limited (m = 0), then finished all the tasks", func(t *testing.T) {
 		tasksCount := 50
 		tasks := make([]Task, 0, tasksCount)
-
 		var runTasksCount int32
 
 		for i := 0; i < tasksCount; i++ {
@@ -92,7 +89,6 @@ func TestRun(t *testing.T) {
 	t.Run("if errors are not limited (m < 0), then finished all the tasks", func(t *testing.T) {
 		tasksCount := 50
 		tasks := make([]Task, 0, tasksCount)
-
 		var runTasksCount int32
 
 		for i := 0; i < tasksCount; i++ {
@@ -115,9 +111,10 @@ func TestRun(t *testing.T) {
 	t.Run("tasks without errors", func(t *testing.T) {
 		tasksCount := 50
 		tasks := make([]Task, 0, tasksCount)
-
 		var runTasksCount int32
 		var sumTime time.Duration
+		workersCount := 5
+		maxErrorsCount := 1
 
 		for i := 0; i < tasksCount; i++ {
 			taskSleep := time.Millisecond * time.Duration(rand.Intn(100))
@@ -129,9 +126,6 @@ func TestRun(t *testing.T) {
 				return nil
 			})
 		}
-
-		workersCount := 5
-		maxErrorsCount := 1
 
 		start := time.Now()
 		err := Run(tasks, workersCount, maxErrorsCount)
@@ -148,6 +142,7 @@ func TestRun(t *testing.T) {
 		tasks := make([]Task, 0, tasksCount)
 		waitCh := make(chan struct{})
 		var runTasksCount int32
+		runErr := make(chan error)
 
 		for i := 0; i < tasksCount; i++ {
 			tasks = append(tasks, func() error {
@@ -156,8 +151,6 @@ func TestRun(t *testing.T) {
 				return nil
 			})
 		}
-
-		runErr := make(chan error)
 
 		go func() {
 			runErr <- Run(tasks, workersCount, tasksCount)
