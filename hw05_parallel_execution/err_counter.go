@@ -24,6 +24,6 @@ func (c *errCounter) exceedsLimit() bool {
 	return c.counter >= c.limit
 }
 
-func newErrCouner(limit int) *errCounter {
+func newErrCounter(limit int) *errCounter {
 	return &errCounter{limit: limit}
 }

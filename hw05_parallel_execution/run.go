@@ -12,7 +12,7 @@ type Task func() error
 func Run(tasks []Task, n, m int) error {
 	ch := make(chan Task)
 	wg := sync.WaitGroup{}
-	errCounter := newErrCouner(m)
+	errCounter := newErrCounter(m)
 
 	wg.Add(n)
 	for i := 0; i < n; i++ {
