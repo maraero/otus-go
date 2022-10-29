@@ -28,17 +28,21 @@ func Run(tasks []Task, n, m int) error {
 
 	for _, task := range tasks {
 		if errCounter.exceedsLimit() {
-			break;
+			return ErrErrorsLimitExceeded
 		}
 		ch <- task
 	}
 
-	close(ch)
-	wg.Wait()
-
-	if errCounter.exceedsLimit() {
-		return ErrErrorsLimitExceeded
-	}
-
 	return nil
+
+	defer func() {
+		close(ch)
+		wg.Wait()
+	}()
+
+	// if errCounter.exceedsLimit() {
+	// 	return ErrErrorsLimitExceeded
+	// }
+
+	// return nil
 }
