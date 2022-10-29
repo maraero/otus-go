@@ -3,14 +3,14 @@ package hw05parallelexecution
 import "sync"
 
 type errCounter struct {
-	mu      sync.Mutex
+	sync.Mutex
 	counter int
 	limit   int
 }
 
 func (c *errCounter) inc() {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.Lock()
+	defer c.Unlock()
 	c.counter++
 }
 
@@ -19,8 +19,8 @@ func (c *errCounter) exceedsLimit() bool {
 		return false
 	}
 
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.Lock()
+	defer c.Unlock()
 	return c.counter >= c.limit
 }
 
