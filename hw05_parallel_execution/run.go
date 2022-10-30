@@ -11,7 +11,7 @@ type Task func() error
 
 // Run executes functions in n goroutines.
 // If the number of errors reaches `m`, no more than `m+n` functions will be executed.
-// If `m == 0` all functions will be executed in spite of errors
+// If `m == 0` all functions will be executed in spite of errors.
 func Run(tasks []Task, n, m int) error {
 	ch := make(chan Task)
 	wg := sync.WaitGroup{}
