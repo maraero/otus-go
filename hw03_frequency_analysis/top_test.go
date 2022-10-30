@@ -79,4 +79,64 @@ func TestTop10(t *testing.T) {
 			require.Equal(t, expected, Top10(text))
 		}
 	})
+
+	t.Run("single word", func(t *testing.T) {
+		text = "aaa"
+		expected := []string{"aaa"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("repeating word", func(t *testing.T) {
+		text = "a a a"
+		expected := []string{"a"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("two words repeating similarly in wrong lexicographical order", func(t *testing.T) {
+		text := "b a"
+		expected := []string{"a", "b"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("two words repeating insimilarly in wrong lexicographical order", func(t *testing.T) {
+		text := "b a a"
+		expected := []string{"a", "b"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("text with new line character", func(t *testing.T) {
+		text := "b a\na"
+		expected := []string{"a", "b"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("text with tab character", func(t *testing.T) {
+		text := "b a\ta"
+		expected := []string{"a", "b"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("text with wrong lexicographic order and similarly repeating characters", func(t *testing.T) {
+		text := " m l k j i h g f e d c b a "
+		expected := []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("text with lowercase and uppercase", func(t *testing.T) {
+		text := "TEST test"
+		expected := []string{"TEST", "test"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("text with words with punctuation marks", func(t *testing.T) {
+		text := "test, test"
+		expected := []string{"test", "test,"}
+		require.Equal(t, expected, Top10(text))
+	})
+
+	t.Run("text with dash punctuation mark", func(t *testing.T) {
+		text := "one-on-one - test"
+		expected := []string{"-", "one-on-one", "test"}
+		require.Equal(t, expected, Top10(text))
+	})
 }
