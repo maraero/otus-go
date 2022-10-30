@@ -1,17 +1,16 @@
 package hw05parallelexecution
 
-import "sync"
+import (
+	"sync/atomic"
+)
 
 type errCounter struct {
-	sync.Mutex
-	counter int
-	limit   int
+	counter int32
+	limit   int32
 }
 
 func (c *errCounter) inc() {
-	c.Lock()
-	defer c.Unlock()
-	c.counter++
+	atomic.AddInt32(&c.counter, 1)
 }
 
 func (c *errCounter) exceedsLimit() bool {
@@ -19,11 +18,9 @@ func (c *errCounter) exceedsLimit() bool {
 		return false
 	}
 
-	c.Lock()
-	defer c.Unlock()
-	return c.counter >= c.limit
+	return atomic.LoadInt32(&c.counter) >= c.limit
 }
 
 func newErrCounter(limit int) *errCounter {
-	return &errCounter{limit: limit}
+	return &errCounter{limit: int32(limit)}
 }
