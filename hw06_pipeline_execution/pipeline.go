@@ -14,17 +14,18 @@ func interrupter(in In, done In) Out {
 	go func() {
 		defer func() {
 			close(out)
-			for range in {}
+			for range in {
+			}
 		}()
 
 		for {
 			select {
-			case v, ok := <- in:
+			case v, ok := <-in:
 				if !ok {
 					return
 				}
 				out <- v
-			case <- done:
+			case <-done:
 				return
 			}
 		}
@@ -34,7 +35,7 @@ func interrupter(in In, done In) Out {
 }
 
 func ExecutePipeline(in In, done In, stages ...Stage) Out {
-	var out = in
+	out := in
 
 	for _, stage := range stages {
 		out = stage(interrupter(out, done))
