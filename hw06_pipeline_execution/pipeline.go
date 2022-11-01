@@ -14,7 +14,7 @@ func interrupter(done In, in In) Out {
 	go func() {
 		defer func() {
 			close(out)
-			for range in {
+			for range in { // drain the channel to let the previous stage finish
 			}
 		}()
 
@@ -42,5 +42,5 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 		out = stage(interrupter(done, out))
 	}
 
-	return out
+	return interrupter(done, out)
 }
