@@ -8,7 +8,7 @@ type (
 
 type Stage func(in In) (out Out)
 
-func interrupter(in In, done In) Out {
+func interrupter(done In, in In) Out {
 	out := make(Bi)
 
 	go func() {
@@ -24,6 +24,7 @@ func interrupter(in In, done In) Out {
 				if !ok {
 					return
 				}
+
 				out <- v
 			case <-done:
 				return
@@ -38,7 +39,7 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	out := in
 
 	for _, stage := range stages {
-		out = stage(interrupter(out, done))
+		out = stage(interrupter(done, out))
 	}
 
 	return out
