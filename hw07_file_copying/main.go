@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	"os"
+
+	"github.com/gookit/color"
 )
 
 var (
@@ -18,5 +21,9 @@ func init() {
 
 func main() {
 	flag.Parse()
-	Copy(from, to, offset, limit)
+	err := Copy(from, to, offset, limit)
+	if err != nil {
+		color.SetOutput(os.Stderr)
+		color.Error.Println(err.Error())
+	}
 }
