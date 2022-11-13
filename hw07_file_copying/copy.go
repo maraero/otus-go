@@ -32,7 +32,7 @@ func getDstFile(fpath string) (*os.File, error) {
 	if fpath == "" {
 		return nil, ErrDstFileIsNotSpecified
 	}
-	file, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE, os.FileMode(0o755))
+	file, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.FileMode(0o755))
 	if err != nil {
 		return nil, err
 	}
