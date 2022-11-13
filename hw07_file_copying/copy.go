@@ -21,22 +21,14 @@ func getSrcFile(fpath string) (*os.File, error) {
 	if fpath == "" {
 		return nil, ErrSrcFileIsNotSpecified
 	}
-	file, err := os.Open(fpath)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
+	return os.Open(fpath)
 }
 
 func getDstFile(fpath string) (*os.File, error) {
 	if fpath == "" {
 		return nil, ErrDstFileIsNotSpecified
 	}
-	file, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.FileMode(0o755))
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
+	return os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.FileMode(0o755))
 }
 
 func getSrcFileSize(file *os.File) (int64, error) {
