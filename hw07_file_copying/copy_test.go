@@ -2,10 +2,17 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+)
+
+const (
+	INPUT  = "input"
+	OUTPUT = "output"
 )
 
 func TestCopyWithExistingFiles(t *testing.T) {
@@ -40,26 +47,109 @@ func TestCopyWithExistingFiles(t *testing.T) {
 	}
 }
 
-func TestErrors(t *testing.T) {
-	t.Run("empty src filepath", func(t *testing.T) {
-		err := Copy("", "test", 0, 0)
-		require.Equal(t, err, ErrSrcFileIsNotSpecified)
+func TestEmptySrcFilepath(t *testing.T) {
+	err := Copy("", "test", 0, 0)
+	require.Equal(t, err, ErrSrcFileIsNotSpecified)
+}
+
+func TestCanNotOpenSrcFile(t *testing.T) {
+	err := Copy("missging_file.txt", "", 0, 0)
+	require.Error(t, err)
+}
+
+func TestEmptyDstFilepath(t *testing.T) {
+	err := Copy("testdata/input.txt", "", 0, 0)
+	require.Equal(t, err, ErrDstFileIsNotSpecified)
+}
+
+func TestCanNotCopyDirectory(t *testing.T) {
+	dstFile := createTmpFile(t, "", OUTPUT)
+	defer os.Remove(dstFile.Name())
+	err := Copy("testdata", dstFile.Name(), 0, 0)
+	require.Equal(t, err, ErrSrcDirectory)
+}
+
+func TestOffsetExceedsFileSize(t *testing.T) {
+	t.Run("positive", func(t *testing.T) {
+		srcFile := createTmpFile(t, "a", INPUT)
+		dstFile := createTmpFile(t, "a", OUTPUT)
+		defer os.Remove(srcFile.Name())
+		defer os.Remove(dstFile.Name())
+		err := Copy(srcFile.Name(), dstFile.Name(), 2, 0)
+		require.Equal(t, err, ErrOffsetExceedsFileSize)
 	})
 
-	t.Run("can not open src file", func(t *testing.T) {
-		err := Copy("testdata/missging_file.txt", "", 0, 0)
-		require.Error(t, err)
+	t.Run("negative", func(t *testing.T) {
+		fileIn, fileOut := createTestingFilePair(t, "a", "a")
+		defer func() {
+			defer os.Remove(fileIn.Name())
+			defer os.Remove(fileOut.Name())
+		}()
+		err := Copy(fileIn.Name(), fileOut.Name(), -2, 0)
+		require.Equal(t, err, ErrOffsetExceedsFileSize)
 	})
+}
 
-	t.Run("empty dst filepath", func(t *testing.T) {
-		err := Copy("testdata/input.txt", "", 0, 0)
-		require.Equal(t, err, ErrDstFileIsNotSpecified)
-	})
+func TestNegativeLimit(t *testing.T) {
+	fileIn, fileOut := createTestingFilePair(t, "a", "a")
+	defer func() {
+		defer os.Remove(fileIn.Name())
+		defer os.Remove(fileOut.Name())
+	}()
+	err := Copy(fileIn.Name(), fileOut.Name(), 0, -1)
+	require.Equal(t, err, ErrNegativeLimit)
+}
 
-	t.Run("can not copy directory", func(t *testing.T) {
-		toPath := "testdata/output.txt"
-		err := Copy("testdata", "testdata/output.txt", 0, 0)
-		defer os.Remove(toPath)
-		require.Equal(t, err, ErrSrcDirectory)
-	})
+func TestOffsetLimitCombinations(t *testing.T) {
+	cases := []struct {
+		name   string
+		limit  int64
+		offset int64
+		in     string
+		out    string
+	}{
+		{name: "limit=0, offset=0", limit: 0, offset: 0, in: "1234567890", out: "1234567890"},
+		{name: "limit=0, offset>0", limit: 0, offset: 5, in: "1234567890", out: "67890"},
+		{name: "limit=0, offset<0", limit: 0, offset: -3, in: "1234567890", out: "890"},
+		{name: "limit>0, offset=0", limit: 3, offset: 0, in: "1234567890", out: "123"},
+		{name: "limit>0, offset>0", limit: 3, offset: 3, in: "1234567890", out: "456"},
+		{name: "limit>0, offset<0", limit: 3, offset: -5, in: "1234567890", out: "678"},
+	}
+
+	for _, c := range cases {
+		c := c
+		t.Run(c.name, func(t *testing.T) {
+			fileIn, fileOut := createTestingFilePair(t, c.in, c.out)
+			defer func() {
+				defer os.Remove(fileIn.Name())
+				defer os.Remove(fileOut.Name())
+			}()
+			err := Copy(fileIn.Name(), fileOut.Name(), c.offset, c.limit)
+			require.NoError(t, err)
+			outContent, err := os.ReadFile(fileOut.Name())
+			require.NoError(t, err)
+			require.Equal(t, string(c.out), string(outContent))
+		})
+	}
+}
+
+func createTmpFile(t *testing.T, content string, postfix string) *os.File {
+	name := strings.ReplaceAll(t.Name()+"_"+postfix, "/", "_")
+	f, err := os.CreateTemp("", name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if _, err = f.WriteString(content); err != nil {
+		log.Fatal()
+	}
+	if err = f.Close(); err != nil {
+		log.Fatal(err)
+	}
+	return f
+}
+
+func createTestingFilePair(t *testing.T, contentIn string, contentOut string) (fileIn *os.File, fileOut *os.File) {
+	fileIn = createTmpFile(t, contentIn, INPUT)
+	fileOut = createTmpFile(t, contentOut, OUTPUT)
+	return fileIn, fileOut
 }
