@@ -9,11 +9,13 @@ import (
 	"github.com/cheggaaa/pb/v3"
 )
 
-var ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
-var ErrSrcFileIsNotSpecified = errors.New("source file is not specified")
-var ErrDstFileIsNotSpecified = errors.New("destination file is not specified")
-var ErrSrcDirectory = errors.New("can not copy directory")
-var ErrNegativeLimit = errors.New("limit can not be negative")
+var (
+	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
+	ErrSrcFileIsNotSpecified = errors.New("source file is not specified")
+	ErrDstFileIsNotSpecified = errors.New("destination file is not specified")
+	ErrSrcDirectory          = errors.New("can not copy directory")
+	ErrNegativeLimit         = errors.New("limit can not be negative")
+)
 
 func getSrcFile(fpath string) (*os.File, error) {
 	if fpath == "" {

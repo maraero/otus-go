@@ -128,12 +128,13 @@ func TestOffsetLimitCombinations(t *testing.T) {
 			require.NoError(t, err)
 			outContent, err := os.ReadFile(fileOut.Name())
 			require.NoError(t, err)
-			require.Equal(t, string(c.out), string(outContent))
+			require.Equal(t, c.out, string(outContent))
 		})
 	}
 }
 
 func createTmpFile(t *testing.T, content string, postfix string) *os.File {
+	t.Helper()
 	name := strings.ReplaceAll(t.Name()+"_"+postfix, "/", "_")
 	f, err := os.CreateTemp("", name)
 	if err != nil {
@@ -149,6 +150,7 @@ func createTmpFile(t *testing.T, content string, postfix string) *os.File {
 }
 
 func createTestingFilePair(t *testing.T, contentIn string, contentOut string) (fileIn *os.File, fileOut *os.File) {
+	t.Helper()
 	fileIn = createTmpFile(t, contentIn, INPUT)
 	fileOut = createTmpFile(t, contentOut, OUTPUT)
 	return fileIn, fileOut
