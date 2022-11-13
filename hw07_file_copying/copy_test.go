@@ -101,24 +101,23 @@ func TestNegativeLimit(t *testing.T) {
 }
 
 func TestOffsetLimitCombinations(t *testing.T) {
-	cases := []struct {
-		name   string
+	cases := map[string]struct {
 		limit  int64
 		offset int64
 		in     string
 		out    string
 	}{
-		{name: "limit=0, offset=0", limit: 0, offset: 0, in: "1234567890", out: "1234567890"},
-		{name: "limit=0, offset>0", limit: 0, offset: 5, in: "1234567890", out: "67890"},
-		{name: "limit=0, offset<0", limit: 0, offset: -3, in: "1234567890", out: "890"},
-		{name: "limit>0, offset=0", limit: 3, offset: 0, in: "1234567890", out: "123"},
-		{name: "limit>0, offset>0", limit: 3, offset: 3, in: "1234567890", out: "456"},
-		{name: "limit>0, offset<0", limit: 3, offset: -5, in: "1234567890", out: "678"},
+		"limit=0, offset=0": {limit: 0, offset: 0, in: "1234567890", out: "1234567890"},
+		"limit=0, offset>0": {limit: 0, offset: 5, in: "1234567890", out: "67890"},
+		"limit=0, offset<0": {limit: 0, offset: -3, in: "1234567890", out: "890"},
+		"limit>0, offset=0": {limit: 3, offset: 0, in: "1234567890", out: "123"},
+		"limit>0, offset>0": {limit: 3, offset: 3, in: "1234567890", out: "456"},
+		"limit>0, offset<0": {limit: 3, offset: -5, in: "1234567890", out: "678"},
 	}
 
-	for _, c := range cases {
+	for key, c := range cases {
 		c := c
-		t.Run(c.name, func(t *testing.T) {
+		t.Run(key, func(t *testing.T) {
 			fileIn, fileOut := createTestingFilePair(t, c.in, c.out)
 			defer func() {
 				defer os.Remove(fileIn.Name())
