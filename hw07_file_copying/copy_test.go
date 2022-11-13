@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCopy(t *testing.T) {
+func TestCopyWithExistingFiles(t *testing.T) {
 	cases := []struct {
 		offset int64
 		limit  int64
@@ -38,4 +38,28 @@ func TestCopy(t *testing.T) {
 			require.Equal(t, string(toContent), string(expectedContent))
 		})
 	}
+}
+
+func TestErrors(t *testing.T) {
+	t.Run("empty src filepath", func(t *testing.T) {
+		err := Copy("", "test", 0, 0)
+		require.Equal(t, err, ErrSrcFileIsNotSpecified)
+	})
+
+	t.Run("can not open src file", func(t *testing.T) {
+		err := Copy("testdata/missging_file.txt", "", 0, 0)
+		require.Error(t, err)
+	})
+
+	t.Run("empty dst filepath", func(t *testing.T) {
+		err := Copy("testdata/input.txt", "", 0, 0)
+		require.Equal(t, err, ErrDstFileIsNotSpecified)
+	})
+
+	t.Run("can not copy directory", func(t *testing.T) {
+		toPath := "testdata/output.txt"
+		err := Copy("testdata", "testdata/output.txt", 0, 0)
+		defer os.Remove(toPath)
+		require.Equal(t, err, ErrSrcDirectory)
+	})
 }

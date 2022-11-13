@@ -10,10 +10,14 @@ import (
 )
 
 var ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
+var ErrSrcFileIsNotSpecified = errors.New("source file is not specified")
+var ErrDstFileIsNotSpecified = errors.New("destination file is not specified")
+var ErrSrcDirectory = errors.New("can not copy directory")
+var ErrNegativeLimit = errors.New("limit can not be negative")
 
 func getSrcFile(fpath string) (*os.File, error) {
 	if fpath == "" {
-		return nil, errors.New("source file is not specified")
+		return nil, ErrSrcFileIsNotSpecified
 	}
 	file, err := os.Open(fpath)
 	if err != nil {
@@ -24,7 +28,7 @@ func getSrcFile(fpath string) (*os.File, error) {
 
 func getDstFile(fpath string) (*os.File, error) {
 	if fpath == "" {
-		return nil, errors.New("destination file is not specified")
+		return nil, ErrDstFileIsNotSpecified
 	}
 	file, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE, os.FileMode(0o755))
 	if err != nil {
@@ -39,7 +43,7 @@ func getSrcFileSize(file *os.File) (int64, error) {
 		return 0, err
 	}
 	if fi.IsDir() {
-		return 0, errors.New("can not copy directory")
+		return 0, ErrSrcDirectory
 	}
 	filesize := fi.Size()
 	return filesize, nil
@@ -54,7 +58,7 @@ func validateOffset(offset int64, filesize int64) error {
 
 func validateLimit(limit int64) error {
 	if limit < 0 {
-		return errors.New("limit can not be negative")
+		return ErrNegativeLimit
 	}
 	return nil
 }
