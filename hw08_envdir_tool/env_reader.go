@@ -42,7 +42,7 @@ func getFirstStringFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 	fName := fInfo.Name()
 	err := validateFile(fInfo)
 	if err != nil {
-		return "", fmt.Errorf("File %s is not valid: %w", fName, err)
+		return "", fmt.Errorf("File %s is invalid: %w", fName, err)
 	}
 
 	fPath := filepath.Join(dir, fName)
@@ -57,7 +57,6 @@ func getFirstStringFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 		return "", fmt.Errorf("Can not read file %s: %w", fName, err)
 	}
 	bytes.Replace(fContent, []byte("0x00"), []byte("\n"), -1)
-	fContent = bytes.Split(fContent, []byte("\n"))[0]
 	fContent = bytes.TrimRightFunc(fContent, unicode.IsSpace)
 	return string(fContent), nil
 }
@@ -79,6 +78,7 @@ func ReadDir(dir string) (Environment, error) {
 		}
 
 		ev := EnvValue{}
+
 		if str == "" {
 			ev.NeedRemove = true
 		} else {
