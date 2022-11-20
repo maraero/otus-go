@@ -43,7 +43,7 @@ func TestRunCmd(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		os.Chmod(tmpFile.Name(), os.FileMode(0777))
+		os.Chmod(tmpFile.Name(), os.FileMode(0o777))
 		defer os.Remove(tmpFile.Name())
 		if _, err := tmpFile.Write(content); err != nil {
 			log.Fatal(err)

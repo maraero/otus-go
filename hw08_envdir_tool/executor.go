@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 )
@@ -14,7 +15,7 @@ func handleEnvs(env Environment) error {
 	for name, val := range env {
 		var err error
 
-		if val.NeedRemove == true {
+		if val.NeedRemove {
 			err = os.Unsetenv(name)
 		} else {
 			err = os.Setenv(name, val.Value)
@@ -36,18 +37,19 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 		return exitError
 	}
 
-	c := exec.Command(cmd[0], cmd[1:]...)
+	c := exec.Command(cmd[0], cmd[1:]...) //nolint:gosec
 	c.Env = os.Environ()
 	c.Stderr = os.Stderr
 	c.Stdin = os.Stdin
 	c.Stdout = os.Stdout
 
 	err := c.Run()
-
-	if exitErr, ok := err.(*exec.ExitError); ok {
-		return exitErr.ExitCode()
-	}
 	if err != nil {
+		var exitErr *exec.ExitError
+
+		if errors.As(err, &exitErr) {
+			return exitErr.ExitCode()
+		}
 		return exitError
 	}
 

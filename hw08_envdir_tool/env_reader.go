@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,7 +26,7 @@ func validateFile(fInfo fs.FileInfo) error {
 		return fmt.Errorf("filename %s contains \"=\"", fName)
 	}
 
-	if fInfo.Mode().IsRegular() != true {
+	if !fInfo.Mode().IsRegular() {
 		return fmt.Errorf("file %s is not regular", fName)
 	}
 
@@ -38,11 +37,11 @@ func readFileFirstLine(file *os.File) (string, error) {
 	scanner := bufio.NewScanner(file)
 	scanner.Scan()
 	if err := scanner.Err(); err != nil {
-		return "", fmt.Errorf("Can not read file %s: %w", file.Name(), err)
+		return "", fmt.Errorf("can not read file %s: %w", file.Name(), err)
 	}
 
 	fContent := scanner.Bytes()
-	fContent = bytes.Replace(fContent, []byte("\x00"), []byte("\n"), -1)
+	fContent = bytes.ReplaceAll(fContent, []byte("\x00"), []byte("\n"))
 	fContent = bytes.TrimRightFunc(fContent, unicode.IsSpace)
 	return string(fContent), nil
 }
@@ -51,7 +50,7 @@ func getFirstLineFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 	fName := fInfo.Name()
 	err := validateFile(fInfo)
 	if err != nil {
-		return "", fmt.Errorf("File %s is invalid: %w", fName, err)
+		return "", fmt.Errorf("file %s is invalid: %w", fName, err)
 	}
 
 	if fInfo.Size() == 0 {
@@ -67,7 +66,7 @@ func getFirstLineFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 
 	line, err := readFileFirstLine(file)
 	if err != nil {
-		return "", fmt.Errorf("Can not get first line from file %s: %w", fName, err)
+		return "", fmt.Errorf("can not get first line from file %s: %w", fName, err)
 	}
 
 	return line, nil
@@ -76,15 +75,23 @@ func getFirstLineFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 // ReadDir reads a specified directory and returns map of env variables.
 // Variables represented as files where filename is name of variable, file first line is a value.
 func ReadDir(dir string) (Environment, error) {
-	files, err := ioutil.ReadDir(dir)
+	entries, err := os.ReadDir(dir)
 	if err != nil {
-		return nil, fmt.Errorf("Can not read directories: %w", err)
+		return nil, fmt.Errorf("can not read directories: %w", err)
+	}
+	infos := make([]fs.FileInfo, 0, len(entries))
+	for _, entry := range entries {
+		info, err := entry.Info()
+		if err != nil {
+			return nil, fmt.Errorf("can not get entrie's info: %w", err)
+		}
+		infos = append(infos, info)
 	}
 
 	envs := Environment{}
 
-	for _, file := range files {
-		str, err := getFirstLineFromFile(file, dir)
+	for _, fInfo := range infos {
+		str, err := getFirstLineFromFile(fInfo, dir)
 		if err != nil {
 			continue
 		}
@@ -97,7 +104,7 @@ func ReadDir(dir string) (Environment, error) {
 			ev.Value = str
 		}
 
-		envs[file.Name()] = ev
+		envs[fInfo.Name()] = ev
 	}
 
 	return envs, nil
