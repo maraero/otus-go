@@ -21,7 +21,9 @@ func handleEnvs(env Environment) error {
 			err = os.Setenv(name, val.Value)
 		}
 
-		return err
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
