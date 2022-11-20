@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
-	"io"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -31,10 +31,6 @@ func validateFile(fInfo fs.FileInfo) error {
 		return fmt.Errorf("file %s is not regular", fName)
 	}
 
-	if fInfo.Size() == 0 {
-		return fmt.Errorf("file %s is empty", fName)
-	}
-
 	return nil
 }
 
@@ -45,6 +41,10 @@ func getFirstStringFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 		return "", fmt.Errorf("File %s is invalid: %w", fName, err)
 	}
 
+	if fInfo.Size() == 0 {
+		return "", nil
+	}
+
 	fPath := filepath.Join(dir, fName)
 	file, err := os.Open(fPath)
 	if err != nil {
@@ -52,11 +52,14 @@ func getFirstStringFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 	}
 	defer file.Close()
 
-	fContent, err := io.ReadAll(file)
-	if err != nil {
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	if err := scanner.Err(); err != nil {
 		return "", fmt.Errorf("Can not read file %s: %w", fName, err)
 	}
-	bytes.Replace(fContent, []byte("0x00"), []byte("\n"), -1)
+
+	fContent := scanner.Bytes()
+	fContent = bytes.Replace(fContent, []byte("\x00"), []byte("\n"), -1)
 	fContent = bytes.TrimRightFunc(fContent, unicode.IsSpace)
 	return string(fContent), nil
 }
