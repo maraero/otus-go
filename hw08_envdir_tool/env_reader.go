@@ -48,8 +48,7 @@ func readFileFirstLine(file *os.File) (string, error) {
 
 func getFirstLineFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 	fName := fInfo.Name()
-	err := validateFile(fInfo)
-	if err != nil {
+	if err := validateFile(fInfo); err != nil {
 		return "", fmt.Errorf("file %s is invalid: %w", fName, err)
 	}
 
