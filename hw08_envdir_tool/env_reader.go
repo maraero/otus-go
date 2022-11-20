@@ -34,7 +34,20 @@ func validateFile(fInfo fs.FileInfo) error {
 	return nil
 }
 
-func getFirstStringFromFile(fInfo fs.FileInfo, dir string) (string, error) {
+func readFileFirstLine(file *os.File) (string, error) {
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	if err := scanner.Err(); err != nil {
+		return "", fmt.Errorf("Can not read file %s: %w", file.Name(), err)
+	}
+
+	fContent := scanner.Bytes()
+	fContent = bytes.Replace(fContent, []byte("\x00"), []byte("\n"), -1)
+	fContent = bytes.TrimRightFunc(fContent, unicode.IsSpace)
+	return string(fContent), nil
+}
+
+func getFirstLineFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 	fName := fInfo.Name()
 	err := validateFile(fInfo)
 	if err != nil {
@@ -52,16 +65,12 @@ func getFirstStringFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	scanner.Scan()
-	if err := scanner.Err(); err != nil {
-		return "", fmt.Errorf("Can not read file %s: %w", fName, err)
+	line, err := readFileFirstLine(file)
+	if err != nil {
+		return "", fmt.Errorf("Can not get first line from file %s: %w", fName, err)
 	}
 
-	fContent := scanner.Bytes()
-	fContent = bytes.Replace(fContent, []byte("\x00"), []byte("\n"), -1)
-	fContent = bytes.TrimRightFunc(fContent, unicode.IsSpace)
-	return string(fContent), nil
+	return line, nil
 }
 
 // ReadDir reads a specified directory and returns map of env variables.
@@ -75,7 +84,7 @@ func ReadDir(dir string) (Environment, error) {
 	envs := Environment{}
 
 	for _, file := range files {
-		str, err := getFirstStringFromFile(file, dir)
+		str, err := getFirstLineFromFile(file, dir)
 		if err != nil {
 			continue
 		}
