@@ -19,6 +19,44 @@ type EnvValue struct {
 	NeedRemove bool
 }
 
+// ReadDir reads a specified directory and returns map of env variables.
+// Variables represented as files where filename is name of variable, file first line is a value.
+func ReadDir(dir string) (Environment, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, fmt.Errorf("can not read directories: %w", err)
+	}
+	infos := make([]fs.FileInfo, 0, len(entries))
+	for _, entry := range entries {
+		info, err := entry.Info()
+		if err != nil {
+			return nil, fmt.Errorf("can not get entrie's info: %w", err)
+		}
+		infos = append(infos, info)
+	}
+
+	envs := Environment{}
+
+	for _, fInfo := range infos {
+		str, err := getFirstLineFromFile(fInfo, dir)
+		if err != nil {
+			continue
+		}
+
+		ev := EnvValue{}
+
+		if str == "" {
+			ev.NeedRemove = true
+		} else {
+			ev.Value = str
+		}
+
+		envs[fInfo.Name()] = ev
+	}
+
+	return envs, nil
+}
+
 func validateFile(fInfo fs.FileInfo) error {
 	fName := fInfo.Name()
 
@@ -69,42 +107,4 @@ func getFirstLineFromFile(fInfo fs.FileInfo, dir string) (string, error) {
 	}
 
 	return line, nil
-}
-
-// ReadDir reads a specified directory and returns map of env variables.
-// Variables represented as files where filename is name of variable, file first line is a value.
-func ReadDir(dir string) (Environment, error) {
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return nil, fmt.Errorf("can not read directories: %w", err)
-	}
-	infos := make([]fs.FileInfo, 0, len(entries))
-	for _, entry := range entries {
-		info, err := entry.Info()
-		if err != nil {
-			return nil, fmt.Errorf("can not get entrie's info: %w", err)
-		}
-		infos = append(infos, info)
-	}
-
-	envs := Environment{}
-
-	for _, fInfo := range infos {
-		str, err := getFirstLineFromFile(fInfo, dir)
-		if err != nil {
-			continue
-		}
-
-		ev := EnvValue{}
-
-		if str == "" {
-			ev.NeedRemove = true
-		} else {
-			ev.Value = str
-		}
-
-		envs[fInfo.Name()] = ev
-	}
-
-	return envs, nil
 }

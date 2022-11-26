@@ -11,24 +11,6 @@ const (
 	exitError   = 1
 )
 
-func handleEnvs(env Environment) error {
-	for name, val := range env {
-		var err error
-
-		if val.NeedRemove {
-			err = os.Unsetenv(name)
-		} else {
-			err = os.Setenv(name, val.Value)
-		}
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 // RunCmd runs a command + arguments (cmd) with environment variables from env.
 func RunCmd(cmd []string, env Environment) (returnCode int) {
 	if len(cmd) == 0 {
@@ -56,4 +38,22 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	}
 
 	return exitSuccess
+}
+
+func handleEnvs(env Environment) error {
+	for name, val := range env {
+		var err error
+
+		if val.NeedRemove {
+			err = os.Unsetenv(name)
+		} else {
+			err = os.Setenv(name, val.Value)
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
