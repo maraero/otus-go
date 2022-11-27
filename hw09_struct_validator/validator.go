@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const validateTag = "validate"
+
 var (
 	ErrorNotStruct = errors.New("input is not struct")
 )
@@ -31,6 +33,12 @@ func Validate(v interface{}) error {
 
 	if val.Kind() != reflect.Struct {
 		return ErrorNotStruct
+	}
+
+	fields := reflect.VisibleFields(val.Type())
+
+	if len(fields) == 0 {
+		return nil
 	}
 
 	// Place your code here.

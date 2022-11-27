@@ -66,4 +66,11 @@ func TestValidate(t *testing.T) {
 		res := Validate(in)
 		require.Equal(t, ErrorNotStruct, res)
 	})
+
+	t.Run("empty struct", func(t *testing.T) {
+		var in interface{}
+		in = struct{}{}
+		res := Validate(in)
+		require.Nil(t, res)
+	})
 }
