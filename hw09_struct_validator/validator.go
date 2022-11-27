@@ -1,8 +1,14 @@
 package hw09structvalidator
 
 import (
+	"errors"
 	"fmt"
+	"reflect"
 	"strings"
+)
+
+var (
+	ErrorNotStruct = errors.New("input is not struct")
 )
 
 type ValidationError struct {
@@ -21,6 +27,12 @@ func (v ValidationErrors) Error() string {
 }
 
 func Validate(v interface{}) error {
+	val := reflect.ValueOf(v)
+
+	if val.Kind() != reflect.Struct {
+		return ErrorNotStruct
+	}
+
 	// Place your code here.
 	return nil
 }
