@@ -39,7 +39,7 @@ func validateField(field reflect.StructField, rVal reflect.Value) error {
 
 	ruleList := getRuleListFromTag(tag)
 
-	switch field.Type.Kind() {
+	switch field.Type.Kind() { //nolint:exhaustive
 	case reflect.String:
 		val := rVal.String()
 		err := validateString(val, ruleList)
@@ -53,7 +53,7 @@ func validateField(field reflect.StructField, rVal reflect.Value) error {
 			return err
 		}
 	case reflect.Slice:
-		switch rVal.Type().Elem().Kind() {
+		switch rVal.Type().Elem().Kind() { //nolint:exhaustive
 		case reflect.String:
 			vals := rVal.Interface().([]string)
 			err := validateSliceString(vals, ruleList)

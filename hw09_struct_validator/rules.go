@@ -65,7 +65,7 @@ func validateIntMax(val int64, max string) error {
 
 func validateIntIn(val int64, in string) error {
 	strSet := strings.Split(in, listSep)
-	var intSet []int64
+	intSet := make([]int64, 0, cap(strSet))
 	for _, s := range strSet {
 		val, err := strconv.ParseInt(s, 10, 64)
 		if err != nil {

@@ -48,10 +48,16 @@ func TestValidate(t *testing.T) {
 		{in: App{ // validation error
 			Version: "123456",
 		}, expectedErr: ErrValidation, contains: []string{"field \"Version\" error: \"validation error: length must be 5\""}},
-		{in: Response{ // validation error
-			Code: 504,
-			Body: "any",
-		}, expectedErr: ErrValidation, contains: []string{"field \"Code\" error: \"validation error: does not match any value in list 200,404,500\""}},
+		{
+			in: Response{ // validation error
+				Code: 504,
+				Body: "any",
+			},
+			expectedErr: ErrValidation,
+			contains: []string{
+				"field \"Code\" error: \"validation error: does not match any value in list 200,404,500\"",
+			},
+		},
 		{in: User{ // validation errors
 			ID:     "wrong id",
 			Name:   "any name",
