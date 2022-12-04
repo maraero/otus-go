@@ -17,7 +17,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	clientParams := ClientParams{addr: addr, timeout: *timeout, in: os.Stdin, out: os.Stdout, cancel: cancel}
+	clientParams := ClientParams{addr: addr, timeout: timeout, in: os.Stdin, out: os.Stdout, cancel: cancel}
 	client := NewTelnetClient(clientParams)
 	if err := client.Connect(); err != nil {
 		log.Fatalf("failed to connect to %v: %v", addr, err)
@@ -52,13 +52,13 @@ func receive(client TelnetClient) {
 	}
 }
 
-func parseArgs() (host string, port string, timeout *time.Duration) {
-	timeout = flag.Duration("timeout", time.Second*10, "timeout")
+func parseArgs() (host string, port string, timeout time.Duration) {
+	timeoutFlag := flag.Duration("timeout", time.Second*10, "timeout")
 	flag.Parse()
 	if flag.NArg() < 2 {
 		log.Fatal("not enough arguments, pass host and port")
 	}
 	host = flag.Arg(0)
 	port = flag.Arg(1)
-	return host, port, timeout
+	return host, port, *timeoutFlag
 }
