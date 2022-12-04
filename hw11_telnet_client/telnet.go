@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"time"
 )
 
@@ -50,6 +51,7 @@ func (c *client) Send() error {
 	if _, err := io.Copy(c.conn, c.in); err != nil {
 		return fmt.Errorf("sending error: %w", err)
 	}
+	fmt.Fprintln(os.Stderr, "EOF")
 	return nil
 }
 
@@ -58,5 +60,6 @@ func (c *client) Receive() error {
 	if _, err := io.Copy(c.out, c.conn); err != nil {
 		return fmt.Errorf("receiving error: %w", err)
 	}
+	fmt.Fprintln(os.Stderr, "Connection is closed")
 	return nil
 }
