@@ -1,0 +1,7 @@
+goos: darwin
+goarch: amd64
+pkg: github.com/fixme_my_friend/hw10_program_optimization
+cpu: Intel(R) Core(TM) i7-8850H CPU @ 2.60GHz
+BenchmarkGetDomainStat-12    	  195613	      5666 ns/op	    6330 B/op	      84 allocs/op
+PASS
+ok  	github.com/fixme_my_friend/hw10_program_optimization	1.310s
