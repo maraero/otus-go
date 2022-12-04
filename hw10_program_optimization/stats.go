@@ -33,7 +33,7 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 		if err != nil {
 			return nil, err
 		}
-		email := strings.TrimSpace(strings.ToLower(user.Email))
+		email := strings.ToLower(user.Email)
 		if strings.HasSuffix(email, ending) {
 			fDomain := strings.SplitN(email, "@", 2)[1]
 			result[fDomain]++
