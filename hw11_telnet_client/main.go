@@ -16,6 +16,7 @@ func main() {
 	addr := net.JoinHostPort(host, port)
 
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	client := NewTelnetClient(addr, *timeout, os.Stdin, os.Stdout, cancel)
 	if err := client.Connect(); err != nil {

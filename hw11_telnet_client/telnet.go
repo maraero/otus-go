@@ -25,9 +25,9 @@ type TelnetClient interface {
 	Receive() error
 }
 
-func NewTelnetClient(address string, timeout time.Duration, in io.ReadCloser, out io.Writer, cancel context.CancelFunc) TelnetClient {
+func NewTelnetClient(addr string, timeout time.Duration, in io.ReadCloser, out io.Writer, cancel context.CancelFunc) TelnetClient {
 	return &client{
-		addr:    address,
+		addr:    addr,
 		timeout: timeout,
 		in:      in,
 		out:     out,
@@ -50,8 +50,7 @@ func (c *client) Close() error {
 
 func (c *client) Send() error {
 	defer c.cancel()
-	_, err := io.Copy(c.conn, c.in)
-	if err != nil {
+	if _, err := io.Copy(c.conn, c.in); err != nil {
 		return fmt.Errorf("sending error: %w", err)
 	}
 	fmt.Fprint(os.Stdout, "EOF\n")
@@ -60,8 +59,7 @@ func (c *client) Send() error {
 
 func (c *client) Receive() error {
 	defer c.cancel()
-	_, err := io.Copy(c.out, c.conn)
-	if err != nil {
+	if _, err := io.Copy(c.out, c.conn); err != nil {
 		return fmt.Errorf("receiving error: %w", err)
 	}
 	fmt.Fprintln(os.Stderr, "connection closed")
