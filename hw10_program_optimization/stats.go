@@ -39,5 +39,9 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 			result[fDomain]++
 		}
 	}
+
+	if bScanner.Err() != nil {
+		return nil, bScanner.Err()
+	}
 	return result, nil
 }
