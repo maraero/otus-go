@@ -17,7 +17,8 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
-	client := NewTelnetClient(addr, *timeout, os.Stdin, os.Stdout, cancel)
+	clientParams := ClientParams{addr: addr, timeout: *timeout, in: os.Stdin, out: os.Stdout, cancel: cancel}
+	client := NewTelnetClient(clientParams)
 	if err := client.Connect(); err != nil {
 		log.Fatalf("failed to connect to %v: %v", addr, err)
 	}

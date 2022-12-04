@@ -29,7 +29,12 @@ func TestTelnetClient(t *testing.T) {
 			timeout, err := time.ParseDuration("10s")
 			require.NoError(t, err)
 
-			client := NewTelnetClient(l.Addr().String(), timeout, ioutil.NopCloser(in), out, func() {})
+			clientParams := ClientParams{
+				addr:    l.Addr().String(),
+				timeout: timeout,
+				in:      ioutil.NopCloser(in), out: out, cancel: func() {},
+			}
+			client := NewTelnetClient(clientParams)
 			require.NoError(t, client.Connect())
 			defer func() { require.NoError(t, client.Close()) }()
 
@@ -81,7 +86,14 @@ func TestTelnetClient(t *testing.T) {
 			out := &bytes.Buffer{}
 
 			timeout := time.Duration(5) * time.Second
-			client := NewTelnetClient(l.Addr().String(), timeout, ioutil.NopCloser(in), out, func() {})
+			clientParams := ClientParams{
+				addr:    l.Addr().String(),
+				timeout: timeout,
+				in:      ioutil.NopCloser(in),
+				out:     out,
+				cancel:  func() {},
+			}
+			client := NewTelnetClient(clientParams)
 			require.NoError(t, client.Connect())
 			defer func() { require.NoError(t, client.Close()) }()
 
@@ -121,7 +133,14 @@ func TestTelnetClient(t *testing.T) {
 
 		timeout := time.Duration(10) * time.Second
 
-		client := NewTelnetClient("000:000", timeout, ioutil.NopCloser(in), out, func() {})
+		clientParams := ClientParams{
+			addr:    "000:000",
+			timeout: timeout,
+			in:      ioutil.NopCloser(in),
+			out:     out,
+			cancel:  func() {},
+		}
+		client := NewTelnetClient(clientParams)
 		require.Error(t, client.Connect())
 	})
 }

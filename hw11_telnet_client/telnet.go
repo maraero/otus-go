@@ -9,13 +9,17 @@ import (
 	"time"
 )
 
-type client struct {
+type ClientParams struct {
 	addr    string
 	timeout time.Duration
 	in      io.ReadCloser
 	out     io.Writer
-	conn    net.Conn
 	cancel  context.CancelFunc
+}
+
+type client struct {
+	ClientParams
+	conn net.Conn
 }
 
 type TelnetClient interface {
@@ -25,14 +29,8 @@ type TelnetClient interface {
 	Receive() error
 }
 
-func NewTelnetClient(addr string, timeout time.Duration, in io.ReadCloser, out io.Writer, cancel context.CancelFunc) TelnetClient {
-	return &client{
-		addr:    addr,
-		timeout: timeout,
-		in:      in,
-		out:     out,
-		cancel:  cancel,
-	}
+func NewTelnetClient(c ClientParams) TelnetClient {
+	return &client{ClientParams: c, conn: nil}
 }
 
 func (c *client) Connect() error {
