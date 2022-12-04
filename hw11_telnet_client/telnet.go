@@ -31,7 +31,8 @@ func NewTelnetClient(address string, timeout time.Duration, in io.ReadCloser, ou
 		timeout: timeout,
 		in:      in,
 		out:     out,
-		cancel:  cancel}
+		cancel:  cancel,
+	}
 }
 
 func (c *client) Connect() error {
