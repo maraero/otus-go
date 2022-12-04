@@ -21,7 +21,7 @@ type User struct {
 type DomainStat map[string]int
 
 func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
-	var parser = jsoniter.ConfigCompatibleWithStandardLibrary
+	parser := jsoniter.ConfigCompatibleWithStandardLibrary
 	result := make(DomainStat)
 	ending := "." + domain
 
