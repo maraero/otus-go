@@ -50,7 +50,6 @@ func (c *client) Send() error {
 	if _, err := io.Copy(c.conn, c.in); err != nil {
 		return fmt.Errorf("sending error: %w", err)
 	}
-	fmt.Println("EOF")
 	return nil
 }
 
@@ -59,6 +58,5 @@ func (c *client) Receive() error {
 	if _, err := io.Copy(c.out, c.conn); err != nil {
 		return fmt.Errorf("receiving error: %w", err)
 	}
-	fmt.Println("connection closed")
 	return nil
 }
