@@ -49,4 +49,21 @@ func TestGetDomainStat(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, DomainStat{}, result)
 	})
+
+	t.Run("incorrect json", func(t *testing.T) {
+		data := `{"Id":1,"Name":"Howard Mendoza","Username":"0Oliver","Email":"aliquid_qui_ea@Browsedrive.gov","Phone":"6-866-899-36-79","Password":"InAQJvsq","Address":"Blackbird Place 25"
+{"Id":4,"Name":"Gregory Reid","Username":"tButler","Email":"5Moore@Teklist.net","Phone":"520-04-16","Password":"r639qLNu","Address":"Sunfield Park 20"}
+{"Id":5,"Name":"Janice Rose","Username":"KeithHart","Email":"nulla@Linktype.com","Phone":"146-91-01","Password":"acSBF5","Address":"Russell Trail 61"`
+
+		_, err := GetDomainStat(bytes.NewBufferString(data), "com")
+		require.Error(t, err)
+	})
+
+	t.Run("not a json", func(t *testing.T) {
+		data = `"Email":"aliquid_qui_ea@Browsedrive.gov`
+		t.Run("not a json", func(t *testing.T) {
+			_, err := GetDomainStat(bytes.NewBufferString(data), "gov")
+			require.Error(t, err)
+		})
+	})
 }
