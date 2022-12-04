@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net"
 	"sync"
 	"testing"
@@ -32,7 +32,7 @@ func TestTelnetClient(t *testing.T) {
 			clientParams := ClientParams{
 				addr:    l.Addr().String(),
 				timeout: timeout,
-				in:      ioutil.NopCloser(in), out: out, cancel: func() {},
+				in:      io.NopCloser(in), out: out, cancel: func() {},
 			}
 			client := NewTelnetClient(clientParams)
 			require.NoError(t, client.Connect())
@@ -89,7 +89,7 @@ func TestTelnetClient(t *testing.T) {
 			clientParams := ClientParams{
 				addr:    l.Addr().String(),
 				timeout: timeout,
-				in:      ioutil.NopCloser(in),
+				in:      io.NopCloser(in),
 				out:     out,
 				cancel:  func() {},
 			}
@@ -136,7 +136,7 @@ func TestTelnetClient(t *testing.T) {
 		clientParams := ClientParams{
 			addr:    "000:000",
 			timeout: timeout,
-			in:      ioutil.NopCloser(in),
+			in:      io.NopCloser(in),
 			out:     out,
 			cancel:  func() {},
 		}
