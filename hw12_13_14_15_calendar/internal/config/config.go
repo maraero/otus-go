@@ -46,7 +46,33 @@ func parseConfigFromFile(f *os.File) (Config, error) {
 }
 
 func validateConfig(c Config) error {
-	if c.Storage.Type == StorageSql && c.Storage.DSN == "" {
+	err := validateConfigLogger(c.Logger)
+	if err != nil {
+		return err
+	}
+
+	err = validateConfigStorage(c.Storage)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func validateConfigLogger(c ConfigLogger) error {
+	if len(c.OutputPaths) == 0 {
+		return errors.New(ErrMissingOutputPaths)
+	}
+
+	if len(c.ErrorOutputPaths) == 0 {
+		return errors.New(ErrMissingErrOutputPaths)
+	}
+
+	return nil
+}
+
+func validateConfigStorage(c ConfigStorage) error {
+	if c.Type == StorageSql && c.DSN == "" {
 		return errors.New(ErrMissingDSN)
 	}
 	return nil

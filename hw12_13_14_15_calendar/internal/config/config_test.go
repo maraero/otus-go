@@ -100,6 +100,50 @@ func TestNewConfig(t *testing.T) {
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrMissingDSN)
 	})
+
+	t.Run("missing output paths for logger", func(t *testing.T) {
+		c := Config{
+			Logger: ConfigLogger{
+				Level:            "debug",
+				OutputPaths:      []string{},
+				ErrorOutputPaths: []string{"stderr"},
+			},
+			Server: ConfigServer{
+				Host: "localhost",
+				Port: "3000",
+			},
+			Storage: ConfigStorage{Type: StorageInMemory, DSN: ""},
+		}
+		b, err := json.Marshal(c)
+		require.NoError(t, err)
+		tmpFilename := createTmpFile(t, string(b))
+		defer os.Remove(tmpFilename)
+		_, err = NewConfig(tmpFilename)
+		require.Error(t, err)
+		require.ErrorContains(t, err, ErrMissingOutputPaths)
+	})
+
+	t.Run("missing output paths for logger", func(t *testing.T) {
+		c := Config{
+			Logger: ConfigLogger{
+				Level:            "debug",
+				OutputPaths:      []string{"stdout"},
+				ErrorOutputPaths: []string{},
+			},
+			Server: ConfigServer{
+				Host: "localhost",
+				Port: "3000",
+			},
+			Storage: ConfigStorage{Type: StorageInMemory, DSN: ""},
+		}
+		b, err := json.Marshal(c)
+		require.NoError(t, err)
+		tmpFilename := createTmpFile(t, string(b))
+		defer os.Remove(tmpFilename)
+		_, err = NewConfig(tmpFilename)
+		require.Error(t, err)
+		require.ErrorContains(t, err, ErrMissingErrOutputPaths)
+	})
 }
 
 func createTmpFile(t *testing.T, content string) (filepath string) {
