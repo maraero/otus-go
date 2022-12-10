@@ -35,6 +35,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	migrate(config.Storage.Type, config.Storage.SQLDriver, config.Storage.DSN)
+
 	log, err := logger.New(config.Logger.Level, config.Logger.OutputPaths, config.Logger.ErrorOutputPaths)
 	if err != nil {
 		log.Fatal(err)
