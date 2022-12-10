@@ -8,8 +8,8 @@ type Config struct {
 
 type Logger struct {
 	Level            string   `json:"level"`
-	OutputPaths      []string `json:"output_paths"`
-	ErrorOutputPaths []string `json:"error_output_paths"`
+	OutputPaths      []string `json:"outputPaths"`
+	ErrorOutputPaths []string `json:"errorOutputPaths"`
 }
 
 type Server struct {
@@ -19,6 +19,6 @@ type Server struct {
 
 type Storage struct {
 	Type      string `json:"type"`
-	SQLDriver string `json:"sql_driver"`
+	SQLDriver string `json:"sqlDriver"`
 	DSN       string `json:"dsn"`
 }

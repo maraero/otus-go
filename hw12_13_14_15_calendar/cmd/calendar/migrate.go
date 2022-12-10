@@ -39,5 +39,5 @@ func getDBDriverBySQLDriver(sqlDriver string) (string, error) {
 	if sqlDriver == "pgx" {
 		return "postgres", nil
 	}
-	return "", fmt.Errorf("Unknown sql driver: %v", sqlDriver)
+	return "", fmt.Errorf("unknown sql driver: %v", sqlDriver)
 }
