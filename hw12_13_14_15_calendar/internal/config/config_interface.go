@@ -18,6 +18,7 @@ type ConfigServer struct {
 }
 
 type ConfigStorage struct {
-	Type string `json:"type"`
-	DSN  string `json:"dsn"`
+	Type      string `json:"type"`
+	SQLDriver string `json:"sql_driver"`
+	DSN       string `json:"dsn"`
 }

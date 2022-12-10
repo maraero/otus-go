@@ -8,17 +8,17 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger(config ConfigLogger) (*Log, error) {
-	level, err := zap.ParseAtomicLevel(config.Level)
+func New(level string, outputPaths []string, errOutputPath []string) (*Log, error) {
+	parsedLevel, err := zap.ParseAtomicLevel(level)
 	if err != nil {
 		return nil, errors.New(ErrWrongLevel)
 	}
 
 	cfg := zap.Config{
 		Encoding:         "json",
-		Level:            level,
-		OutputPaths:      config.OutputPaths,
-		ErrorOutputPaths: config.ErrorOutputPaths,
+		Level:            parsedLevel,
+		OutputPaths:      outputPaths,
+		ErrorOutputPaths: errOutputPath,
 		EncoderConfig: zapcore.EncoderConfig{
 			MessageKey:  "message",
 			LevelKey:    "level",

@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func NewConfig(configFilePath string) (Config, error) {
+func New(configFilePath string) (Config, error) {
 	file, err := os.Open(configFilePath)
 	if err != nil {
 		return Config{}, fmt.Errorf("%v: %w", ErrFailedOpenConfigFile, err)
@@ -72,8 +72,22 @@ func validateConfigLogger(c ConfigLogger) error {
 }
 
 func validateConfigStorage(c ConfigStorage) error {
-	if c.Type == StorageSql && c.DSN == "" {
-		return errors.New(ErrMissingDSN)
+	if c.Type == StorageSql {
+		return validateSQLConfig(c.DSN, c.SQLDriver)
 	}
 	return nil
+}
+
+func validateSQLConfig(DSN string, driver string) error {
+	if DSN == "" {
+		return errors.New(ErrMissingDSN)
+	}
+
+	for _, driver := range AllowedSQLDrivers {
+		if driver == driver {
+			return nil
+		}
+	}
+
+	return errors.New(ErrWrongSQLDriver)
 }

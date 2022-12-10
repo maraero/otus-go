@@ -6,21 +6,19 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
-	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage/event-service"
+	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 )
 
 type Storage struct {
-	db     *sqlx.DB
-	logger logger.Logger
+	db *sqlx.DB
 }
 
 func New() *Storage {
 	return &Storage{}
 }
 
-func (s *Storage) Connect(ctx context.Context, dsn string) error {
-	db, err := sqlx.Open("pgx", dsn)
+func (s *Storage) Connect(ctx context.Context, driver string, dsn string) error {
+	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
@@ -36,7 +34,7 @@ func (s *Storage) Close(ctx context.Context) error {
 	return s.db.Close()
 }
 
-func (s *Storage) CreateEvent(ctx context.Context, e es.Event) (int64, error) {
+func (s *Storage) CreateEvent(ctx context.Context, e evt.Event) (int64, error) {
 	sql := `
 		INSERT INTO events (
 			title,
@@ -72,7 +70,7 @@ func (s *Storage) CreateEvent(ctx context.Context, e es.Event) (int64, error) {
 	return result.LastInsertId()
 }
 
-func (s *Storage) UpdateEvent(ctx context.Context, id int64, e es.Event) error {
+func (s *Storage) UpdateEvent(ctx context.Context, id int64, e evt.Event) error {
 	sql := `
 		UPDATE events
 		SET
@@ -100,7 +98,7 @@ func (s *Storage) UpdateEvent(ctx context.Context, id int64, e es.Event) error {
 		return err
 	}
 	if count == 0 {
-		return es.ErrNotFound
+		return evt.ErrNotFound
 	}
 	return nil
 }
@@ -116,12 +114,12 @@ func (s *Storage) DeleteEvent(ctx context.Context, id int64) error {
 		return err
 	}
 	if count == 0 {
-		return es.ErrNotFound
+		return evt.ErrNotFound
 	}
 	return nil
 }
 
-func (s *Storage) GetEventListByDate(ctx context.Context, date time.Time) ([]es.Event, error) {
+func (s *Storage) GetEventListByDate(ctx context.Context, date time.Time) ([]evt.Event, error) {
 	year, month, day := date.Date()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -139,12 +137,12 @@ func (s *Storage) GetEventListByDate(ctx context.Context, date time.Time) ([]es.
 		"day":   day,
 	})
 	if err != nil {
-		return []es.Event{}, err
+		return []evt.Event{}, err
 	}
 	return parseRows(rows)
 }
 
-func (s *Storage) GetEventListByWeek(ctx context.Context, date time.Time) ([]es.Event, error) {
+func (s *Storage) GetEventListByWeek(ctx context.Context, date time.Time) ([]evt.Event, error) {
 	year, week := date.ISOWeek()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -160,12 +158,12 @@ func (s *Storage) GetEventListByWeek(ctx context.Context, date time.Time) ([]es.
 		"week": week,
 	})
 	if err != nil {
-		return []es.Event{}, err
+		return []evt.Event{}, err
 	}
 	return parseRows(rows)
 }
 
-func (s *Storage) GetEventListByMonth(ctx context.Context, date time.Time) ([]es.Event, error) {
+func (s *Storage) GetEventListByMonth(ctx context.Context, date time.Time) ([]evt.Event, error) {
 	year, month, _ := date.Date()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -181,20 +179,20 @@ func (s *Storage) GetEventListByMonth(ctx context.Context, date time.Time) ([]es
 		"month": month,
 	})
 	if err != nil {
-		return []es.Event{}, err
+		return []evt.Event{}, err
 	}
 	return parseRows(rows)
 }
 
-func parseRows(rows *sqlx.Rows) ([]es.Event, error) {
-	var events []es.Event
+func parseRows(rows *sqlx.Rows) ([]evt.Event, error) {
+	var events []evt.Event
 	for rows.Next() {
-		var event es.Event
-		err := rows.StructScan(event)
+		var e evt.Event
+		err := rows.StructScan(e)
 		if err != nil {
-			return []es.Event{}, err
+			return []evt.Event{}, err
 		}
-		events = append(events, event)
+		events = append(events, e)
 	}
 	return events, nil
 }

@@ -21,13 +21,13 @@ func TestNewConfig(t *testing.T) {
 				Host: "localhost",
 				Port: "3000",
 			},
-			Storage: ConfigStorage{Type: "SQL", DSN: "Connection string"},
+			Storage: ConfigStorage{Type: "SQL", SQLDriver: "pgx", DSN: "Connection string"},
 		}
 		b, err := json.Marshal(c)
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		config, err := NewConfig(tmpFilename)
+		config, err := New(tmpFilename)
 		require.NoError(t, err)
 		require.Equal(t, c, config)
 	})
@@ -49,7 +49,7 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		config, err := NewConfig(tmpFilename)
+		config, err := New(tmpFilename)
 		require.NoError(t, err)
 		require.Equal(t, config.Logger, c.Logger)
 		require.Equal(t, config.Server, c.Server)
@@ -57,7 +57,7 @@ func TestNewConfig(t *testing.T) {
 	})
 
 	t.Run("can not open conig file", func(t *testing.T) {
-		_, err := NewConfig("UNKNOWN_PATH")
+		_, err := New("UNKNOWN_PATH")
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrFailedOpenConfigFile)
 	})
@@ -65,7 +65,7 @@ func TestNewConfig(t *testing.T) {
 	t.Run("can not read config (not json)", func(t *testing.T) {
 		tmpFilename := createTmpFile(t, "")
 		defer os.Remove(tmpFilename)
-		_, err := NewConfig(tmpFilename)
+		_, err := New(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrFailedReadConfig)
 	})
@@ -74,7 +74,7 @@ func TestNewConfig(t *testing.T) {
 		c := "\"{\"Logger\":{\"Level\":\"debug\"},\"Server\":{},\"Storage\":{}}\""
 		tmpFilename := createTmpFile(t, c)
 		defer os.Remove(tmpFilename)
-		_, err := NewConfig(tmpFilename)
+		_, err := New(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrFailedReadConfig)
 	})
@@ -96,7 +96,7 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		_, err = NewConfig(tmpFilename)
+		_, err = New(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrMissingDSN)
 	})
@@ -118,7 +118,7 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		_, err = NewConfig(tmpFilename)
+		_, err = New(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrMissingOutputPaths)
 	})
@@ -140,7 +140,7 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		_, err = NewConfig(tmpFilename)
+		_, err = New(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrMissingErrOutputPaths)
 	})

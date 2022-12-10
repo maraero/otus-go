@@ -6,12 +6,6 @@ type Log struct {
 	*zap.Logger
 }
 
-type ConfigLogger struct {
-	Level            string   `json:"level"`
-	OutputPaths      []string `json:"outputPaths"`
-	ErrorOutputPaths []string `json:"errorOutputPaths"`
-}
-
 type Logger interface {
 	Debug(args ...interface{})
 	Info(args ...interface{})
