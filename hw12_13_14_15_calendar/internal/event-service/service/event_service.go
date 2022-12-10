@@ -10,7 +10,7 @@ import (
 	sqlstorage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-sql"
 )
 
-func New(ctx context.Context, storageType string, sqlDriver string, DSN string) (*EventService, error) {
+func New(ctx context.Context, storageType string, sqlDriver string, dsn string) (*EventService, error) {
 	var storage Storage
 	if storageType == config.StorageInMemory {
 		storage = memorystorage.New()
@@ -18,7 +18,7 @@ func New(ctx context.Context, storageType string, sqlDriver string, DSN string) 
 		storage = sqlstorage.New()
 	}
 
-	err := storage.Connect(ctx, sqlDriver, DSN)
+	err := storage.Connect(ctx, sqlDriver, dsn)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +40,7 @@ func (es *EventService) CreateEvent(ctx context.Context, e event.Event) (id int6
 }
 
 func (es *EventService) UpdateEvent(ctx context.Context, id int64, e event.Event) error {
-	err := es.validateEvent(e)
-	if err != nil {
+	if err := es.validateEvent(e); err != nil {
 		return err
 	}
 	return es.storage.UpdateEvent(ctx, id, e)

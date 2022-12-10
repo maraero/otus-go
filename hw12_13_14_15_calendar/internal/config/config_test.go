@@ -152,7 +152,6 @@ func createTmpFile(t *testing.T, content string) (filepath string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
 	if _, err = f.WriteString(content); err != nil {
 		log.Fatal()
 	}

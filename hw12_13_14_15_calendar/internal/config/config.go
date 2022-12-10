@@ -27,7 +27,7 @@ func New(configFilePath string) (Config, error) {
 	return c, nil
 }
 
-// getStorageType returns valid storage type. It is "in memory" by default
+// getStorageType returns valid storage type. It is "in memory" by default.
 func getStorageType(t string) string {
 	if t == StorageInMemory || t == StorageSql {
 		return t
@@ -78,13 +78,13 @@ func validateConfigStorage(c ConfigStorage) error {
 	return nil
 }
 
-func validateSQLConfig(DSN string, driver string) error {
-	if DSN == "" {
+func validateSQLConfig(dsn string, driver string) error {
+	if dsn == "" {
 		return errors.New(ErrMissingDSN)
 	}
 
-	for _, driver := range AllowedSQLDrivers {
-		if driver == driver {
+	for _, d := range AllowedSQLDrivers {
+		if d == driver {
 			return nil
 		}
 	}

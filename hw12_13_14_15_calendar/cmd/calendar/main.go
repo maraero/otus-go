@@ -35,12 +35,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	migrate(config.Storage.Type, config.Storage.SQLDriver, config.Storage.DSN)
-
 	log, err := logger.New(config.Logger.Level, config.Logger.OutputPaths, config.Logger.ErrorOutputPaths)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	migrate(log, config.Storage.Type, config.Storage.SQLDriver, config.Storage.DSN)
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
@@ -48,7 +48,8 @@ func main() {
 
 	eventService, err := eventservice.New(ctx, config.Storage.Type, config.Storage.SQLDriver, config.Storage.DSN)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		return
 	}
 
 	calendar := app.New(log, eventService)

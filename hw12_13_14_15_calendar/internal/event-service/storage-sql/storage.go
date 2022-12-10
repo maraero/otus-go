@@ -60,7 +60,7 @@ func (s *Storage) CreateEvent(ctx context.Context, e evt.Event) (int64, error) {
 		"date_start":        e.DateStart,
 		"date_end":          e.DateEnd,
 		"description":       e.Descripion,
-		"user_id":           e.UserId,
+		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
 		"deleted":           e.Deleted,
 	})
@@ -86,7 +86,7 @@ func (s *Storage) UpdateEvent(ctx context.Context, id int64, e evt.Event) error 
 		"date_start":        e.DateStart,
 		"date_end":          e.DateEnd,
 		"description":       e.Descripion,
-		"user_id":           e.UserId,
+		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
 		"deleted":           e.Deleted,
 	})

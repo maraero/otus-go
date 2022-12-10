@@ -39,8 +39,7 @@ func (s *Storage) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
 func (s *Storage) UpdateEvent(_ context.Context, id int64, e evt.Event) error {
 	s.Lock()
 	defer s.Unlock()
-	_, ok := s.events[id]
-	if !ok {
+	if _, ok := s.events[id]; !ok {
 		return evt.ErrNotFound
 	}
 	s.events[id] = e

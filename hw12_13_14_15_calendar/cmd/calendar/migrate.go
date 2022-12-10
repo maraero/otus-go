@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	"github.com/pressly/goose/v3"
 )
 
-func migrate(storageType string, sqlDriver string, DSN string) {
+func migrate(log *logger.Log, storageType string, sqlDriver string, dsn string) {
 	if storageType == config.StorageInMemory {
 		return
 	}
@@ -18,7 +18,7 @@ func migrate(storageType string, sqlDriver string, DSN string) {
 		log.Fatal(err)
 	}
 
-	db, err := goose.OpenDBWithDriver(driver, DSN)
+	db, err := goose.OpenDBWithDriver(driver, dsn)
 	if err != nil {
 		log.Fatal("goose: failed to open DB: %w\n", err)
 	}
@@ -30,7 +30,8 @@ func migrate(storageType string, sqlDriver string, DSN string) {
 	}()
 
 	if err := goose.Up(db, "../../migrations"); err != nil {
-		log.Fatal("goose Up error: %w", err)
+		log.Error("goose Up error: %w", err)
+		return
 	}
 }
 

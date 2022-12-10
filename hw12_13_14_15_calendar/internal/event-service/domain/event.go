@@ -8,7 +8,7 @@ type Event struct {
 	DateStart        time.Time `db:"date_start"`
 	DateEnd          time.Time `db:"date_end"`
 	Descripion       string    `db:"description"`
-	UserId           string    `db:"user_id"`
+	UserID           string    `db:"user_id"`
 	DateNotification time.Time `db:"date_notification"`
 	Deleted          bool      `db:"deleted"`
 }

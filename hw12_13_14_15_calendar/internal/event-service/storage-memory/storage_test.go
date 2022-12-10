@@ -17,7 +17,7 @@ func TestCreateEvent(t *testing.T) {
 		Title:     "create test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
-		UserId:    "create test user id",
+		UserID:    "create test user id",
 	}
 	id, err := storage.CreateEvent(context.Background(), newEvent)
 	require.NoError(t, err)
@@ -32,7 +32,7 @@ func TestUpdateEvent(t *testing.T) {
 		Title:     "update test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
-		UserId:    "update test user id",
+		UserID:    "update test user id",
 	}
 	err := storage.UpdateEvent(context.Background(), int64(5), initialEvent)
 	require.Error(t, err)
@@ -54,7 +54,7 @@ func TestDeleteEvent(t *testing.T) {
 		Title:     "test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
-		UserId:    "test user id",
+		UserID:    "test user id",
 	}
 	err := storage.DeleteEvent(context.Background(), int64(5))
 	require.Error(t, err)
@@ -84,21 +84,21 @@ func (m *MemoryStorageSuite) SetupTest() {
 			Title:     "title 1",
 			DateStart: time.Now(),
 			DateEnd:   time.Now().Add(2 * time.Hour),
-			UserId:    "user id 1",
+			UserID:    "user id 1",
 		},
 		2: {
 			ID:        int64(2),
 			Title:     "title 2",
 			DateStart: time.Now().Add(2 * weekDuration),
 			DateEnd:   time.Now().Add(2*weekDuration + 2*time.Hour),
-			UserId:    "user id 1",
+			UserID:    "user id 1",
 		},
 		3: {
 			ID:        int64(3),
 			Title:     "title 3",
 			DateStart: time.Now().Add(2 * monthDuration),
 			DateEnd:   time.Now().Add(2*monthDuration + 2*time.Hour),
-			UserId:    "user id 1",
+			UserID:    "user id 1",
 		},
 	}
 }
