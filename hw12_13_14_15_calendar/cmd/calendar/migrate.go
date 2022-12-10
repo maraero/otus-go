@@ -13,7 +13,7 @@ func migrate(log *logger.Log, storageType string, sqlDriver string, dsn string) 
 		return
 	}
 
-	driver, err := getDBDriverBySqlDriver(sqlDriver)
+	driver, err := getDBDriverBySQLDriver(sqlDriver)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +35,7 @@ func migrate(log *logger.Log, storageType string, sqlDriver string, dsn string) 
 	}
 }
 
-func getDBDriverBySqlDriver(sqlDriver string) (string, error) {
+func getDBDriverBySQLDriver(sqlDriver string) (string, error) {
 	if sqlDriver == "pgx" {
 		return "postgres", nil
 	}
