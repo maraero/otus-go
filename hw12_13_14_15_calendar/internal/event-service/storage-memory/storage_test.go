@@ -71,9 +71,11 @@ type MemoryStorageSuite struct {
 	storage *Storage
 }
 
-var dayDuration = 24 * time.Hour
-var weekDuration = 7 * dayDuration
-var monthDuration = 30 * dayDuration // not precisely
+var (
+	dayDuration   = 24 * time.Hour
+	weekDuration  = 7 * dayDuration
+	monthDuration = 30 * dayDuration // not precisely
+)
 
 func (m *MemoryStorageSuite) SetupTest() {
 	m.storage = New()
