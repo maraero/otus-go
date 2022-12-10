@@ -8,8 +8,8 @@ type Config struct {
 
 type ConfigLogger struct {
 	Level            string   `json:"level"`
-	OutputPaths      []string `json:"outputPaths"`
-	ErrorOutputPaths []string `json:"errorOutputPaths"`
+	OutputPaths      []string `json:"output_paths"`
+	ErrorOutputPaths []string `json:"error_output_paths"`
 }
 
 type ConfigServer struct {

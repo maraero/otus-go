@@ -1,0 +1,11 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-calendar
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./dev-data/postgres:/data/postgres
+    env_file:
+      - docker.env

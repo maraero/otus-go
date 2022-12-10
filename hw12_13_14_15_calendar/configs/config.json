@@ -1,0 +1,16 @@
+{
+  "logger": {
+    "level": "info",
+    "output_paths": ["./log.log", "stdout"],
+    "error_output_paths": ["./log.log", "stderr"]
+  },
+  "server": {
+    "host": "localhost",
+    "port": "3000"
+  },
+  "storage": {
+    "type": "in-memory",
+    "sql_driver": "pgx",
+    "dsn": "postgresql://admin:admin@localhost:5432/calendar"
+  }
+}
