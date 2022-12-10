@@ -1,4 +1,4 @@
-package storage
+package event_service
 
 import "errors"
 
@@ -8,4 +8,5 @@ var (
 	ErrEmptyDateEnd   = errors.New("empty end date")
 	ErrInvalidDates   = errors.New("stard date can not be after end date")
 	ErrEndInThePast   = errors.New("end date already passed")
+	ErrNotFound       = errors.New("event not found")
 )
