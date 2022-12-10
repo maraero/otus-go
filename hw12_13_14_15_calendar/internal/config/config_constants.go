@@ -2,7 +2,7 @@ package config
 
 const (
 	StorageInMemory string = "in-memory"
-	StorageSql      string = "SQL"
+	StorageSQL      string = "SQL"
 )
 
 var AllowedSQLDrivers [1]string = [1]string{"pgx"}

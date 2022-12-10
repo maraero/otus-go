@@ -1,23 +1,23 @@
 package config
 
 type Config struct {
-	Logger  ConfigLogger  `json:"logger"`
-	Server  ConfigServer  `json:"server"`
-	Storage ConfigStorage `json:"storage"`
+	Logger  Logger  `json:"logger"`
+	Server  Server  `json:"server"`
+	Storage Storage `json:"storage"`
 }
 
-type ConfigLogger struct {
+type Logger struct {
 	Level            string   `json:"level"`
 	OutputPaths      []string `json:"output_paths"`
 	ErrorOutputPaths []string `json:"error_output_paths"`
 }
 
-type ConfigServer struct {
+type Server struct {
 	Host string `json:"host"`
 	Port string `json:"port"`
 }
 
-type ConfigStorage struct {
+type Storage struct {
 	Type      string `json:"type"`
 	SQLDriver string `json:"sql_driver"`
 	DSN       string `json:"dsn"`

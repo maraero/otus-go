@@ -12,16 +12,13 @@ import (
 func TestNewConfig(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
 		c := Config{
-			Logger: ConfigLogger{
+			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server: ConfigServer{
-				Host: "localhost",
-				Port: "3000",
-			},
-			Storage: ConfigStorage{Type: "SQL", SQLDriver: "pgx", DSN: "Connection string"},
+			Server:  Server{Host: "localhost", Port: "3000"},
+			Storage: Storage{Type: "SQL", SQLDriver: "pgx", DSN: "Connection string"},
 		}
 		b, err := json.Marshal(c)
 		require.NoError(t, err)
@@ -34,16 +31,13 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("invalid storage type - used default", func(t *testing.T) {
 		c := Config{
-			Logger: ConfigLogger{
+			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server: ConfigServer{
-				Host: "localhost",
-				Port: "3000",
-			},
-			Storage: ConfigStorage{Type: "WRONG_TYPE", DSN: "Connection string"},
+			Server:  Server{Host: "localhost", Port: "3000"},
+			Storage: Storage{Type: "WRONG_TYPE", DSN: "Connection string"},
 		}
 		b, err := json.Marshal(c)
 		require.NoError(t, err)
@@ -81,16 +75,13 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("missing DSN for SQL storage", func(t *testing.T) {
 		c := Config{
-			Logger: ConfigLogger{
+			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server: ConfigServer{
-				Host: "localhost",
-				Port: "3000",
-			},
-			Storage: ConfigStorage{Type: StorageSql, DSN: ""},
+			Server:  Server{Host: "localhost", Port: "3000"},
+			Storage: Storage{Type: StorageSQL, DSN: ""},
 		}
 		b, err := json.Marshal(c)
 		require.NoError(t, err)
@@ -103,16 +94,13 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("missing output paths for logger", func(t *testing.T) {
 		c := Config{
-			Logger: ConfigLogger{
+			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server: ConfigServer{
-				Host: "localhost",
-				Port: "3000",
-			},
-			Storage: ConfigStorage{Type: StorageInMemory, DSN: ""},
+			Server:  Server{Host: "localhost", Port: "3000"},
+			Storage: Storage{Type: StorageInMemory, DSN: ""},
 		}
 		b, err := json.Marshal(c)
 		require.NoError(t, err)
@@ -125,16 +113,13 @@ func TestNewConfig(t *testing.T) {
 
 	t.Run("missing output paths for logger", func(t *testing.T) {
 		c := Config{
-			Logger: ConfigLogger{
+			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout"},
 				ErrorOutputPaths: []string{},
 			},
-			Server: ConfigServer{
-				Host: "localhost",
-				Port: "3000",
-			},
-			Storage: ConfigStorage{Type: StorageInMemory, DSN: ""},
+			Server:  Server{Host: "localhost", Port: "3000"},
+			Storage: Storage{Type: StorageInMemory, DSN: ""},
 		}
 		b, err := json.Marshal(c)
 		require.NoError(t, err)
