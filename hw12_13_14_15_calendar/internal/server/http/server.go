@@ -11,12 +11,13 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 )
 
-func NewServer(logger *logger.Log, app *app.App, host, port string) *Server {
+func New(logger *logger.Log, app *app.App, c config.Server) *Server {
 	s := &Server{
-		addr:   net.JoinHostPort(host, port),
+		addr:   net.JoinHostPort(c.Host, c.Port),
 		app:    app,
 		logger: logger,
 		router: mux.NewRouter(),
