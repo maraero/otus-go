@@ -40,8 +40,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	migrate(logger, config.Storage)
-
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
