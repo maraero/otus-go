@@ -22,7 +22,7 @@ func migrate(log *logger.Log, c config.Storage) {
 		}
 	}()
 
-	if err := goose.Up(db, "../../migrations"); err != nil {
+	if err := goose.Up(db, "migrations"); err != nil {
 		log.Error("goose Up error: %w", err)
 	}
 }

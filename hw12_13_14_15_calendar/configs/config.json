@@ -1,15 +1,15 @@
 {
   "logger": {
     "level": "info",
-    "outputPaths": ["./log.log", "stdout"],
-    "errorOutputPaths": ["./log.log", "stderr"]
+    "outputPaths": ["./logs/log.log", "stdout"],
+    "errorOutputPaths": ["./logs/log.log", "stderr"]
   },
   "server": {
     "host": "localhost",
     "port": "3000"
   },
   "storage": {
-    "type": "in-memory",
+    "type": "sql",
     "database": "postgres",
     "dsn": "postgresql://admin:admin@localhost:5432/calendar"
   }
