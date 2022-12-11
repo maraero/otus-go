@@ -18,7 +18,7 @@ func TestNewConfig(t *testing.T) {
 				ErrorOutputPaths: []string{"stderr"},
 			},
 			Server:  Server{Host: "localhost", Port: "3000"},
-			Storage: Storage{Type: "SQL", SQLDriver: "pgx", DSN: "Connection string"},
+			Storage: Storage{Type: "SQL", Database: "postgres", DSN: "Connection string"},
 		}
 		b, err := json.Marshal(c)
 		require.NoError(t, err)

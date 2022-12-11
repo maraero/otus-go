@@ -18,7 +18,7 @@ type Server struct {
 }
 
 type Storage struct {
-	Type      string `json:"type"`
-	SQLDriver string `json:"sqlDriver"`
-	DSN       string `json:"dsn"`
+	Type     string `json:"type"`
+	Database string `json:"database"`
+	DSN      string `json:"dsn"`
 }

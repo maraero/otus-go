@@ -10,15 +10,15 @@ import (
 	sqlstorage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-sql"
 )
 
-func New(ctx context.Context, storageType string, sqlDriver string, dsn string) (*EventService, error) {
+func New(ctx context.Context, c config.Storage) (*EventService, error) {
 	var storage Storage
-	if storageType == config.StorageInMemory {
+	if c.Type == config.StorageInMemory {
 		storage = memorystorage.New()
 	} else {
 		storage = sqlstorage.New()
 	}
 
-	err := storage.Connect(ctx, sqlDriver, dsn)
+	err := storage.Connect(ctx, c.Database, c.DSN)
 	if err != nil {
 		return nil, err
 	}

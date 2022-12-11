@@ -10,7 +10,7 @@
   },
   "storage": {
     "type": "in-memory",
-    "sqlDriver": "pgx",
+    "database": "postgres",
     "dsn": "postgresql://admin:admin@localhost:5432/calendar"
   }
 }

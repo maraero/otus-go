@@ -12,7 +12,7 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	eventservice "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
-	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
+	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/server/http"
 )
 
@@ -35,25 +35,24 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log, err := logger.New(config.Logger.Level, config.Logger.OutputPaths, config.Logger.ErrorOutputPaths)
+	logger, err := l.New(config.Logger)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	migrate(log, config.Storage.Type, config.Storage.SQLDriver, config.Storage.DSN)
+	migrate(logger, config.Storage)
 
-	ctx, cancel := signal.NotifyContext(context.Background(),
-		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	eventService, err := eventservice.New(ctx, config.Storage.Type, config.Storage.SQLDriver, config.Storage.DSN)
+	eventService, err := eventservice.New(ctx, config.Storage)
 	if err != nil {
-		log.Error(err)
+		logger.Error(err)
 		return
 	}
 
-	calendar := app.New(log, eventService)
-	server := internalhttp.NewServer(log, calendar)
+	calendar := app.New(logger, eventService)
+	server := internalhttp.NewServer(logger, calendar, config.Server.Host, config.Server.Port)
 
 	go func() {
 		<-ctx.Done()
@@ -62,15 +61,14 @@ func main() {
 		defer cancel()
 
 		if err := server.Stop(ctx); err != nil {
-			log.Error("failed to stop http server: " + err.Error())
+			logger.Error("failed to stop http server: " + err.Error())
 		}
 	}()
 
-	log.Info("calendar is running...")
+	logger.Info("calendar is running...")
 
-	if err := server.Start(ctx); err != nil {
-		log.Error("failed to start http server: " + err.Error())
-		cancel()
+	if err := server.Start(); err != nil {
+		logger.Error("failed to start http server: " + err.Error())
 		os.Exit(1) //nolint:gocritic
 	}
 }

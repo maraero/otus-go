@@ -4,12 +4,13 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-func New(level string, outputPaths []string, errOutputPath []string) (*Log, error) {
-	parsedLevel, err := zap.ParseAtomicLevel(level)
+func New(c config.Logger) (*Log, error) {
+	parsedLevel, err := zap.ParseAtomicLevel(c.Level)
 	if err != nil {
 		return nil, errors.New(ErrWrongLevel)
 	}
@@ -17,8 +18,8 @@ func New(level string, outputPaths []string, errOutputPath []string) (*Log, erro
 	cfg := zap.Config{
 		Encoding:         "json",
 		Level:            parsedLevel,
-		OutputPaths:      outputPaths,
-		ErrorOutputPaths: errOutputPath,
+		OutputPaths:      c.OutputPaths,
+		ErrorOutputPaths: c.ErrorOutputPaths,
 		EncoderConfig: zapcore.EncoderConfig{
 			MessageKey:  "message",
 			LevelKey:    "level",

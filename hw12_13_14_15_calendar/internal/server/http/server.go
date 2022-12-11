@@ -2,30 +2,78 @@ package internalhttp
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"net"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 )
 
-type Server struct { // TODO
+func NewServer(logger *logger.Log, app *app.App, host, port string) *Server {
+	s := &Server{
+		addr:   net.JoinHostPort(host, port),
+		app:    app,
+		logger: logger,
+		router: mux.NewRouter(),
+	}
+	s.configureRouter()
+	return s
 }
 
-type Logger interface { // TODO
+func (s *Server) configureRouter() {
+	s.router.Use(s.loggingMiddleware)
+	s.router.HandleFunc("/", s.homeHandler).Methods("GET")
+	s.router.HandleFunc("/hello-world", s.homeHandler).Methods("GET")
 }
 
-type Application interface { // TODO
-}
-
-func NewServer(logger Logger, app Application) *Server {
-	return &Server{}
-}
-
-func (s *Server) Start(ctx context.Context) error {
-	// TODO
-	<-ctx.Done()
-	return nil
+func (s *Server) Start() error {
+	s.srv = &http.Server{
+		Addr:         s.addr,
+		Handler:      s.router,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	err := s.srv.ListenAndServe()
+	if errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("server closed: %w", err)
+	}
+	return err
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	// TODO
-	return nil
+	err := s.srv.Shutdown(ctx)
+	if err != nil {
+		return fmt.Errorf("server shutdown: %w", err)
+	}
+	return err
 }
 
-// TODO
+func requestAddr(r *http.Request) string {
+	return strings.Split(r.RemoteAddr, ":")[0]
+}
+
+func userAgent(r *http.Request) string {
+	userAgents := r.Header["User-Agent"]
+	if len(userAgents) > 0 {
+		return "\"" + userAgents[0] + "\""
+	}
+	return ""
+}
+
+func (w *responseWriter) WriteHeader(statusCode int) {
+	w.code = statusCode
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
+func (s *Server) homeHandler(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("Hello, world\n"))
+	if err != nil {
+		s.logger.Error(fmt.Errorf("http write: %w", err))
+	}
+}

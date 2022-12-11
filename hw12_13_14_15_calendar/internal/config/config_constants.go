@@ -5,7 +5,7 @@ const (
 	StorageSQL      string = "SQL"
 )
 
-var AllowedSQLDrivers = [1]string{"pgx"}
+var AllowedDatabases = [1]string{"postgres"}
 
 const (
 	ErrFailedOpenConfigFile  = "failed to open configFil"

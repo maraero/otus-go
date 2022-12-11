@@ -73,18 +73,18 @@ func validateConfigLogger(c Logger) error {
 
 func validateConfigStorage(c Storage) error {
 	if c.Type == StorageSQL {
-		return validateSQLConfig(c.DSN, c.SQLDriver)
+		return validateSQLConfig(c.DSN, c.Database)
 	}
 	return nil
 }
 
-func validateSQLConfig(dsn string, driver string) error {
+func validateSQLConfig(dsn string, database string) error {
 	if dsn == "" {
 		return errors.New(ErrMissingDSN)
 	}
 
-	for _, d := range AllowedSQLDrivers {
-		if d == driver {
+	for _, d := range AllowedDatabases {
+		if d == database {
 			return nil
 		}
 	}

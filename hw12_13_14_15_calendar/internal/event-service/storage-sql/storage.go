@@ -17,7 +17,8 @@ func New() *Storage {
 	return &Storage{}
 }
 
-func (s *Storage) Connect(ctx context.Context, driver string, dsn string) error {
+func (s *Storage) Connect(ctx context.Context, database string, dsn string) error {
+	driver := getDriverByDatabase(database)
 	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
@@ -195,4 +196,8 @@ func parseRows(rows *sqlx.Rows) ([]evt.Event, error) {
 		events = append(events, e)
 	}
 	return events, nil
+}
+
+func getDriverByDatabase(db string) string {
+	return DatabaseDrivers[db]
 }
