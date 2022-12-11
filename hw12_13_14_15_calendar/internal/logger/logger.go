@@ -23,7 +23,7 @@ func New(c config.Logger) (*Log, error) {
 		EncoderConfig: zapcore.EncoderConfig{
 			MessageKey:  "message",
 			LevelKey:    "level",
-			EncodeLevel: zapcore.CapitalColorLevelEncoder,
+			EncodeLevel: zapcore.CapitalLevelEncoder,
 			TimeKey:     "time",
 			EncodeTime:  zapcore.ISO8601TimeEncoder,
 		},
