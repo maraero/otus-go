@@ -11,7 +11,7 @@ import (
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
-	eventservice "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
+	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/server/http"
 )
@@ -45,7 +45,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	eventService, err := eventservice.New(ctx, config.Storage)
+	eventService, err := es.New(ctx, config.Storage)
 	if err != nil {
 		logger.Error(err)
 		return
