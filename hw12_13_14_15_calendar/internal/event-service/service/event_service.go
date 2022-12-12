@@ -10,15 +10,14 @@ import (
 	sqlstorage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-sql"
 )
 
-func New(dbConn *sqlx.DB) (*EventService, error) {
+func New(dbConn *sqlx.DB) *EventService {
 	var storage Storage
 	if dbConn == nil {
 		storage = memorystorage.New()
 	} else {
 		storage = sqlstorage.New(dbConn)
 	}
-
-	return &EventService{storage: storage}, nil
+	return &EventService{storage: storage}
 }
 
 func (es *EventService) CreateEvent(ctx context.Context, e event.Event) (id int64, err error) {

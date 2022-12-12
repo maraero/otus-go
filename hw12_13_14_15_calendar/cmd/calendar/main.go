@@ -57,12 +57,7 @@ func main() {
 		migrate(dbConnection.DB, logger)
 	}
 
-	eventService, err := es.New(dbConnection)
-	if err != nil {
-		logger.Error(err)
-		return
-	}
-
+	eventService := es.New(dbConnection)
 	calendar := app.New(logger, eventService)
 	server := internalhttp.New(logger, calendar, config.Server)
 
