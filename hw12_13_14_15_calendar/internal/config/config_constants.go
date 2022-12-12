@@ -2,7 +2,7 @@ package config
 
 const (
 	StorageInMemory string = "in-memory"
-	StorageSQL      string = "SQL"
+	StorageSQL      string = "sql"
 )
 
 var AllowedDatabases = [1]string{"postgres"}

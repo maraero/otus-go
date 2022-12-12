@@ -73,7 +73,7 @@ func validateConfigLogger(c Logger) error {
 
 func validateConfigStorage(c Storage) error {
 	if c.Type == StorageSQL {
-		return validateSQLConfig(c.DSN, c.Database)
+		return validateSQLConfig(c.DSN, c.Driver)
 	}
 	return nil
 }

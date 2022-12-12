@@ -18,7 +18,7 @@ func New(ctx context.Context, c config.Storage) (*EventService, error) {
 		storage = sqlstorage.New()
 	}
 
-	err := storage.Connect(ctx, c.Database, c.DSN)
+	err := storage.Connect(ctx, c.Driver, c.DSN)
 	if err != nil {
 		return nil, err
 	}

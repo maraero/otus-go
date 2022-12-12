@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	_ "github.com/jackc/pgx/v5"
 	"github.com/jmoiron/sqlx"
 	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 )
@@ -17,8 +18,7 @@ func New() *Storage {
 	return &Storage{}
 }
 
-func (s *Storage) Connect(ctx context.Context, database string, dsn string) error {
-	driver := getDriverByDatabase(database)
+func (s *Storage) Connect(ctx context.Context, driver string, dsn string) error {
 	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
@@ -196,8 +196,4 @@ func parseRows(rows *sqlx.Rows) ([]evt.Event, error) {
 		events = append(events, e)
 	}
 	return events, nil
-}
-
-func getDriverByDatabase(db string) string {
-	return DatabaseDrivers[db]
 }

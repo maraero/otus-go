@@ -10,7 +10,7 @@
   },
   "storage": {
     "type": "sql",
-    "database": "postgres",
-    "dsn": "postgresql://admin:admin@localhost:5432/calendar"
+    "driver": "postgres",
+    "dsn": "postgresql://admin:admin@localhost:5432/calendar?sslmode=disable"
   }
 }
