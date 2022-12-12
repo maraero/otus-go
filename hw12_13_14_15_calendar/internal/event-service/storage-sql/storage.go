@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	_ "github.com/jackc/pgx/v5"
 	"github.com/jmoiron/sqlx"
 	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 )
