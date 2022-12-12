@@ -43,7 +43,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	dbConnection := newDBConnection(ctx, config.Storage)
+	dbConnection := newDBConnection(ctx, logger, config.Storage)
 	defer func() {
 		if dbConnection != nil {
 			err := dbConnection.Close()

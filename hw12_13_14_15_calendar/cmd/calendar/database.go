@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 )
 
 const (
@@ -16,14 +16,14 @@ const (
 	ConnMaxLifetime = time.Minute
 )
 
-func newDBConnection(ctx context.Context, c config.Storage) *sqlx.DB {
+func newDBConnection(ctx context.Context, logger *logger.Log, c config.Storage) *sqlx.DB {
 	if c.Type != config.StorageSQL {
 		return nil
 	}
 
 	conn, err := connect(ctx, c.Driver, c.DSN)
 	if err != nil {
-		log.Fatal("DB connection error: %w", err)
+		logger.Fatal("DB connection error: %w", err)
 	}
 
 	return conn
