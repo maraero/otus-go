@@ -19,14 +19,6 @@ func New() *Storage {
 	return &Storage{events: make(map[int64]evt.Event)}
 }
 
-func (s *Storage) Connect(_ context.Context, _ string, _ string) error {
-	return nil
-}
-
-func (s *Storage) Close(_ context.Context) error {
-	return nil
-}
-
 func (s *Storage) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
 	s.Lock()
 	defer s.Unlock()

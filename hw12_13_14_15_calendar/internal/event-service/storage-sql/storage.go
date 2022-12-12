@@ -2,7 +2,6 @@ package sqlstorage
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -13,25 +12,8 @@ type Storage struct {
 	db *sqlx.DB
 }
 
-func New() *Storage {
-	return &Storage{}
-}
-
-func (s *Storage) Connect(ctx context.Context, driver string, dsn string) error {
-	db, err := sqlx.Open(driver, dsn)
-	if err != nil {
-		return fmt.Errorf("failed to connect to database: %w", err)
-	}
-	db.SetMaxOpenConns(MaxOpenConns)
-	db.SetMaxIdleConns(MaxIdleConns)
-	db.SetConnMaxLifetime(ConnMaxLifetime)
-
-	s.db = db
-	return s.db.PingContext(ctx)
-}
-
-func (s *Storage) Close(ctx context.Context) error {
-	return s.db.Close()
+func New(dbConn *sqlx.DB) *Storage {
+	return &Storage{db: dbConn}
 }
 
 func (s *Storage) CreateEvent(ctx context.Context, e evt.Event) (int64, error) {

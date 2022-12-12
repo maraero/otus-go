@@ -8,8 +8,6 @@ import (
 )
 
 type Storage interface {
-	Connect(ctx context.Context, driver string, DSN string) error
-	Close(ctx context.Context) error
 	CreateEvent(ctx context.Context, e evt.Event) (int64, error)
 	UpdateEvent(ctx context.Context, id int64, e evt.Event) error
 	DeleteEvent(ctx context.Context, id int64) error

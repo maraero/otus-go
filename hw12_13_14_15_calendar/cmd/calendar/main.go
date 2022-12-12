@@ -40,12 +40,24 @@ func main() {
 		log.Fatal(err)
 	}
 
-	migrate(logger, config.Storage)
-
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	eventService, err := es.New(ctx, config.Storage)
+	dbConnection := newDBConnection(ctx, config.Storage)
+	defer func() {
+		if dbConnection != nil {
+			err := dbConnection.Close()
+			if err != nil {
+				log.Fatal("can not close database connection: %w", err)
+			}
+		}
+	}()
+
+	if dbConnection != nil {
+		migrate(dbConnection.DB, logger)
+	}
+
+	eventService, err := es.New(dbConnection)
 	if err != nil {
 		logger.Error(err)
 		return

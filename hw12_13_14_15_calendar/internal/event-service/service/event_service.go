@@ -4,23 +4,18 @@ import (
 	"context"
 	"time"
 
-	config "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
+	"github.com/jmoiron/sqlx"
 	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 	memorystorage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-memory"
 	sqlstorage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-sql"
 )
 
-func New(ctx context.Context, c config.Storage) (*EventService, error) {
+func New(dbConn *sqlx.DB) (*EventService, error) {
 	var storage Storage
-	if c.Type == config.StorageInMemory {
+	if dbConn == nil {
 		storage = memorystorage.New()
 	} else {
-		storage = sqlstorage.New()
-	}
-
-	err := storage.Connect(ctx, c.Driver, c.DSN)
-	if err != nil {
-		return nil, err
+		storage = sqlstorage.New(dbConn)
 	}
 
 	return &EventService{storage: storage}, nil
