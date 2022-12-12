@@ -27,8 +27,7 @@ func New(ctx context.Context, c config.Storage) (*EventService, error) {
 }
 
 func (es *EventService) CreateEvent(ctx context.Context, e event.Event) (id int64, err error) {
-	err = es.validateEvent(e)
-	if err != nil {
+	if err = e.Validate(); err != nil {
 		return 0, err
 	}
 
@@ -40,7 +39,7 @@ func (es *EventService) CreateEvent(ctx context.Context, e event.Event) (id int6
 }
 
 func (es *EventService) UpdateEvent(ctx context.Context, id int64, e event.Event) error {
-	if err := es.validateEvent(e); err != nil {
+	if err := e.Validate(); err != nil {
 		return err
 	}
 	return es.storage.UpdateEvent(ctx, id, e)
@@ -60,28 +59,4 @@ func (es *EventService) GetEventListByWeek(ctx context.Context, date time.Time) 
 
 func (es *EventService) GetEventListByMonth(ctx context.Context, date time.Time) ([]event.Event, error) {
 	return es.storage.GetEventListByMonth(ctx, date)
-}
-
-func (es *EventService) validateEvent(e event.Event) error {
-	if e.Title == "" {
-		return event.ErrEmptyTitle
-	}
-
-	if e.DateStart.IsZero() {
-		return event.ErrEmptyDateStart
-	}
-
-	if e.DateEnd.IsZero() {
-		return event.ErrEmptyDateEnd
-	}
-
-	if e.DateStart.After(e.DateEnd) {
-		return event.ErrInvalidDates
-	}
-
-	if e.DateEnd.Before(time.Now()) {
-		return event.ErrEndInThePast
-	}
-
-	return nil
 }
