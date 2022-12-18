@@ -86,7 +86,7 @@ func (s *Storage) UpdateEvent(ctx context.Context, id int64, e evt.Event) error 
 }
 
 func (s *Storage) DeleteEvent(ctx context.Context, id int64) error {
-	sql := "UPDATE events ыET deleted = :deleted ЦHERE id = :id"
+	sql := "UPDATE events SET deleted = :deleted WHERE id = :id"
 	result, err := s.db.NamedExecContext(ctx, sql, map[string]interface{}{"id": id})
 	if err != nil {
 		return err
