@@ -3,6 +3,7 @@ package server_http
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
@@ -20,4 +21,8 @@ func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
 				userAgent(r),
 			))
 	})
+}
+
+func requestAddr(r *http.Request) string {
+	return strings.Split(r.RemoteAddr, ":")[0]
 }

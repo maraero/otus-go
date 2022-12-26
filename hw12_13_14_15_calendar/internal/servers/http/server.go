@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -51,10 +50,6 @@ func (s *Server) Stop(ctx context.Context) error {
 		return fmt.Errorf("server shutdown: %w", err)
 	}
 	return err
-}
-
-func requestAddr(r *http.Request) string {
-	return strings.Split(r.RemoteAddr, ":")[0]
 }
 
 func userAgent(r *http.Request) string {
