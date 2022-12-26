@@ -26,8 +26,17 @@ func New(app *app.App, c config.Server) *Server {
 
 func (s *Server) configureRouter() {
 	s.router.Use(s.loggingMiddleware)
+
 	s.router.HandleFunc("/", s.homeHandler).Methods("GET")
 	s.router.HandleFunc("/hello-world", s.homeHandler).Methods("GET")
+
+	eventsRouter := s.router.PathPrefix("/events").Subrouter()
+	eventsRouter.HandleFunc("/", handleCreateEvent(s.app)).Methods(http.MethodPost)
+	eventsRouter.HandleFunc("/", handleUpdateEvent(s.app)).Methods(http.MethodPut)
+	eventsRouter.HandleFunc("/", handleDeleteEvent(s.app)).Methods(http.MethodDelete)
+	eventsRouter.HandleFunc("/list/date/{date}", handleGetEventList(s.app, "date")).Methods(http.MethodGet)
+	eventsRouter.HandleFunc("/list/week/{date}", handleGetEventList(s.app, "week")).Methods(http.MethodGet)
+	eventsRouter.HandleFunc("/list/month/{date}", handleGetEventList(s.app, "month")).Methods(http.MethodGet)
 }
 
 func (s *Server) Start() error {
