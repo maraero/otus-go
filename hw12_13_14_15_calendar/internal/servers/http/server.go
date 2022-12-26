@@ -17,7 +17,7 @@ import (
 
 func New(logger *logger.Log, app *app.App, c config.Server) *Server {
 	s := &Server{
-		addr:   net.JoinHostPort(c.Host, c.Port),
+		addr:   net.JoinHostPort(c.Host, c.HttpPort),
 		app:    app,
 		logger: logger,
 		router: mux.NewRouter(),
