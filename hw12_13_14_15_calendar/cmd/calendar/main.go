@@ -58,8 +58,8 @@ func main() {
 	}
 
 	eventService := es.New(dbConnection)
-	calendar := app.New(logger, eventService)
-	httpServer := server_http.New(logger, calendar, config.Server)
+	calendar := app.New(eventService, logger)
+	httpServer := server_http.New(calendar, config.Server)
 
 	go func() {
 		<-ctx.Done()

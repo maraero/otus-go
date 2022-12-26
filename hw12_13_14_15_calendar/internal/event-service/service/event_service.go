@@ -6,16 +6,16 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
-	memorystorage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-memory"
-	sqlstorage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-sql"
+	memory_storage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-memory"
+	sql_storage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-sql"
 )
 
 func New(dbConn *sqlx.DB) *EventService {
 	var storage Storage
 	if dbConn == nil {
-		storage = memorystorage.New()
+		storage = memory_storage.New()
 	} else {
-		storage = sqlstorage.New(dbConn)
+		storage = sql_storage.New(dbConn)
 	}
 	return &EventService{storage: storage}
 }
