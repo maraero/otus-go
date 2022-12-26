@@ -1,4 +1,4 @@
-package internalhttp
+package server_http
 
 import (
 	"context"
