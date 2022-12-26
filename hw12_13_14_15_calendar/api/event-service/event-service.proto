@@ -23,7 +23,7 @@ service EventService {
     rpc UpdateEvent (UpdateEventRequest) returns (UpdateEventResposnse) {}
     rpc DeleteEvent (DeleteEventRequest) returns (DeleteEventResponse) {}
     rpc GetEventListByDate(EventListRequest) returns (EventListResponse) {}
-    rpc GetEventListByWeeek(EventListRequest) returns (EventListResponse) {}
+    rpc GetEventListByWeek(EventListRequest) returns (EventListResponse) {}
     rpc GetEventListByMonth(EventListRequest) returns (EventListResponse) {}
 }
 

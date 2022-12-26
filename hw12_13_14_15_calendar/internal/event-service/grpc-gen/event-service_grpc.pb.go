@@ -26,7 +26,7 @@ type EventServiceClient interface {
 	UpdateEvent(ctx context.Context, in *UpdateEventRequest, opts ...grpc.CallOption) (*UpdateEventResposnse, error)
 	DeleteEvent(ctx context.Context, in *DeleteEventRequest, opts ...grpc.CallOption) (*DeleteEventResponse, error)
 	GetEventListByDate(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
-	GetEventListByWeeek(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
+	GetEventListByWeek(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
 	GetEventListByMonth(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
 }
 
@@ -74,9 +74,9 @@ func (c *eventServiceClient) GetEventListByDate(ctx context.Context, in *EventLi
 	return out, nil
 }
 
-func (c *eventServiceClient) GetEventListByWeeek(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error) {
+func (c *eventServiceClient) GetEventListByWeek(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error) {
 	out := new(EventListResponse)
-	err := c.cc.Invoke(ctx, "/event.EventService/GetEventListByWeeek", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/event.EventService/GetEventListByWeek", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ type EventServiceServer interface {
 	UpdateEvent(context.Context, *UpdateEventRequest) (*UpdateEventResposnse, error)
 	DeleteEvent(context.Context, *DeleteEventRequest) (*DeleteEventResponse, error)
 	GetEventListByDate(context.Context, *EventListRequest) (*EventListResponse, error)
-	GetEventListByWeeek(context.Context, *EventListRequest) (*EventListResponse, error)
+	GetEventListByWeek(context.Context, *EventListRequest) (*EventListResponse, error)
 	GetEventListByMonth(context.Context, *EventListRequest) (*EventListResponse, error)
 	mustEmbedUnimplementedEventServiceServer()
 }
@@ -121,8 +121,8 @@ func (UnimplementedEventServiceServer) DeleteEvent(context.Context, *DeleteEvent
 func (UnimplementedEventServiceServer) GetEventListByDate(context.Context, *EventListRequest) (*EventListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEventListByDate not implemented")
 }
-func (UnimplementedEventServiceServer) GetEventListByWeeek(context.Context, *EventListRequest) (*EventListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEventListByWeeek not implemented")
+func (UnimplementedEventServiceServer) GetEventListByWeek(context.Context, *EventListRequest) (*EventListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEventListByWeek not implemented")
 }
 func (UnimplementedEventServiceServer) GetEventListByMonth(context.Context, *EventListRequest) (*EventListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEventListByMonth not implemented")
@@ -212,20 +212,20 @@ func _EventService_GetEventListByDate_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventService_GetEventListByWeeek_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _EventService_GetEventListByWeek_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EventListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventServiceServer).GetEventListByWeeek(ctx, in)
+		return srv.(EventServiceServer).GetEventListByWeek(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/event.EventService/GetEventListByWeeek",
+		FullMethod: "/event.EventService/GetEventListByWeek",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventServiceServer).GetEventListByWeeek(ctx, req.(*EventListRequest))
+		return srv.(EventServiceServer).GetEventListByWeek(ctx, req.(*EventListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -272,8 +272,8 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EventService_GetEventListByDate_Handler,
 		},
 		{
-			MethodName: "GetEventListByWeeek",
-			Handler:    _EventService_GetEventListByWeeek_Handler,
+			MethodName: "GetEventListByWeek",
+			Handler:    _EventService_GetEventListByWeek_Handler,
 		},
 		{
 			MethodName: "GetEventListByMonth",

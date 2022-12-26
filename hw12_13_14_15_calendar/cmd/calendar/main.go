@@ -13,6 +13,7 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
+	server_grpc "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc"
 	server_http "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/http"
 )
 
@@ -59,16 +60,22 @@ func main() {
 
 	eventService := es.New(dbConnection)
 	calendar := app.New(eventService, logger)
-	httpServer := server_http.New(calendar, config.Server)
 
+	httpServer := server_http.New(calendar, config.Server)
 	go func() {
 		<-ctx.Done()
-
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 		defer cancel()
-
 		if err := httpServer.Stop(ctx); err != nil {
 			logger.Error("failed to stop http server: " + err.Error())
+		}
+	}()
+
+	grpcServer := server_grpc.New(calendar, config.Server)
+	go func() {
+		<-ctx.Done()
+		if err := grpcServer.Stop(); err != nil {
+			logger.Error("failed to stop grpc server: " + err.Error())
 		}
 	}()
 
