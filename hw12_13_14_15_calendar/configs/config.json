@@ -10,7 +10,7 @@
     "grpcPort": "3001"
   },
   "storage": {
-    "type": "sql",
+    "type": "in-memory",
     "driver": "postgres",
     "dsn": "postgresql://admin:admin@localhost:5432/calendar?sslmode=disable"
   }
