@@ -62,18 +62,16 @@ func main() {
 	calendar := app.New(eventService, logger)
 
 	httpServer := server_http.New(calendar, config.Server)
+	grpcServer := server_grpc.New(calendar, config.Server)
 	go func() {
 		<-ctx.Done()
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 		defer cancel()
+
 		if err := httpServer.Stop(ctx); err != nil {
 			logger.Error("failed to stop http server: " + err.Error())
 		}
-	}()
 
-	grpcServer := server_grpc.New(calendar, config.Server)
-	go func() {
-		<-ctx.Done()
 		if err := grpcServer.Stop(); err != nil {
 			logger.Error("failed to stop grpc server: " + err.Error())
 		}
@@ -83,6 +81,12 @@ func main() {
 
 	if err := httpServer.Start(); err != nil {
 		logger.Error("failed to start http server: " + err.Error())
+		cancel()
+		os.Exit(1) //nolint:gocritic
+	}
+
+	if err := grpcServer.Start(); err != nil {
+		logger.Error("failed to start grpc server: " + err.Error())
 		cancel()
 		os.Exit(1) //nolint:gocritic
 	}
