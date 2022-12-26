@@ -13,7 +13,7 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
-	internalhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/server/http"
+	server_http "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/http"
 )
 
 var configFile string
@@ -59,7 +59,7 @@ func main() {
 
 	eventService := es.New(dbConnection)
 	calendar := app.New(logger, eventService)
-	server := internalhttp.New(logger, calendar, config.Server)
+	httpServer := server_http.New(logger, calendar, config.Server)
 
 	go func() {
 		<-ctx.Done()
@@ -67,14 +67,14 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
 		defer cancel()
 
-		if err := server.Stop(ctx); err != nil {
+		if err := httpServer.Stop(ctx); err != nil {
 			logger.Error("failed to stop http server: " + err.Error())
 		}
 	}()
 
 	logger.Info("calendar is running...")
 
-	if err := server.Start(); err != nil {
+	if err := httpServer.Start(); err != nil {
 		logger.Error("failed to start http server: " + err.Error())
 		cancel()
 		os.Exit(1) //nolint:gocritic
