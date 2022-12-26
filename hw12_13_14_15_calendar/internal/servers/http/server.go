@@ -34,9 +34,9 @@ func (s *Server) configureRouter() {
 	eventsRouter.HandleFunc("/", handleCreateEvent(s.app)).Methods(http.MethodPost)
 	eventsRouter.HandleFunc("/", handleUpdateEvent(s.app)).Methods(http.MethodPut)
 	eventsRouter.HandleFunc("/", handleDeleteEvent(s.app)).Methods(http.MethodDelete)
-	eventsRouter.HandleFunc("/list/date/{date}", handleGetEventList(s.app, "date")).Methods(http.MethodGet)
-	eventsRouter.HandleFunc("/list/week/{date}", handleGetEventList(s.app, "week")).Methods(http.MethodGet)
-	eventsRouter.HandleFunc("/list/month/{date}", handleGetEventList(s.app, "month")).Methods(http.MethodGet)
+	eventsRouter.HandleFunc("/date/{date}", handleGetEventList(s.app, "date")).Methods(http.MethodGet)
+	eventsRouter.HandleFunc("/week/{date}", handleGetEventList(s.app, "week")).Methods(http.MethodGet)
+	eventsRouter.HandleFunc("/month/{date}", handleGetEventList(s.app, "month")).Methods(http.MethodGet)
 }
 
 func (s *Server) Start() error {
