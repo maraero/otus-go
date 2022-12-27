@@ -3,14 +3,14 @@ package event
 import "time"
 
 type Event struct {
-	ID               int64     `db:"id"`
-	Title            string    `db:"title"`
-	DateStart        time.Time `db:"date_start"`
-	DateEnd          time.Time `db:"date_end"`
-	Descripion       string    `db:"description"`
-	UserID           string    `db:"user_id"`
-	DateNotification time.Time `db:"date_notification"`
-	Deleted          bool      `db:"deleted"`
+	ID               int64     `db:"id" json:"id"`
+	Title            string    `db:"title" json:"title"`
+	DateStart        time.Time `db:"date_start" json:"dateStart"`
+	DateEnd          time.Time `db:"date_end" json:"dateEnd"`
+	Descripion       string    `db:"description" json:"description"`
+	UserID           string    `db:"user_id" json:"userId"`
+	DateNotification time.Time `db:"date_notification" json:"dateNotification"`
+	Deleted          bool      `db:"deleted" json:"deleted"`
 }
 
 func (e *Event) Validate() error {

@@ -61,19 +61,6 @@ func (s *Server) Stop(ctx context.Context) error {
 	return err
 }
 
-func userAgent(r *http.Request) string {
-	userAgents := r.Header["User-Agent"]
-	if len(userAgents) > 0 {
-		return "\"" + userAgents[0] + "\""
-	}
-	return ""
-}
-
-func (w *responseWriter) WriteHeader(statusCode int) {
-	w.code = statusCode
-	w.ResponseWriter.WriteHeader(statusCode)
-}
-
 func (s *Server) homeHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write([]byte("Hello, world\n"))
