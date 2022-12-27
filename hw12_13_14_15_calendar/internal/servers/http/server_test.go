@@ -144,35 +144,87 @@ func (s *SuiteTest) TestCreateEvent() {
 }
 
 func (s *SuiteTest) TestUpdateEvent() {
-	client := &http.Client{}
+	s.Run("successful", func() {
+		client := &http.Client{}
 
-	newEvent := event.Event{
-		Title:       "new event",
-		DateStart:   time.Now().Add(1 * time.Hour),
-		DateEnd:     time.Now().Add(3 * time.Hour),
-		Description: "test new event",
-		UserID:      "test user id",
-	}
-	reqBody, err := json.Marshal(newEvent)
-	s.Require().NoError(err)
-	createUrl := s.ts.URL + "/events"
-	req, err := http.NewRequest(http.MethodPost, createUrl, bytes.NewBuffer(reqBody))
-	res, err := client.Do(req)
-	response, err := io.ReadAll(res.Body)
-	defer res.Body.Close()
-	responseJson := CreatedEvent{}
-	json.Unmarshal(response, &responseJson)
-	s.Require().NotZero(responseJson.ID)
+		newEvent := event.Event{
+			Title:       "new event",
+			DateStart:   time.Now().Add(1 * time.Hour),
+			DateEnd:     time.Now().Add(3 * time.Hour),
+			Description: "test new event",
+			UserID:      "test user id",
+		}
+		reqBody, err := json.Marshal(newEvent)
+		s.Require().NoError(err)
+		createUrl := s.ts.URL + "/events"
+		req, err := http.NewRequest(http.MethodPost, createUrl, bytes.NewBuffer(reqBody))
+		res, err := client.Do(req)
+		response, err := io.ReadAll(res.Body)
+		defer res.Body.Close()
+		responseJson := CreatedEvent{}
+		json.Unmarshal(response, &responseJson)
+		s.Require().NotZero(responseJson.ID)
 
-	updatedEvent := newEvent
-	updatedEvent.Title = "updated event"
-	updateUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
-	reqBody, err = json.Marshal(updatedEvent)
-	s.Require().NoError(err)
-	req, err = http.NewRequest(http.MethodPut, updateUrl, bytes.NewBuffer(reqBody))
-	res, err = client.Do(req)
-	response, err = io.ReadAll(res.Body)
-	defer res.Body.Close()
-	s.Require().NoError(err)
-	s.Require().Equal(http.StatusOK, res.StatusCode)
+		updatedEvent := newEvent
+		updatedEvent.Title = "updated event"
+		updateUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
+		reqBody, err = json.Marshal(updatedEvent)
+		s.Require().NoError(err)
+		req, err = http.NewRequest(http.MethodPut, updateUrl, bytes.NewBuffer(reqBody))
+		res, err = client.Do(req)
+		response, err = io.ReadAll(res.Body)
+		defer res.Body.Close()
+		s.Require().NoError(err)
+		s.Require().Equal(http.StatusOK, res.StatusCode)
+
+		getEventByIdUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
+		req, err = http.NewRequest(http.MethodGet, getEventByIdUrl, nil)
+		res, err = client.Do(req)
+		s.Require().NoError(err)
+		s.Require().Equal(http.StatusOK, res.StatusCode)
+
+		response, err = io.ReadAll(res.Body)
+		defer res.Body.Close()
+		s.Require().NoError(err)
+
+		evtResponseJson := event.Event{}
+		err = json.Unmarshal(response, &evtResponseJson)
+		s.Require().NoError(err)
+		s.Require().Equal(updatedEvent.Title, evtResponseJson.Title)
+		s.Require().Equal(updatedEvent.Description, evtResponseJson.Description)
+	})
+
+	s.Run("bad request", func() {
+		client := &http.Client{}
+
+		newEvent := event.Event{
+			Title:       "new event",
+			DateStart:   time.Now().Add(1 * time.Hour),
+			DateEnd:     time.Now().Add(3 * time.Hour),
+			Description: "test new event",
+			UserID:      "test user id",
+		}
+		reqBody, err := json.Marshal(newEvent)
+		s.Require().NoError(err)
+		createUrl := s.ts.URL + "/events"
+		req, err := http.NewRequest(http.MethodPost, createUrl, bytes.NewBuffer(reqBody))
+		res, err := client.Do(req)
+		response, err := io.ReadAll(res.Body)
+		defer res.Body.Close()
+		responseJson := CreatedEvent{}
+		json.Unmarshal(response, &responseJson)
+		s.Require().NotZero(responseJson.ID)
+
+		updatedEvent := newEvent
+		updatedEvent.Title = "updated event"
+		updateUrl := s.ts.URL + "/events/0" // wrong id
+		reqBody, err = json.Marshal(updatedEvent)
+		s.Require().NoError(err)
+		req, err = http.NewRequest(http.MethodPut, updateUrl, bytes.NewBuffer(reqBody))
+		res, err = client.Do(req)
+		response, err = io.ReadAll(res.Body)
+		defer res.Body.Close()
+		s.Require().NoError(err)
+		s.Require().Equal(http.StatusBadRequest, res.StatusCode)
+	})
 }

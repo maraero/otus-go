@@ -2,7 +2,6 @@ package memorystorage
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -22,7 +21,6 @@ func TestCreateEvent(t *testing.T) {
 	id, err := storage.CreateEvent(context.Background(), newEvent)
 	require.NoError(t, err)
 	require.Equal(t, id, int64(1))
-	fmt.Println(storage.events)
 	require.Equal(t, newEvent.Title, storage.events[id].Title)
 }
 

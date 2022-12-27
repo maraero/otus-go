@@ -2,7 +2,6 @@ package server_http
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -32,7 +31,6 @@ func handleCreateEvent(app *app.App) http.HandlerFunc {
 
 		evt := event.Event{}
 		err = json.Unmarshal(body, &evt)
-		fmt.Println(err, evt)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
