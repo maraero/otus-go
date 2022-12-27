@@ -14,6 +14,7 @@ type Storage interface {
 	GetEventListByDate(ctx context.Context, date time.Time) ([]evt.Event, error)
 	GetEventListByWeek(ctx context.Context, date time.Time) ([]evt.Event, error)
 	GetEventListByMonth(ctx context.Context, date time.Time) ([]evt.Event, error)
+	GetEventById(ctx context.Context, id int64) (evt.Event, error)
 }
 
 type EventService struct {

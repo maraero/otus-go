@@ -129,3 +129,23 @@ func handleGetEventList(app *app.App, period string) http.HandlerFunc {
 		writeJson(w, EventList{List: list})
 	}
 }
+
+func handleGetEventById(app *app.App) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		params := mux.Vars(r)
+		idParam := params["id"]
+		id, err := strconv.ParseInt(idParam, 10, 64)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		evt, err := app.Event_service.GetEventById(r.Context(), id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		writeJson(w, evt)
+	}
+}

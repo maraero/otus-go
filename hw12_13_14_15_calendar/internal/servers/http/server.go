@@ -31,9 +31,10 @@ func (s *Server) configureRouter() {
 	s.router.HandleFunc("/hello-world", s.homeHandler).Methods("GET")
 
 	eventsRouter := s.router.PathPrefix("/events").Subrouter()
-	eventsRouter.HandleFunc("/", handleCreateEvent(s.app)).Methods(http.MethodPost)
-	eventsRouter.HandleFunc("/", handleUpdateEvent(s.app)).Methods(http.MethodPut)
-	eventsRouter.HandleFunc("/", handleDeleteEvent(s.app)).Methods(http.MethodDelete)
+	eventsRouter.HandleFunc("", handleCreateEvent(s.app)).Methods(http.MethodPost)
+	eventsRouter.HandleFunc("/{id}", handleGetEventById(s.app)).Methods(http.MethodGet)
+	eventsRouter.HandleFunc("/{id}", handleUpdateEvent(s.app)).Methods(http.MethodPut)
+	eventsRouter.HandleFunc("/{id}", handleDeleteEvent(s.app)).Methods(http.MethodDelete)
 	eventsRouter.HandleFunc("/date/{date}", handleGetEventList(s.app, "date")).Methods(http.MethodGet)
 	eventsRouter.HandleFunc("/week/{date}", handleGetEventList(s.app, "week")).Methods(http.MethodGet)
 	eventsRouter.HandleFunc("/month/{date}", handleGetEventList(s.app, "month")).Methods(http.MethodGet)

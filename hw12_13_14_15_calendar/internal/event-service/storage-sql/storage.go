@@ -41,7 +41,7 @@ func (s *Storage) CreateEvent(ctx context.Context, e evt.Event) (int64, error) {
 		"title":             e.Title,
 		"date_start":        e.DateStart,
 		"date_end":          e.DateEnd,
-		"description":       e.Descripion,
+		"description":       e.Description,
 		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
 		"deleted":           e.Deleted,
@@ -67,7 +67,7 @@ func (s *Storage) UpdateEvent(ctx context.Context, id int64, e evt.Event) error 
 		"title":             e.Title,
 		"date_start":        e.DateStart,
 		"date_end":          e.DateEnd,
-		"description":       e.Descripion,
+		"description":       e.Description,
 		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
 		"deleted":           e.Deleted,
@@ -156,14 +156,25 @@ func (s *Storage) GetEventListByMonth(ctx context.Context, date time.Time) ([]ev
 			deleted = false
 		ORDER BY date_start
 	`
-	rows, err := s.db.NamedQueryContext(ctx, sql, map[string]interface{}{
-		"year":  year,
-		"month": month,
-	})
+	rows, err := s.db.NamedQueryContext(ctx, sql, map[string]interface{}{"year": year, "month": month})
 	if err != nil {
 		return []evt.Event{}, err
 	}
 	return parseRows(rows)
+}
+
+func (s *Storage) GetEventById(ctx context.Context, id int64) (evt.Event, error) {
+	sql := `
+		SELECT id, title, date_start, date_end, description, user_id, date_notification
+		FROM events
+		WHERE id = id
+	`
+	event := evt.Event{}
+	err := s.db.Get(&event, sql, map[string]interface{}{"id": id})
+	if err != nil {
+		return evt.Event{}, err
+	}
+	return event, nil
 }
 
 func parseRows(rows *sqlx.Rows) ([]evt.Event, error) {

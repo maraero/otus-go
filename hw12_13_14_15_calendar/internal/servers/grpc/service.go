@@ -68,13 +68,22 @@ func (s *Service) GetEventListByMonth(ctx context.Context, req *gges.EventListRe
 	return &gges.EventListResponse{Events: domainEventListToGrpcEventList(list)}, nil
 }
 
+func (s *Service) GetEventById(ctx context.Context, req *gges.GetEventByIdRequest) (*gges.Event, error) {
+	evt, err := s.app.Event_service.GetEventById(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, err.Error())
+	}
+	event := domainEventToGrpcEvent(evt)
+	return &event, nil
+}
+
 func grpcEventToDomainEvent(grpcEvent *gges.Event) event.Event {
 	return event.Event{
 		ID:               grpcEvent.Id,
 		Title:            grpcEvent.Title,
 		DateStart:        grpcEvent.DateStart.AsTime(),
 		DateEnd:          grpcEvent.DateEnd.AsTime(),
-		Descripion:       grpcEvent.Description,
+		Description:      grpcEvent.Description,
 		UserID:           grpcEvent.UserId,
 		DateNotification: grpcEvent.DateNotification.AsTime(),
 		Deleted:          grpcEvent.Deleted,
@@ -87,7 +96,7 @@ func domainEventToGrpcEvent(domainEvent event.Event) gges.Event {
 		Title:            domainEvent.Title,
 		DateStart:        timestamppb.New(domainEvent.DateStart),
 		DateEnd:          timestamppb.New(domainEvent.DateEnd),
-		Description:      domainEvent.Descripion,
+		Description:      domainEvent.Description,
 		UserId:           domainEvent.UserID,
 		DateNotification: timestamppb.New(domainEvent.DateNotification),
 		Deleted:          domainEvent.Deleted,

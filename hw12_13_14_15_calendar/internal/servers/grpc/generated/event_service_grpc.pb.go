@@ -28,6 +28,7 @@ type EventServiceClient interface {
 	GetEventListByDate(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
 	GetEventListByWeek(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
 	GetEventListByMonth(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
+	GetEventById(ctx context.Context, in *GetEventByIdRequest, opts ...grpc.CallOption) (*Event, error)
 }
 
 type eventServiceClient struct {
@@ -92,6 +93,15 @@ func (c *eventServiceClient) GetEventListByMonth(ctx context.Context, in *EventL
 	return out, nil
 }
 
+func (c *eventServiceClient) GetEventById(ctx context.Context, in *GetEventByIdRequest, opts ...grpc.CallOption) (*Event, error) {
+	out := new(Event)
+	err := c.cc.Invoke(ctx, "/event.EventService/GetEventById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EventServiceServer is the server API for EventService service.
 // All implementations must embed UnimplementedEventServiceServer
 // for forward compatibility
@@ -102,6 +112,7 @@ type EventServiceServer interface {
 	GetEventListByDate(context.Context, *EventListRequest) (*EventListResponse, error)
 	GetEventListByWeek(context.Context, *EventListRequest) (*EventListResponse, error)
 	GetEventListByMonth(context.Context, *EventListRequest) (*EventListResponse, error)
+	GetEventById(context.Context, *GetEventByIdRequest) (*Event, error)
 	mustEmbedUnimplementedEventServiceServer()
 }
 
@@ -126,6 +137,9 @@ func (UnimplementedEventServiceServer) GetEventListByWeek(context.Context, *Even
 }
 func (UnimplementedEventServiceServer) GetEventListByMonth(context.Context, *EventListRequest) (*EventListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEventListByMonth not implemented")
+}
+func (UnimplementedEventServiceServer) GetEventById(context.Context, *GetEventByIdRequest) (*Event, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEventById not implemented")
 }
 func (UnimplementedEventServiceServer) mustEmbedUnimplementedEventServiceServer() {}
 
@@ -248,6 +262,24 @@ func _EventService_GetEventListByMonth_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EventService_GetEventById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEventByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EventServiceServer).GetEventById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/event.EventService/GetEventById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EventServiceServer).GetEventById(ctx, req.(*GetEventByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EventService_ServiceDesc is the grpc.ServiceDesc for EventService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +310,10 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEventListByMonth",
 			Handler:    _EventService_GetEventListByMonth_Handler,
+		},
+		{
+			MethodName: "GetEventById",
+			Handler:    _EventService_GetEventById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
