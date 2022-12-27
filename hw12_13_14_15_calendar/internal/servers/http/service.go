@@ -13,12 +13,12 @@ import (
 	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 )
 
-type CreateEvent struct {
-	id int64
+type CreatedEvent struct {
+	ID int64 `json:"id"`
 }
 
 type EventList struct {
-	list []event.Event
+	List []event.Event `json:"list"`
 }
 
 func handleCreateEvent(app *app.App) http.HandlerFunc {
@@ -44,7 +44,7 @@ func handleCreateEvent(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		writeJson(w, CreateEvent{id: id})
+		writeJson(w, CreatedEvent{ID: id})
 	}
 }
 
@@ -126,6 +126,6 @@ func handleGetEventList(app *app.App, period string) http.HandlerFunc {
 			return
 		}
 
-		writeJson(w, EventList{list: list})
+		writeJson(w, EventList{List: list})
 	}
 }
