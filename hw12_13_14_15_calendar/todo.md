@@ -1,6 +1,5 @@
 # TODOs
 
-- add negative cases for tests
 - tests for HTTP methods
 - tests for GRPC methods
 - send PR for check
