@@ -1,4 +1,4 @@
-package server_http
+package serverhttp
 
 import (
 	"fmt"
