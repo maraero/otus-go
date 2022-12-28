@@ -5,9 +5,8 @@ import (
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
-	"google.golang.org/grpc"
-
 	gges "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc/generated"
+	"google.golang.org/grpc"
 )
 
 func New(app *app.App, c config.Server) *Server {
