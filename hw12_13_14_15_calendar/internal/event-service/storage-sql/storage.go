@@ -167,10 +167,10 @@ func (s *Storage) GetEventByID(ctx context.Context, id int64) (evt.Event, error)
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
 		FROM events
-		WHERE id = id
+		WHERE id = $1
 	`
 	event := evt.Event{}
-	err := s.db.Get(&event, sql, map[string]interface{}{"id": id})
+	err := s.db.Get(&event, sql, id)
 	if err != nil {
 		return evt.Event{}, err
 	}
