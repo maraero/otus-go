@@ -7,7 +7,7 @@ type Event struct {
 	Title            string    `db:"title" json:"title"`
 	DateStart        time.Time `db:"date_start" json:"dateStart"`
 	DateEnd          time.Time `db:"date_end" json:"dateEnd"`
-	Description       string    `db:"description" json:"description"`
+	Description      string    `db:"description" json:"description"`
 	UserID           string    `db:"user_id" json:"userId"`
 	DateNotification time.Time `db:"date_notification" json:"dateNotification"`
 	Deleted          bool      `db:"deleted" json:"deleted"`
