@@ -336,13 +336,16 @@ func (s *SuiteTest) TestGetEventList() {
 			s.Require().Equal(title, responseJson.List[0].Title)
 		}
 
-		getEventListByDayUrl := s.ts.URL + "/events/date/" + time.Now().Format("2006-01-02")
+		date := time.Now().Format("2006-01-02")
+		getEventListByDayUrl := s.ts.URL + "/events/date/" + date
 		check(getEventListByDayUrl, "test_0")
 
-		getEventListByWeekUrl := s.ts.URL + "/events/week/" + time.Now().Add(1*time.Duration(multiplier)*week).Format("2006-01-02")
+		date = time.Now().Add(1 * time.Duration(multiplier) * week).Format("2006-01-02")
+		getEventListByWeekUrl := s.ts.URL + "/events/week/" + date
 		check(getEventListByWeekUrl, "test_1")
 
-		getEventListByMonthUrl := s.ts.URL + "/events/month/" + time.Now().Add(2*time.Duration(multiplier)*week).Format("2006-01-02")
+		date = time.Now().Add(2 * time.Duration(multiplier) * week).Format("2006-01-02")
+		getEventListByMonthUrl := s.ts.URL + "/events/month/" + date
 		check(getEventListByMonthUrl, "test_2")
 	})
 }
