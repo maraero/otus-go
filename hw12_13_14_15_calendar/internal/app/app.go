@@ -6,5 +6,5 @@ import (
 )
 
 func New(es *es.EventService, logger *logger.Log) *App {
-	return &App{Event_service: es, Logger: logger}
+	return &App{EventService: es, Logger: logger}
 }
