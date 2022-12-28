@@ -13,7 +13,7 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
-	server_grpc "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc"
+	servergrpc "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc"
 	serverhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/http"
 )
 
@@ -62,7 +62,7 @@ func main() {
 	calendar := app.New(eventService, logger)
 
 	httpServer := serverhttp.New(calendar, config.Server)
-	grpcServer := server_grpc.New(calendar, config.Server)
+	grpcServer := servergrpc.New(calendar, config.Server)
 	go func() {
 		<-ctx.Done()
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
