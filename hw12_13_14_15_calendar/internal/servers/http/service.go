@@ -42,7 +42,7 @@ func handleCreateEvent(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		writeJson(w, CreatedEvent{ID: id})
+		writeJSON(w, CreatedEvent{ID: id})
 	}
 }
 
@@ -124,7 +124,7 @@ func handleGetEventList(app *app.App, period string) http.HandlerFunc {
 			return
 		}
 
-		writeJson(w, EventList{List: list})
+		writeJSON(w, EventList{List: list})
 	}
 }
 
@@ -144,6 +144,6 @@ func handleGetEventByID(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		writeJson(w, evt)
+		writeJSON(w, evt)
 	}
 }
