@@ -67,7 +67,7 @@ func (s *SuiteTest) TestRoot() {
 func (s *SuiteTest) TestHelloWorld() {
 	client := &http.Client{}
 	rootURL := s.ts.URL + "/hello-world"
-	req, err := http.NewRequest(http.MethodGet, rootURL, nil)
+	req, err := http.NewRequest(http.MethodGet, rootURL, nil) //nolint:noctx
 	s.Require().NoError(err)
 	res, err := client.Do(req)
 	s.Require().NoError(err)
@@ -109,7 +109,7 @@ func (s *SuiteTest) TestCreateEvent() {
 		s.Require().NotZero(responseJSON.ID)
 
 		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
-		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
+		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil) //nolint:noctx
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
@@ -144,7 +144,7 @@ func (s *SuiteTest) TestCreateEvent() {
 		reqBody, err := json.Marshal(newEvent)
 		s.Require().NoError(err)
 
-		req, err := http.NewRequest(http.MethodPost, createEventURL, bytes.NewBuffer(reqBody))
+		req, err := http.NewRequest(http.MethodPost, createEventURL, bytes.NewBuffer(reqBody)) //nolint:noctx
 		s.Require().NoError(err)
 		res, err := client.Do(req)
 		s.Require().NoError(err)
@@ -183,7 +183,7 @@ func (s *SuiteTest) TestUpdateEvent() {
 		updateURL := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
 		reqBody, err = json.Marshal(updatedEvent)
 		s.Require().NoError(err)
-		req, err = http.NewRequest(http.MethodPut, updateURL, bytes.NewBuffer(reqBody))
+		req, err = http.NewRequest(http.MethodPut, updateURL, bytes.NewBuffer(reqBody)) //nolint:noctx
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
@@ -192,7 +192,7 @@ func (s *SuiteTest) TestUpdateEvent() {
 		s.Require().Equal(http.StatusOK, res.StatusCode)
 
 		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
-		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
+		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil) //nolint:noctx
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
@@ -238,7 +238,7 @@ func (s *SuiteTest) TestUpdateEvent() {
 		updateURL := s.ts.URL + "/events/0" // wrong id
 		reqBody, err = json.Marshal(updatedEvent)
 		s.Require().NoError(err)
-		req, err = http.NewRequest(http.MethodPut, updateURL, bytes.NewBuffer(reqBody))
+		req, err = http.NewRequest(http.MethodPut, updateURL, bytes.NewBuffer(reqBody)) //nolint:noctx
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
@@ -262,7 +262,7 @@ func (s *SuiteTest) TestDeleteEvent() {
 		reqBody, err := json.Marshal(newEvent)
 		s.Require().NoError(err)
 		createURL := s.ts.URL + "/events"
-		req, err := http.NewRequest(http.MethodPost, createURL, bytes.NewBuffer(reqBody))
+		req, err := http.NewRequest(http.MethodPost, createURL, bytes.NewBuffer(reqBody)) //nolint:noctx
 		s.Require().NoError(err)
 		res, err := client.Do(req)
 		s.Require().NoError(err)
@@ -274,7 +274,7 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().NotZero(responseJSON.ID)
 
 		deleteEventURL := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
-		req, err = http.NewRequest(http.MethodDelete, deleteEventURL, nil)
+		req, err = http.NewRequest(http.MethodDelete, deleteEventURL, nil) //nolint:noctx
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
@@ -282,7 +282,7 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().Equal(http.StatusOK, res.StatusCode)
 
 		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
-		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
+		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil) //nolint:noctx
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
@@ -298,8 +298,8 @@ func (s *SuiteTest) TestDeleteEvent() {
 	s.Run("bad request", func() {
 		client := &http.Client{}
 
-		deleteEventURL := s.ts.URL + "/events/0" // no event
-		req, err := http.NewRequest(http.MethodDelete, deleteEventURL, nil)
+		deleteEventURL := s.ts.URL + "/events/0"                            // no event
+		req, err := http.NewRequest(http.MethodDelete, deleteEventURL, nil) //nolint:noctx
 		s.Require().NoError(err)
 		res, err := client.Do(req)
 		s.Require().NoError(err)
@@ -313,7 +313,7 @@ func (s *SuiteTest) TestGetEventList() {
 		client := &http.Client{}
 
 		getEventListURL := s.ts.URL + "/events/date/" + time.Now().Format("2006-01-02")
-		req, err := http.NewRequest(http.MethodGet, getEventListURL, nil)
+		req, err := http.NewRequest(http.MethodGet, getEventListURL, nil) //nolint:noctx
 		s.Require().NoError(err)
 		res, err := client.Do(req)
 		s.Require().NoError(err)
@@ -345,7 +345,7 @@ func (s *SuiteTest) TestGetEventList() {
 			}
 			reqBody, err := json.Marshal(newEvent)
 			s.Require().NoError(err)
-			req, err := http.NewRequest(http.MethodPost, createEventURL, bytes.NewBuffer(reqBody))
+			req, err := http.NewRequest(http.MethodPost, createEventURL, bytes.NewBuffer(reqBody)) //nolint:noctx
 			s.Require().NoError(err)
 			res, err := client.Do(req)
 			s.Require().NoError(err)
@@ -354,7 +354,7 @@ func (s *SuiteTest) TestGetEventList() {
 		}
 
 		check := func(url string, title string) {
-			req, err := http.NewRequest(http.MethodGet, url, nil)
+			req, err := http.NewRequest(http.MethodGet, url, nil) //nolint:noctx
 			s.Require().NoError(err)
 			res, err := client.Do(req)
 			s.Require().NoError(err)
