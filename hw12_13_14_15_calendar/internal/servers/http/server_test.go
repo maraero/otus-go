@@ -42,6 +42,10 @@ func (s *SuiteTest) SetupTest() {
 	s.ts = httptest.NewServer(New(calendar, config.Server).router)
 }
 
+func (s *SuiteTest) TeardownTest() {
+	s.ts.Close()
+}
+
 func TestHttpServer(t *testing.T) {
 	suite.Run(t, new(SuiteTest))
 }
