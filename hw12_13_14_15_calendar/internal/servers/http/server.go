@@ -15,7 +15,7 @@ import (
 
 func New(app *app.App, c config.Server) *Server {
 	s := &Server{
-		addr:   net.JoinHostPort(c.Host, c.HttpPort),
+		addr:   net.JoinHostPort(c.Host, c.HTTPPort),
 		app:    app,
 		logger: app.Logger,
 		router: mux.NewRouter(),

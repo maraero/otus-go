@@ -14,7 +14,7 @@ type Logger struct {
 
 type Server struct {
 	Host     string `json:"host"`
-	HttpPort string `json:"httpPort"`
+	HTTPPort string `json:"httpPort"`
 	GrpcPort string `json:"grpcPort"`
 }
 

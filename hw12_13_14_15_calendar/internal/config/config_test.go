@@ -17,7 +17,7 @@ func TestNewConfig(t *testing.T) {
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server:  Server{Host: "localhost", HttpPort: "3000", GrpcPort: "3001"},
+			Server:  Server{Host: "localhost", HTTPPort: "3000", GrpcPort: "3001"},
 			Storage: Storage{Type: "sql", Driver: "postgres", DSN: "Connection string"},
 		}
 		b, err := json.Marshal(c)
@@ -36,7 +36,7 @@ func TestNewConfig(t *testing.T) {
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server:  Server{Host: "localhost", HttpPort: "3000", GrpcPort: "3001"},
+			Server:  Server{Host: "localhost", HTTPPort: "3000", GrpcPort: "3001"},
 			Storage: Storage{Type: "WRONG_TYPE", DSN: "Connection string"},
 		}
 		b, err := json.Marshal(c)
@@ -80,7 +80,7 @@ func TestNewConfig(t *testing.T) {
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server:  Server{Host: "localhost", HttpPort: "3000", GrpcPort: "3001"},
+			Server:  Server{Host: "localhost", HTTPPort: "3000", GrpcPort: "3001"},
 			Storage: Storage{Type: StorageSQL, DSN: ""},
 		}
 		b, err := json.Marshal(c)
@@ -99,7 +99,7 @@ func TestNewConfig(t *testing.T) {
 				OutputPaths:      []string{},
 				ErrorOutputPaths: []string{"stderr"},
 			},
-			Server:  Server{Host: "localhost", HttpPort: "3000", GrpcPort: "3001"},
+			Server:  Server{Host: "localhost", HTTPPort: "3000", GrpcPort: "3001"},
 			Storage: Storage{Type: StorageInMemory, DSN: ""},
 		}
 		b, err := json.Marshal(c)
@@ -118,7 +118,7 @@ func TestNewConfig(t *testing.T) {
 				OutputPaths:      []string{"stdout"},
 				ErrorOutputPaths: []string{},
 			},
-			Server:  Server{Host: "localhost", HttpPort: "3000", GrpcPort: "3001"},
+			Server:  Server{Host: "localhost", HTTPPort: "3000", GrpcPort: "3001"},
 			Storage: Storage{Type: StorageInMemory, DSN: ""},
 		}
 		b, err := json.Marshal(c)
