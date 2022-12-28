@@ -75,6 +75,10 @@ func (s *SuiteTest) SetupTest() {
 	s.client = gges.NewEventServiceClient(conn)
 }
 
+func (s *SuiteTest) TeardownTest() {
+	s.closer()
+}
+
 func TestGrpcServer(t *testing.T) {
 	suite.Run(t, new(SuiteTest))
 }
