@@ -8,7 +8,6 @@ package generated_grpc_event_service
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -24,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EventServiceClient interface {
 	CreateEvent(ctx context.Context, in *Event, opts ...grpc.CallOption) (*CreateEventResponse, error)
-	UpdateEvent(ctx context.Context, in *UpdateEventRequest, opts ...grpc.CallOption) (*UpdateEventResposnse, error)
+	UpdateEvent(ctx context.Context, in *UpdateEventRequest, opts ...grpc.CallOption) (*UpdateEventResponse, error)
 	DeleteEvent(ctx context.Context, in *DeleteEventRequest, opts ...grpc.CallOption) (*DeleteEventResponse, error)
 	GetEventListByDate(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
 	GetEventListByWeek(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
@@ -49,8 +48,8 @@ func (c *eventServiceClient) CreateEvent(ctx context.Context, in *Event, opts ..
 	return out, nil
 }
 
-func (c *eventServiceClient) UpdateEvent(ctx context.Context, in *UpdateEventRequest, opts ...grpc.CallOption) (*UpdateEventResposnse, error) {
-	out := new(UpdateEventResposnse)
+func (c *eventServiceClient) UpdateEvent(ctx context.Context, in *UpdateEventRequest, opts ...grpc.CallOption) (*UpdateEventResponse, error) {
+	out := new(UpdateEventResponse)
 	err := c.cc.Invoke(ctx, "/event.EventService/UpdateEvent", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -108,7 +107,7 @@ func (c *eventServiceClient) GetEventByID(ctx context.Context, in *GetEventByIDR
 // for forward compatibility
 type EventServiceServer interface {
 	CreateEvent(context.Context, *Event) (*CreateEventResponse, error)
-	UpdateEvent(context.Context, *UpdateEventRequest) (*UpdateEventResposnse, error)
+	UpdateEvent(context.Context, *UpdateEventRequest) (*UpdateEventResponse, error)
 	DeleteEvent(context.Context, *DeleteEventRequest) (*DeleteEventResponse, error)
 	GetEventListByDate(context.Context, *EventListRequest) (*EventListResponse, error)
 	GetEventListByWeek(context.Context, *EventListRequest) (*EventListResponse, error)
@@ -124,7 +123,7 @@ type UnimplementedEventServiceServer struct {
 func (UnimplementedEventServiceServer) CreateEvent(context.Context, *Event) (*CreateEventResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEvent not implemented")
 }
-func (UnimplementedEventServiceServer) UpdateEvent(context.Context, *UpdateEventRequest) (*UpdateEventResposnse, error) {
+func (UnimplementedEventServiceServer) UpdateEvent(context.Context, *UpdateEventRequest) (*UpdateEventResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEvent not implemented")
 }
 func (UnimplementedEventServiceServer) DeleteEvent(context.Context, *DeleteEventRequest) (*DeleteEventResponse, error) {

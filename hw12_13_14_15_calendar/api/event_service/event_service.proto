@@ -20,7 +20,7 @@ message Event {
 
 service EventService {
     rpc CreateEvent(Event) returns (CreateEventResponse) {}
-    rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResposnse) {}
+    rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResponse) {}
     rpc DeleteEvent(DeleteEventRequest) returns (DeleteEventResponse) {}
     rpc GetEventListByDate(EventListRequest) returns (EventListResponse) {}
     rpc GetEventListByWeek(EventListRequest) returns (EventListResponse) {}
@@ -36,7 +36,7 @@ message UpdateEventRequest {
     int64 id = 1;
     Event e = 2;
 }
-message UpdateEventResposnse {}
+message UpdateEventResponse {}
 
 message DeleteEventRequest {
     int64 id = 1;

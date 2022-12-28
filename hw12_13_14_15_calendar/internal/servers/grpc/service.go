@@ -28,12 +28,12 @@ func (s *Service) CreateEvent(ctx context.Context, req *gges.Event) (*gges.Creat
 	return &gges.CreateEventResponse{Id: id}, nil
 }
 
-func (s *Service) UpdateEvent(ctx context.Context, req *gges.UpdateEventRequest) (*gges.UpdateEventResposnse, error) {
+func (s *Service) UpdateEvent(ctx context.Context, req *gges.UpdateEventRequest) (*gges.UpdateEventResponse, error) {
 	err := s.app.EventService.UpdateEvent(ctx, req.Id, grpcEventToDomainEvent(req.E))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	return &gges.UpdateEventResposnse{}, nil
+	return &gges.UpdateEventResponse{}, nil
 }
 
 func (s *Service) DeleteEvent(ctx context.Context, req *gges.DeleteEventRequest) (*gges.DeleteEventResponse, error) {
