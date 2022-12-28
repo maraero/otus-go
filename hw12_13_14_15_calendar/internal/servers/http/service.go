@@ -36,7 +36,7 @@ func handleCreateEvent(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		id, err := app.Event_service.CreateEvent(r.Context(), evt)
+		id, err := app.EventService.CreateEvent(r.Context(), evt)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -70,7 +70,7 @@ func handleUpdateEvent(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		err = app.Event_service.UpdateEvent(r.Context(), id, evt)
+		err = app.EventService.UpdateEvent(r.Context(), id, evt)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -88,7 +88,7 @@ func handleDeleteEvent(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		err = app.Event_service.DeleteEvent(r.Context(), id)
+		err = app.EventService.DeleteEvent(r.Context(), id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -110,13 +110,13 @@ func handleGetEventList(app *app.App, period string) http.HandlerFunc {
 
 		switch period {
 		case "date":
-			list, err = app.Event_service.GetEventListByDate(r.Context(), date)
+			list, err = app.EventService.GetEventListByDate(r.Context(), date)
 		case "week":
-			list, err = app.Event_service.GetEventListByWeek(r.Context(), date)
+			list, err = app.EventService.GetEventListByWeek(r.Context(), date)
 		case "month":
-			list, err = app.Event_service.GetEventListByDate(r.Context(), date)
+			list, err = app.EventService.GetEventListByDate(r.Context(), date)
 		default:
-			list, err = app.Event_service.GetEventListByDate(r.Context(), date)
+			list, err = app.EventService.GetEventListByDate(r.Context(), date)
 		}
 
 		if err != nil {
@@ -138,7 +138,7 @@ func handleGetEventByID(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		evt, err := app.Event_service.GetEventByID(r.Context(), id)
+		evt, err := app.EventService.GetEventByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return

@@ -21,7 +21,7 @@ func NewService(app *app.App) *Service {
 }
 
 func (s *Service) CreateEvent(ctx context.Context, req *gges.Event) (*gges.CreateEventResponse, error) {
-	id, err := s.app.Event_service.CreateEvent(ctx, grpcEventToDomainEvent(req))
+	id, err := s.app.EventService.CreateEvent(ctx, grpcEventToDomainEvent(req))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -29,7 +29,7 @@ func (s *Service) CreateEvent(ctx context.Context, req *gges.Event) (*gges.Creat
 }
 
 func (s *Service) UpdateEvent(ctx context.Context, req *gges.UpdateEventRequest) (*gges.UpdateEventResposnse, error) {
-	err := s.app.Event_service.UpdateEvent(ctx, req.Id, grpcEventToDomainEvent(req.E))
+	err := s.app.EventService.UpdateEvent(ctx, req.Id, grpcEventToDomainEvent(req.E))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -37,7 +37,7 @@ func (s *Service) UpdateEvent(ctx context.Context, req *gges.UpdateEventRequest)
 }
 
 func (s *Service) DeleteEvent(ctx context.Context, req *gges.DeleteEventRequest) (*gges.DeleteEventResponse, error) {
-	err := s.app.Event_service.DeleteEvent(ctx, req.Id)
+	err := s.app.EventService.DeleteEvent(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -45,7 +45,7 @@ func (s *Service) DeleteEvent(ctx context.Context, req *gges.DeleteEventRequest)
 }
 
 func (s *Service) GetEventListByDate(ctx context.Context, req *gges.EventListRequest) (*gges.EventListResponse, error) {
-	list, err := s.app.Event_service.GetEventListByDate(ctx, req.Date.AsTime())
+	list, err := s.app.EventService.GetEventListByDate(ctx, req.Date.AsTime())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -53,7 +53,7 @@ func (s *Service) GetEventListByDate(ctx context.Context, req *gges.EventListReq
 }
 
 func (s *Service) GetEventListByWeek(ctx context.Context, req *gges.EventListRequest) (*gges.EventListResponse, error) {
-	list, err := s.app.Event_service.GetEventListByWeek(ctx, req.Date.AsTime())
+	list, err := s.app.EventService.GetEventListByWeek(ctx, req.Date.AsTime())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -61,7 +61,7 @@ func (s *Service) GetEventListByWeek(ctx context.Context, req *gges.EventListReq
 }
 
 func (s *Service) GetEventListByMonth(ctx context.Context, req *gges.EventListRequest) (*gges.EventListResponse, error) {
-	list, err := s.app.Event_service.GetEventListByMonth(ctx, req.Date.AsTime())
+	list, err := s.app.EventService.GetEventListByMonth(ctx, req.Date.AsTime())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -69,7 +69,7 @@ func (s *Service) GetEventListByMonth(ctx context.Context, req *gges.EventListRe
 }
 
 func (s *Service) GetEventByID(ctx context.Context, req *gges.GetEventByIDRequest) (*gges.Event, error) {
-	evt, err := s.app.Event_service.GetEventByID(ctx, req.Id)
+	evt, err := s.app.EventService.GetEventByID(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}

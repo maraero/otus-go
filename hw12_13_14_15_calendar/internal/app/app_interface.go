@@ -6,6 +6,6 @@ import (
 )
 
 type App struct {
-	Event_service *es.EventService
-	Logger        *logger.Log
+	EventService *es.EventService
+	Logger       *logger.Log
 }
