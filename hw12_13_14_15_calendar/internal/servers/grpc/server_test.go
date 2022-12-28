@@ -23,7 +23,6 @@ import (
 
 type SuiteTest struct {
 	suite.Suite
-	gs     *grpc.Server
 	client gges.EventServiceClient
 	closer func()
 }
@@ -189,8 +188,8 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().NoError(err)
 		s.Require().NotNil(out)
 
-		getEventIn := &gges.GetEventByIdRequest{Id: createdOut.Id}
-		getEventOut, err := s.client.GetEventById(ctx, getEventIn)
+		getEventIn := &gges.GetEventByIDRequest{Id: createdOut.Id}
+		getEventOut, err := s.client.GetEventByID(ctx, getEventIn)
 		s.Require().NoError(err)
 		s.Require().NotNil(getEventOut)
 		s.Require().Equal(true, getEventOut.Deleted)

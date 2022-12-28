@@ -55,6 +55,6 @@ func (es *EventService) GetEventListByMonth(ctx context.Context, date time.Time)
 	return es.storage.GetEventListByMonth(ctx, date)
 }
 
-func (es *EventService) GetEventById(ctx context.Context, id int64) (event.Event, error) {
-	return es.storage.GetEventById(ctx, id)
+func (es *EventService) GetEventByID(ctx context.Context, id int64) (event.Event, error) {
+	return es.storage.GetEventByID(ctx, id)
 }

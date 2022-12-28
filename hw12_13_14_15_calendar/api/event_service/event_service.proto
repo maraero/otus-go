@@ -25,7 +25,7 @@ service EventService {
     rpc GetEventListByDate(EventListRequest) returns (EventListResponse) {}
     rpc GetEventListByWeek(EventListRequest) returns (EventListResponse) {}
     rpc GetEventListByMonth(EventListRequest) returns (EventListResponse) {}
-    rpc GetEventById(GetEventByIdRequest) returns (Event) {}
+    rpc GetEventByID(GetEventByIDRequest) returns (Event) {}
 }
 
 message CreateEventResponse {
@@ -50,6 +50,6 @@ message EventListResponse {
     repeated Event events = 1;
 }
 
-message GetEventByIdRequest {
+message GetEventByIDRequest {
     int64 id = 1;
 }

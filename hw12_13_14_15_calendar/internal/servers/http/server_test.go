@@ -105,8 +105,8 @@ func (s *SuiteTest) TestCreateEvent() {
 		s.Require().NoError(err)
 		s.Require().NotZero(responseJson.ID)
 
-		getEventByIdUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
-		req, err = http.NewRequest(http.MethodGet, getEventByIdUrl, nil)
+		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
+		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
@@ -181,8 +181,8 @@ func (s *SuiteTest) TestUpdateEvent() {
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
 
-		getEventByIdUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
-		req, err = http.NewRequest(http.MethodGet, getEventByIdUrl, nil)
+		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
+		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
@@ -261,8 +261,8 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
 
-		getEventByIdUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
-		req, err = http.NewRequest(http.MethodGet, getEventByIdUrl, nil)
+		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJson.ID)
+		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
 		res, err = client.Do(req)
 		response, err = io.ReadAll(res.Body)
 		defer res.Body.Close()

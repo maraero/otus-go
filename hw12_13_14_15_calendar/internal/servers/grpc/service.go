@@ -68,8 +68,8 @@ func (s *Service) GetEventListByMonth(ctx context.Context, req *gges.EventListRe
 	return &gges.EventListResponse{Events: domainEventListToGrpcEventList(list)}, nil
 }
 
-func (s *Service) GetEventById(ctx context.Context, req *gges.GetEventByIdRequest) (*gges.Event, error) {
-	evt, err := s.app.Event_service.GetEventById(ctx, req.Id)
+func (s *Service) GetEventByID(ctx context.Context, req *gges.GetEventByIDRequest) (*gges.Event, error) {
+	evt, err := s.app.Event_service.GetEventByID(ctx, req.Id)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}

@@ -163,7 +163,7 @@ func (s *Storage) GetEventListByMonth(ctx context.Context, date time.Time) ([]ev
 	return parseRows(rows)
 }
 
-func (s *Storage) GetEventById(ctx context.Context, id int64) (evt.Event, error) {
+func (s *Storage) GetEventByID(ctx context.Context, id int64) (evt.Event, error) {
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
 		FROM events

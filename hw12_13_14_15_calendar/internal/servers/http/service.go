@@ -128,7 +128,7 @@ func handleGetEventList(app *app.App, period string) http.HandlerFunc {
 	}
 }
 
-func handleGetEventById(app *app.App) http.HandlerFunc {
+func handleGetEventByID(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params := mux.Vars(r)
 		idParam := params["id"]
@@ -138,7 +138,7 @@ func handleGetEventById(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		evt, err := app.Event_service.GetEventById(r.Context(), id)
+		evt, err := app.Event_service.GetEventByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return

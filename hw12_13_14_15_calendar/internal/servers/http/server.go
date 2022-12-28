@@ -32,7 +32,7 @@ func (s *Server) configureRouter() {
 
 	eventsRouter := s.router.PathPrefix("/events").Subrouter()
 	eventsRouter.HandleFunc("", handleCreateEvent(s.app)).Methods(http.MethodPost)
-	eventsRouter.HandleFunc("/{id}", handleGetEventById(s.app)).Methods(http.MethodGet)
+	eventsRouter.HandleFunc("/{id}", handleGetEventByID(s.app)).Methods(http.MethodGet)
 	eventsRouter.HandleFunc("/{id}", handleUpdateEvent(s.app)).Methods(http.MethodPut)
 	eventsRouter.HandleFunc("/{id}", handleDeleteEvent(s.app)).Methods(http.MethodDelete)
 	eventsRouter.HandleFunc("/date/{date}", handleGetEventList(s.app, "date")).Methods(http.MethodGet)

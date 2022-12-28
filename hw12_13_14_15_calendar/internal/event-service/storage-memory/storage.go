@@ -107,7 +107,7 @@ func (s *Storage) GetEventListByMonth(_ context.Context, date time.Time) ([]evt.
 	return order(res), nil
 }
 
-func (s *Storage) GetEventById(_ context.Context, id int64) (evt.Event, error) {
+func (s *Storage) GetEventByID(_ context.Context, id int64) (evt.Event, error) {
 	res, ok := s.events[id]
 	if ok {
 		return res, nil

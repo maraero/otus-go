@@ -28,7 +28,7 @@ type EventServiceClient interface {
 	GetEventListByDate(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
 	GetEventListByWeek(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
 	GetEventListByMonth(ctx context.Context, in *EventListRequest, opts ...grpc.CallOption) (*EventListResponse, error)
-	GetEventById(ctx context.Context, in *GetEventByIdRequest, opts ...grpc.CallOption) (*Event, error)
+	GetEventByID(ctx context.Context, in *GetEventByIDRequest, opts ...grpc.CallOption) (*Event, error)
 }
 
 type eventServiceClient struct {
@@ -93,9 +93,9 @@ func (c *eventServiceClient) GetEventListByMonth(ctx context.Context, in *EventL
 	return out, nil
 }
 
-func (c *eventServiceClient) GetEventById(ctx context.Context, in *GetEventByIdRequest, opts ...grpc.CallOption) (*Event, error) {
+func (c *eventServiceClient) GetEventByID(ctx context.Context, in *GetEventByIDRequest, opts ...grpc.CallOption) (*Event, error) {
 	out := new(Event)
-	err := c.cc.Invoke(ctx, "/event.EventService/GetEventById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/event.EventService/GetEventByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ type EventServiceServer interface {
 	GetEventListByDate(context.Context, *EventListRequest) (*EventListResponse, error)
 	GetEventListByWeek(context.Context, *EventListRequest) (*EventListResponse, error)
 	GetEventListByMonth(context.Context, *EventListRequest) (*EventListResponse, error)
-	GetEventById(context.Context, *GetEventByIdRequest) (*Event, error)
+	GetEventByID(context.Context, *GetEventByIDRequest) (*Event, error)
 	mustEmbedUnimplementedEventServiceServer()
 }
 
@@ -138,8 +138,8 @@ func (UnimplementedEventServiceServer) GetEventListByWeek(context.Context, *Even
 func (UnimplementedEventServiceServer) GetEventListByMonth(context.Context, *EventListRequest) (*EventListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEventListByMonth not implemented")
 }
-func (UnimplementedEventServiceServer) GetEventById(context.Context, *GetEventByIdRequest) (*Event, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEventById not implemented")
+func (UnimplementedEventServiceServer) GetEventByID(context.Context, *GetEventByIDRequest) (*Event, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEventByID not implemented")
 }
 func (UnimplementedEventServiceServer) mustEmbedUnimplementedEventServiceServer() {}
 
@@ -262,20 +262,20 @@ func _EventService_GetEventListByMonth_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EventService_GetEventById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetEventByIdRequest)
+func _EventService_GetEventByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEventByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EventServiceServer).GetEventById(ctx, in)
+		return srv.(EventServiceServer).GetEventByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/event.EventService/GetEventById",
+		FullMethod: "/event.EventService/GetEventByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventServiceServer).GetEventById(ctx, req.(*GetEventByIdRequest))
+		return srv.(EventServiceServer).GetEventByID(ctx, req.(*GetEventByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -312,8 +312,8 @@ var EventService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EventService_GetEventListByMonth_Handler,
 		},
 		{
-			MethodName: "GetEventById",
-			Handler:    _EventService_GetEventById_Handler,
+			MethodName: "GetEventByID",
+			Handler:    _EventService_GetEventByID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
