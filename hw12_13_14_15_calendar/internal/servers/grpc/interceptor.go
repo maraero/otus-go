@@ -12,7 +12,12 @@ import (
 )
 
 func loggerInterceptor(logger logger.Log) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(
+		ctx context.Context,
+		req interface{},
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (interface{}, error) {
 		start := time.Now()
 		md, ok := metadata.FromIncomingContext(ctx)
 		result, err := handler(ctx, req)

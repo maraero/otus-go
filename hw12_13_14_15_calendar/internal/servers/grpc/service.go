@@ -60,7 +60,10 @@ func (s *Service) GetEventListByWeek(ctx context.Context, req *gges.EventListReq
 	return &gges.EventListResponse{Events: domainEventListToGrpcEventList(list)}, nil
 }
 
-func (s *Service) GetEventListByMonth(ctx context.Context, req *gges.EventListRequest) (*gges.EventListResponse, error) {
+func (s *Service) GetEventListByMonth(
+	ctx context.Context,
+	req *gges.EventListRequest,
+) (*gges.EventListResponse, error) {
 	list, err := s.app.EventService.GetEventListByMonth(ctx, req.Date.AsTime())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
