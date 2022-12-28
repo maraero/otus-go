@@ -27,20 +27,38 @@ type SuiteTest struct {
 	closer func()
 }
 
+func buildTestConfig() config.Config {
+	loggerConfig := config.Logger{
+		Level:            "info",
+		OutputPaths:      []string{"stdout"},
+		ErrorOutputPaths: []string{"stderr"},
+	}
+	serverConfig := config.Server{
+		Host:     "localhost",
+		HTTPPort: "8000",
+		GrpcPort: "8001",
+	}
+	storageConfig := config.Storage{
+		Type:   "in-memory",
+		Driver: "postgres",
+		DSN:    "postgresql://admin:admin@localhost:5432/calendar?sslmode=disable",
+	}
+	return config.Config{
+		Logger:  loggerConfig,
+		Server:  serverConfig,
+		Storage: storageConfig,
+	}
+}
+
 func (s *SuiteTest) SetupTest() {
 	ctx := context.Background()
 	buffer := 101024 * 1024
 	lsnr := bufconn.Listen(buffer)
 
-	config, err := config.New("../../../configs/config_test.json")
-	if err != nil {
-		log.Fatal("can not parse test config file", err)
-	}
+	config := buildTestConfig()
 
 	logger, err := l.New(config.Logger)
-	if err != nil {
-		log.Fatal("can not init logger", err)
-	}
+	s.Require().NoError(err)
 
 	var dbConnection *sqlx.DB
 	eventService := es.New(dbConnection)
