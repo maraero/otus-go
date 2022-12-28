@@ -82,12 +82,12 @@ func main() {
 	if err := httpServer.Start(); err != nil {
 		logger.Error("failed to start http server: " + err.Error())
 		cancel()
-		os.Exit(1)
+		os.Exit(1) //nolint:gocritic
 	}
 
 	if err = grpcServer.Start(); err != nil {
 		logger.Error("failed to start grpc server: " + err.Error())
 		cancel()
-		os.Exit(1)
+		os.Exit(1) //nolint:gocritic
 	}
 }
