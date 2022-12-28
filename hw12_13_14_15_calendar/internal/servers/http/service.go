@@ -106,7 +106,7 @@ func handleGetEventList(app *app.App, period string) http.HandlerFunc {
 			return
 		}
 
-		list := []event.Event{}
+		var list []event.Event
 
 		switch period {
 		case "date":

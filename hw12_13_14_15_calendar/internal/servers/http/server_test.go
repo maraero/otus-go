@@ -54,6 +54,7 @@ func (s *SuiteTest) TestRoot() {
 	client := &http.Client{}
 	rootURL := s.ts.URL + "/"
 	req, err := http.NewRequest(http.MethodGet, rootURL, nil)
+	s.Require().NoError(err)
 	res, err := client.Do(req)
 	s.Require().NoError(err)
 	s.Require().Equal(http.StatusOK, res.StatusCode)
@@ -67,6 +68,7 @@ func (s *SuiteTest) TestHelloWorld() {
 	client := &http.Client{}
 	rootURL := s.ts.URL + "/hello-world"
 	req, err := http.NewRequest(http.MethodGet, rootURL, nil)
+	s.Require().NoError(err)
 	res, err := client.Do(req)
 	s.Require().NoError(err)
 	s.Require().Equal(http.StatusOK, res.StatusCode)
@@ -92,6 +94,7 @@ func (s *SuiteTest) TestCreateEvent() {
 		s.Require().NoError(err)
 
 		req, err := http.NewRequest(http.MethodPost, createEventURL, bytes.NewBuffer(reqBody))
+		s.Require().NoError(err)
 		res, err := client.Do(req)
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
@@ -107,6 +110,7 @@ func (s *SuiteTest) TestCreateEvent() {
 
 		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
 		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
+		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
@@ -141,8 +145,10 @@ func (s *SuiteTest) TestCreateEvent() {
 		s.Require().NoError(err)
 
 		req, err := http.NewRequest(http.MethodPost, createEventURL, bytes.NewBuffer(reqBody))
+		s.Require().NoError(err)
 		res, err := client.Do(req)
 		s.Require().NoError(err)
+		defer res.Body.Close()
 		s.Require().Equal(http.StatusBadRequest, res.StatusCode)
 	})
 }
@@ -162,8 +168,11 @@ func (s *SuiteTest) TestUpdateEvent() {
 		s.Require().NoError(err)
 		createURL := s.ts.URL + "/events"
 		req, err := http.NewRequest(http.MethodPost, createURL, bytes.NewBuffer(reqBody))
+		s.Require().NoError(err)
 		res, err := client.Do(req)
+		s.Require().NoError(err)
 		response, err := io.ReadAll(res.Body)
+		s.Require().NoError(err)
 		defer res.Body.Close()
 		responseJSON := CreatedEvent{}
 		json.Unmarshal(response, &responseJSON)
@@ -175,14 +184,16 @@ func (s *SuiteTest) TestUpdateEvent() {
 		reqBody, err = json.Marshal(updatedEvent)
 		s.Require().NoError(err)
 		req, err = http.NewRequest(http.MethodPut, updateURL, bytes.NewBuffer(reqBody))
+		s.Require().NoError(err)
 		res, err = client.Do(req)
-		response, err = io.ReadAll(res.Body)
+		s.Require().NoError(err)
 		defer res.Body.Close()
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
 
 		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
 		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
+		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusOK, res.StatusCode)
@@ -212,8 +223,11 @@ func (s *SuiteTest) TestUpdateEvent() {
 		s.Require().NoError(err)
 		createURL := s.ts.URL + "/events"
 		req, err := http.NewRequest(http.MethodPost, createURL, bytes.NewBuffer(reqBody))
+		s.Require().NoError(err)
 		res, err := client.Do(req)
+		s.Require().NoError(err)
 		response, err := io.ReadAll(res.Body)
+		s.Require().NoError(err)
 		defer res.Body.Close()
 		responseJSON := CreatedEvent{}
 		json.Unmarshal(response, &responseJSON)
@@ -225,8 +239,9 @@ func (s *SuiteTest) TestUpdateEvent() {
 		reqBody, err = json.Marshal(updatedEvent)
 		s.Require().NoError(err)
 		req, err = http.NewRequest(http.MethodPut, updateURL, bytes.NewBuffer(reqBody))
+		s.Require().NoError(err)
 		res, err = client.Do(req)
-		response, err = io.ReadAll(res.Body)
+		s.Require().NoError(err)
 		defer res.Body.Close()
 		s.Require().NoError(err)
 		s.Require().Equal(http.StatusBadRequest, res.StatusCode)
@@ -248,8 +263,11 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().NoError(err)
 		createURL := s.ts.URL + "/events"
 		req, err := http.NewRequest(http.MethodPost, createURL, bytes.NewBuffer(reqBody))
+		s.Require().NoError(err)
 		res, err := client.Do(req)
+		s.Require().NoError(err)
 		response, err := io.ReadAll(res.Body)
+		s.Require().NoError(err)
 		defer res.Body.Close()
 		responseJSON := CreatedEvent{}
 		json.Unmarshal(response, &responseJSON)
@@ -257,14 +275,19 @@ func (s *SuiteTest) TestDeleteEvent() {
 
 		deleteEventURL := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
 		req, err = http.NewRequest(http.MethodDelete, deleteEventURL, nil)
+		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
+		defer res.Body.Close()
 		s.Require().Equal(http.StatusOK, res.StatusCode)
 
 		getEventByIDUrl := s.ts.URL + "/events/" + fmt.Sprint(responseJSON.ID)
 		req, err = http.NewRequest(http.MethodGet, getEventByIDUrl, nil)
+		s.Require().NoError(err)
 		res, err = client.Do(req)
+		s.Require().NoError(err)
 		response, err = io.ReadAll(res.Body)
+		s.Require().NoError(err)
 		defer res.Body.Close()
 		evtResponseJSON := event.Event{}
 		err = json.Unmarshal(response, &evtResponseJSON)
@@ -277,8 +300,10 @@ func (s *SuiteTest) TestDeleteEvent() {
 
 		deleteEventURL := s.ts.URL + "/events/0" // no event
 		req, err := http.NewRequest(http.MethodDelete, deleteEventURL, nil)
+		s.Require().NoError(err)
 		res, err := client.Do(req)
 		s.Require().NoError(err)
+		defer res.Body.Close()
 		s.Require().Equal(http.StatusBadRequest, res.StatusCode)
 	})
 }
@@ -293,6 +318,7 @@ func (s *SuiteTest) TestGetEventList() {
 		res, err := client.Do(req)
 		s.Require().NoError(err)
 		response, err := io.ReadAll(res.Body)
+		s.Require().NoError(err)
 		defer res.Body.Close()
 		responseJSON := EventList{}
 		err = json.Unmarshal(response, &responseJSON)
@@ -320,14 +346,20 @@ func (s *SuiteTest) TestGetEventList() {
 			reqBody, err := json.Marshal(newEvent)
 			s.Require().NoError(err)
 			req, err := http.NewRequest(http.MethodPost, createEventURL, bytes.NewBuffer(reqBody))
+			s.Require().NoError(err)
 			res, err := client.Do(req)
+			s.Require().NoError(err)
+			defer res.Body.Close()
 			s.Require().Equal(http.StatusOK, res.StatusCode)
 		}
 
 		check := func(url string, title string) {
 			req, err := http.NewRequest(http.MethodGet, url, nil)
+			s.Require().NoError(err)
 			res, err := client.Do(req)
+			s.Require().NoError(err)
 			response, err := io.ReadAll(res.Body)
+			s.Require().NoError(err)
 			defer res.Body.Close()
 			responseJSON := EventList{}
 			err = json.Unmarshal(response, &responseJSON)
