@@ -278,3 +278,67 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().Equal(http.StatusBadRequest, res.StatusCode)
 	})
 }
+
+func (s *SuiteTest) TestGetEventList() {
+	s.Run("empty list", func() {
+		client := &http.Client{}
+
+		getEventListUrl := s.ts.URL + "/events/date/" + time.Now().Format("2006-01-02")
+		req, err := http.NewRequest(http.MethodGet, getEventListUrl, nil)
+		s.Require().NoError(err)
+		res, err := client.Do(req)
+		s.Require().NoError(err)
+		response, err := io.ReadAll(res.Body)
+		defer res.Body.Close()
+		responseJson := EventList{}
+		err = json.Unmarshal(response, &responseJson)
+		s.Require().NoError(err)
+		s.Require().Equal(0, len(responseJson.List))
+	})
+
+	s.Run("correct lists (date, week, month)", func() {
+		client := &http.Client{}
+
+		// Create events
+		createEventUrl := s.ts.URL + "/events"
+		week := 7 * 24 * time.Hour
+		multiplier := 3
+
+		for i := 0; i < 3; i++ {
+			start := time.Now().Add(time.Duration(i*multiplier) * week) // *3 week to separate
+			newEvent := event.Event{
+				Title:       "test_" + fmt.Sprint(i),
+				DateStart:   start,
+				DateEnd:     start.Add(1 * time.Hour),
+				Description: "test event",
+				UserID:      "test user id",
+			}
+			reqBody, err := json.Marshal(newEvent)
+			s.Require().NoError(err)
+			req, err := http.NewRequest(http.MethodPost, createEventUrl, bytes.NewBuffer(reqBody))
+			res, err := client.Do(req)
+			s.Require().Equal(http.StatusOK, res.StatusCode)
+		}
+
+		check := func(url string, title string) {
+			req, err := http.NewRequest(http.MethodGet, url, nil)
+			res, err := client.Do(req)
+			response, err := io.ReadAll(res.Body)
+			defer res.Body.Close()
+			responseJson := EventList{}
+			err = json.Unmarshal(response, &responseJson)
+			s.Require().NoError(err)
+			s.Require().Equal(1, len(responseJson.List))
+			s.Require().Equal(title, responseJson.List[0].Title)
+		}
+
+		getEventListByDayUrl := s.ts.URL + "/events/date/" + time.Now().Format("2006-01-02")
+		check(getEventListByDayUrl, "test_0")
+
+		getEventListByWeekUrl := s.ts.URL + "/events/week/" + time.Now().Add(1*time.Duration(multiplier)*week).Format("2006-01-02")
+		check(getEventListByWeekUrl, "test_1")
+
+		getEventListByMonthUrl := s.ts.URL + "/events/month/" + time.Now().Add(2*time.Duration(multiplier)*week).Format("2006-01-02")
+		check(getEventListByMonthUrl, "test_2")
+	})
+}
