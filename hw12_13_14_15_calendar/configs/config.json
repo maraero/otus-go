@@ -6,8 +6,8 @@
   },
   "server": {
     "host": "localhost",
-    "httpPort": "3000",
-    "grpcPort": "3001"
+    "httpPort": "4000",
+    "grpcPort": "4001"
   },
   "storage": {
     "type": "in-memory",

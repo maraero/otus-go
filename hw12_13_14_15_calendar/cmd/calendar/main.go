@@ -52,16 +52,22 @@ func main() {
 	calendar := app.New(eventService, logger)
 
 	httpServer := serverhttp.New(calendar, config.Server)
-	err = httpServer.Start()
-	if err != nil {
-		logger.Fatal("can not start http server", err)
-	}
+	go func() {
+		err = httpServer.Start()
+		if err != nil {
+			logger.Error("http server closed:", err)
+			cancel()
+		}
+	}()
 
 	grpcServer := servergrpc.New(calendar, config.Server)
-	err = grpcServer.Start()
-	if err != nil {
-		logger.Fatal("can not start grpc server", err)
-	}
+	go func() {
+		err = grpcServer.Start()
+		if err != nil {
+			logger.Error("grpc server closed:", err)
+			cancel()
+		}
+	}()
 
 	defer shutDown(strg, httpServer, grpcServer, logger)
 	logger.Info("calendar is running...")

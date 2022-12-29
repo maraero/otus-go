@@ -1,7 +1,6 @@
 package servergrpc
 
 import (
-	"fmt"
 	"net"
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
@@ -27,12 +26,7 @@ func (s *Server) Start() error {
 	s.srv = grpc.NewServer(grpc.UnaryInterceptor(loggerInterceptor(*s.logger)))
 	gges.RegisterEventServiceServer(s.srv, NewService(s.app))
 	s.logger.Info("starting grpc server on", s.addr)
-	err = s.srv.Serve(lsnr)
-	if err != nil {
-		return fmt.Errorf("grpc server closed: %w", err)
-	}
-	s.logger.Info("grpc server started on", s.addr)
-	return nil
+	return s.srv.Serve(lsnr)
 }
 
 func (s *Server) Stop() error {

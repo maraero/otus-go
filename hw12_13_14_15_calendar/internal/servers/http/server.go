@@ -2,7 +2,6 @@ package serverhttp
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -48,12 +47,7 @@ func (s *Server) Start() error {
 		WriteTimeout: 10 * time.Second,
 	}
 	s.logger.Info("starting http server on", s.addr)
-	err := s.srv.ListenAndServe()
-	if errors.Is(err, http.ErrServerClosed) {
-		return fmt.Errorf("http server closed: %w", err)
-	}
-	s.logger.Info("http server started on", s.addr)
-	return err
+	return s.srv.ListenAndServe()
 }
 
 func (s *Server) Stop(ctx context.Context) error {
