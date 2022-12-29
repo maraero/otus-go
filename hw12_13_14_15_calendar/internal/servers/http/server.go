@@ -51,8 +51,7 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	err := s.srv.Shutdown(ctx)
-	if err != nil {
+	if err := s.srv.Shutdown(ctx); err != nil {
 		return fmt.Errorf("server shutdown: %w", err)
 	}
 	return nil
