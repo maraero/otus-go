@@ -1,15 +1,23 @@
-BIN := "./bin/calendar"
+BIN_APP := "./bin/calendar"
+BIN_MIGRATOR := "./bin/migrator"
 DOCKER_IMG="calendar:develop"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
 LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
 
-build: 
-	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/calendar
+# Build
+build-app: 
+	go build -v -o $(BIN_APP) -ldflags "$(LDFLAGS)" ./cmd/calendar
+build-migrator:
+	go build -v -o ${BIN_MIGRATOR} ./cmd/migrator
 
-run: build
-	$(BIN) -config ./configs/config.json
+# Run
+run-app: build
+	$(BIN_APP) -config ./configs/config.json
+run-migrator: build
+	$(BIN_MIGRATOR) -config ./configs/config.json
 
+# Docker
 build-img:
 	docker build \
 		--build-arg=LDFLAGS="$(LDFLAGS)" \
@@ -20,8 +28,9 @@ run-img: build-img
 	docker run $(DOCKER_IMG)
 
 version: build
-	$(BIN) version
+	$(BIN_APP) version
 
+# Checks
 test:
 	go test -race ./internal/...
 
@@ -31,6 +40,7 @@ install-lint-deps:
 lint: install-lint-deps
 	golangci-lint run ./...
 
+# Code generation
 generate:
 	rm -rf internal/servers/grpc/generated
 	mkdir -p internal/servers/grpc/generated
