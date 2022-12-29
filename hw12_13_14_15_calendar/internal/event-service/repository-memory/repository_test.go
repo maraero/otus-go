@@ -1,4 +1,4 @@
-package memorystorage
+package eventrepositorymemory
 
 import (
 	"context"
@@ -66,7 +66,7 @@ func TestDeleteEvent(t *testing.T) {
 
 type MemoryStorageSuite struct {
 	suite.Suite
-	storage *Storage
+	storage *Repository
 }
 
 var (

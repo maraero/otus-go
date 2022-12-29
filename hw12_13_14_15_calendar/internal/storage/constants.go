@@ -9,6 +9,6 @@ const (
 )
 
 const (
-	StorageInMemory StorageType = "in-memory"
-	StorageSQL      StorageType = "sql"
+	StorageInMemory Source = "in-memory"
+	StorageSQL      Source = "sql"
 )

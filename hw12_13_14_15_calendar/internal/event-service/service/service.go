@@ -5,16 +5,16 @@ import (
 	"time"
 
 	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
-	memory_storage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-memory"
-	sql_storage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/storage-sql"
+	repository_memory "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/repository-memory"
+	repository_sql "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/repository-sql"
 	storage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 )
 
 func New(strg *storage.Storage) *EventService {
 	if strg.Source == storage.StorageSQL {
-		return &EventService{repository: sql_storage.New(strg.Connection)}
+		return &EventService{repository: repository_sql.New(strg.Connection)}
 	}
-	return &EventService{repository: memory_storage.New()}
+	return &EventService{repository: repository_memory.New()}
 }
 
 func (es *EventService) CreateEvent(ctx context.Context, e event.Event) (id int64, err error) {

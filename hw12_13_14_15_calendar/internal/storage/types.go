@@ -2,9 +2,9 @@ package storage
 
 import "github.com/jmoiron/sqlx"
 
-type StorageType = string
+type Source = string
 
 type Storage struct {
-	Source     StorageType
+	Source     Source
 	Connection *sqlx.DB
 }

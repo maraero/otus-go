@@ -1,25 +1,18 @@
-package memorystorage
+package eventrepositorymemory
 
 import (
 	"context"
 	"sort"
-	"sync"
 	"time"
 
 	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 )
 
-type Storage struct {
-	sync.RWMutex
-	events map[int64]evt.Event
-	last   int64
+func New() *Repository {
+	return &Repository{events: make(map[int64]evt.Event)}
 }
 
-func New() *Storage {
-	return &Storage{events: make(map[int64]evt.Event)}
-}
-
-func (s *Storage) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
+func (s *Repository) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
 	s.Lock()
 	defer s.Unlock()
 	id := s.next()
@@ -28,7 +21,7 @@ func (s *Storage) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
 	return id, nil
 }
 
-func (s *Storage) UpdateEvent(_ context.Context, id int64, e evt.Event) error {
+func (s *Repository) UpdateEvent(_ context.Context, id int64, e evt.Event) error {
 	s.Lock()
 	defer s.Unlock()
 	if _, ok := s.events[id]; !ok {
@@ -38,7 +31,7 @@ func (s *Storage) UpdateEvent(_ context.Context, id int64, e evt.Event) error {
 	return nil
 }
 
-func (s *Storage) DeleteEvent(_ context.Context, id int64) error {
+func (s *Repository) DeleteEvent(_ context.Context, id int64) error {
 	s.Lock()
 	defer s.Unlock()
 	event, ok := s.events[id]
@@ -50,7 +43,7 @@ func (s *Storage) DeleteEvent(_ context.Context, id int64) error {
 	return nil
 }
 
-func (s *Storage) GetEventListByDate(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *Repository) GetEventListByDate(_ context.Context, date time.Time) ([]evt.Event, error) {
 	s.Lock()
 	defer s.Unlock()
 	var res []evt.Event
@@ -69,7 +62,7 @@ func (s *Storage) GetEventListByDate(_ context.Context, date time.Time) ([]evt.E
 	return order(res), nil
 }
 
-func (s *Storage) GetEventListByWeek(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *Repository) GetEventListByWeek(_ context.Context, date time.Time) ([]evt.Event, error) {
 	s.Lock()
 	defer s.Unlock()
 	var res []evt.Event
@@ -88,7 +81,7 @@ func (s *Storage) GetEventListByWeek(_ context.Context, date time.Time) ([]evt.E
 	return order(res), nil
 }
 
-func (s *Storage) GetEventListByMonth(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *Repository) GetEventListByMonth(_ context.Context, date time.Time) ([]evt.Event, error) {
 	s.Lock()
 	defer s.Unlock()
 	var res []evt.Event
@@ -107,7 +100,7 @@ func (s *Storage) GetEventListByMonth(_ context.Context, date time.Time) ([]evt.
 	return order(res), nil
 }
 
-func (s *Storage) GetEventByID(_ context.Context, id int64) (evt.Event, error) {
+func (s *Repository) GetEventByID(_ context.Context, id int64) (evt.Event, error) {
 	res, ok := s.events[id]
 	if ok {
 		return res, nil
@@ -116,7 +109,7 @@ func (s *Storage) GetEventByID(_ context.Context, id int64) (evt.Event, error) {
 	return evt.Event{}, evt.ErrNotFound
 }
 
-func (s *Storage) next() int64 {
+func (s *Repository) next() int64 {
 	s.last++
 	return s.last
 }
