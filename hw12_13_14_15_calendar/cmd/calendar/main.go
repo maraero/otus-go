@@ -50,14 +50,22 @@ func main() {
 	strg := storage.New(ctx, logger, config.Storage)
 	eventService := es.New(strg)
 	calendar := app.New(eventService, logger)
-	httpServer := serverhttp.New(calendar, config.Server)
-	grpcServer := servergrpc.New(calendar, config.Server)
 
+	httpServer := serverhttp.New(calendar, config.Server)
+	err = httpServer.Start()
+	if err != nil {
+		logger.Fatal("can not start http server", err)
+	}
+
+	grpcServer := servergrpc.New(calendar, config.Server)
+	err = grpcServer.Start()
+	if err != nil {
+		logger.Fatal("can not start grpc server", err)
+	}
+
+	defer shutDown(strg, httpServer, grpcServer, logger)
 	logger.Info("calendar is running...")
 	<-ctx.Done()
-	logger.Info("calendar is turning off...")
-	shutDown(strg, httpServer, grpcServer, logger)
-	logger.Info("calendar stopped")
 }
 
 func watchSignals(cancel context.CancelFunc) {
@@ -69,6 +77,7 @@ func watchSignals(cancel context.CancelFunc) {
 }
 
 func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *servergrpc.Server, logger *l.Log) {
+	logger.Info("calendar is turning off...")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
@@ -102,4 +111,5 @@ func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *
 	}()
 
 	wg.Wait()
+	logger.Info("calendar stopped")
 }

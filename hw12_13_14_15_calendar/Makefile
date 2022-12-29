@@ -12,9 +12,9 @@ build-migrator:
 	go build -v -o ${BIN_MIGRATOR} ./cmd/migrator
 
 # Run
-run-app: build
+run-app: build-app
 	$(BIN_APP) -config ./configs/config.json
-run-migrator: build
+run-migrator: build-migrator
 	$(BIN_MIGRATOR) -config ./configs/config.json
 
 # Docker

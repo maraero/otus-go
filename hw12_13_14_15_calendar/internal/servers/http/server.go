@@ -47,10 +47,12 @@ func (s *Server) Start() error {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
+	s.logger.Info("starting http server on", s.addr)
 	err := s.srv.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
-		return fmt.Errorf("server closed: %w", err)
+		return fmt.Errorf("http server closed: %w", err)
 	}
+	s.logger.Info("http server started on", s.addr)
 	return err
 }
 
@@ -59,7 +61,7 @@ func (s *Server) Stop(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("server shutdown: %w", err)
 	}
-	return err
+	return nil
 }
 
 func (s *Server) homeHandler(w http.ResponseWriter, _ *http.Request) {
