@@ -7,7 +7,7 @@ import (
 	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 )
 
-type Storage interface {
+type Repository interface {
 	CreateEvent(ctx context.Context, e evt.Event) (int64, error)
 	UpdateEvent(ctx context.Context, id int64, e evt.Event) error
 	DeleteEvent(ctx context.Context, id int64) error
@@ -18,5 +18,5 @@ type Storage interface {
 }
 
 type EventService struct {
-	storage Storage
+	repository Repository
 }

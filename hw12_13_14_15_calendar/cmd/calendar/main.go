@@ -10,13 +10,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	servergrpc "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc"
 	serverhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/http"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 )
 
 var configFile string
@@ -47,8 +47,8 @@ func main() {
 	go watchSignals(cancel)
 	defer cancel()
 
-	dbConnection := connectDB(ctx, logger, config)
-	eventService := es.New(dbConnection)
+	strg := storage.New(ctx, logger, config.Storage)
+	eventService := es.New(strg)
 	calendar := app.New(eventService, logger)
 	httpServer := serverhttp.New(calendar, config.Server)
 	grpcServer := servergrpc.New(calendar, config.Server)
@@ -56,7 +56,7 @@ func main() {
 	logger.Info("calendar is running...")
 	<-ctx.Done()
 	logger.Info("calendar is turning off...")
-	shutDown(dbConnection, httpServer, grpcServer, logger)
+	shutDown(strg, httpServer, grpcServer, logger)
 	logger.Info("calendar stopped")
 }
 
@@ -68,17 +68,7 @@ func watchSignals(cancel context.CancelFunc) {
 	cancel()
 }
 
-func connectDB(ctx context.Context, logger *l.Log, config config.Config) *sqlx.DB {
-	dbConnection := newDBConnection(ctx, logger, config.Storage)
-
-	if dbConnection != nil {
-		migrate(dbConnection.DB, logger)
-	}
-
-	return dbConnection
-}
-
-func shutDown(dbConnection *sqlx.DB, httpServer *serverhttp.Server, grpcServer *servergrpc.Server, logger *l.Log) {
+func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *servergrpc.Server, logger *l.Log) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
@@ -87,8 +77,8 @@ func shutDown(dbConnection *sqlx.DB, httpServer *serverhttp.Server, grpcServer *
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		if dbConnection != nil {
-			err := dbConnection.Close()
+		if strg.Connection != nil {
+			err := strg.Connection.Close()
 			if err != nil {
 				logger.Error("can not close database connection: %w", err)
 			}

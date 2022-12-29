@@ -8,12 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	gges "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc/generated"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -60,8 +60,8 @@ func (s *SuiteTest) SetupTest() {
 	logger, err := l.New(config.Logger)
 	s.Require().NoError(err)
 
-	var dbConnection *sqlx.DB
-	eventService := es.New(dbConnection)
+	storage := storage.Storage{Source: storage.StorageInMemory, Connection: nil}
+	eventService := es.New(&storage)
 	calendar := app.New(eventService, logger)
 
 	baseServer := grpc.NewServer()

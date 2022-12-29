@@ -1,42 +1,41 @@
-package main
+package storage
 
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 )
 
-const (
-	MaxOpenConns    = 25
-	MaxIdleConns    = 25
-	ConnMaxLifetime = time.Minute
-)
-
-func newDBConnection(ctx context.Context, logger *logger.Log, c config.Storage) *sqlx.DB {
+func New(ctx context.Context, logger *logger.Log, c config.Storage) *Storage {
 	if c.Type != config.StorageSQL {
-		return nil
+		return &Storage{
+			Source:     StorageInMemory,
+			Connection: nil,
+		}
 	}
 
-	conn, err := connect(ctx, c.Driver, c.DSN)
+	conn, err := connectToDB(ctx, c.Driver, c.DSN)
 	if err != nil {
 		logger.Fatal("DB connection error: %w", err)
 	}
 
-	return conn
+	return &Storage{
+		Source:     StorageSQL,
+		Connection: conn,
+	}
 }
 
-func connect(ctx context.Context, driver string, dsn string) (*sqlx.DB, error) {
+func connectToDB(ctx context.Context, driver string, dsn string) (*sqlx.DB, error) {
 	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
-	db.SetMaxOpenConns(MaxOpenConns)
-	db.SetMaxIdleConns(MaxIdleConns)
-	db.SetConnMaxLifetime(ConnMaxLifetime)
+	db.SetMaxOpenConns(maxOpenConns)
+	db.SetMaxIdleConns(maxIdleConns)
+	db.SetConnMaxLifetime(connMaxLifetime)
 
 	err = db.PingContext(ctx)
 	if err != nil {
