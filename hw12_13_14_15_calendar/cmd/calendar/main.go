@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -54,7 +55,7 @@ func main() {
 	httpServer := serverhttp.New(calendar, config.Server)
 	go func() {
 		err = httpServer.Start()
-		if err != nil {
+		if err != nil && err != http.ErrServerClosed {
 			logger.Error("http server closed:", err)
 			cancel()
 		}
@@ -69,9 +70,9 @@ func main() {
 		}
 	}()
 
-	defer shutDown(strg, httpServer, grpcServer, logger)
 	logger.Info("calendar is running...")
 	<-ctx.Done()
+	shutDown(strg, httpServer, grpcServer, logger)
 }
 
 func watchSignals(cancel context.CancelFunc) {
@@ -96,6 +97,8 @@ func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *
 			err := strg.Connection.Close()
 			if err != nil {
 				logger.Error("can not close database connection: %w", err)
+			} else {
+				logger.Info("database connection closed")
 			}
 		}
 	}()
@@ -105,6 +108,8 @@ func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *
 		defer wg.Done()
 		if err := httpServer.Stop(ctx); err != nil {
 			logger.Error("failed to stop http server: " + err.Error())
+		} else {
+			logger.Info("http server closed")
 		}
 	}()
 
@@ -113,6 +118,8 @@ func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *
 		defer wg.Done()
 		if err := grpcServer.Stop(); err != nil {
 			logger.Error("failed to stop grpc server: " + err.Error())
+		} else {
+			logger.Info("grpc server closed")
 		}
 	}()
 
