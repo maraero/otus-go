@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"log"
 	"net/http"
@@ -55,7 +56,7 @@ func main() {
 	httpServer := serverhttp.New(calendar, config.Server)
 	go func() {
 		err = httpServer.Start()
-		if err != nil && err != http.ErrServerClosed {
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("http server closed:", err)
 			cancel()
 		}
