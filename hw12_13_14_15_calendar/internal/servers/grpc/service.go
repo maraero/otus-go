@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
-	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 	gges "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc/generated"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -80,8 +80,8 @@ func (s *Service) GetEventByID(ctx context.Context, req *gges.GetEventByIDReques
 	return &event, nil
 }
 
-func grpcEventToDomainEvent(grpcEvent *gges.Event) event.Event {
-	return event.Event{
+func grpcEventToDomainEvent(grpcEvent *gges.Event) events.Event {
+	return events.Event{
 		ID:               grpcEvent.Id,
 		Title:            grpcEvent.Title,
 		DateStart:        grpcEvent.DateStart.AsTime(),
@@ -93,7 +93,7 @@ func grpcEventToDomainEvent(grpcEvent *gges.Event) event.Event {
 	}
 }
 
-func domainEventToGrpcEvent(domainEvent event.Event) gges.Event {
+func domainEventToGrpcEvent(domainEvent events.Event) gges.Event {
 	return gges.Event{
 		Id:               domainEvent.ID,
 		Title:            domainEvent.Title,
@@ -106,7 +106,7 @@ func domainEventToGrpcEvent(domainEvent event.Event) gges.Event {
 	}
 }
 
-func domainEventListToGrpcEventList(domainEvents []event.Event) []*gges.Event {
+func domainEventListToGrpcEventList(domainEvents []events.Event) []*gges.Event {
 	result := make([]*gges.Event, 0, len(domainEvents))
 	for _, event := range domainEvents {
 		evt := domainEventToGrpcEvent(event)

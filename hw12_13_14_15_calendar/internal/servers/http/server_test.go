@@ -12,8 +12,8 @@ import (
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
-	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 	"github.com/stretchr/testify/suite"
@@ -99,7 +99,7 @@ func (s *SuiteTest) TestCreateEvent() {
 	s.Run("successful", func() {
 		client := &http.Client{}
 
-		newEvent := event.Event{
+		newEvent := events.Event{
 			Title:       "test",
 			DateStart:   time.Now().Add(1 * time.Hour),
 			DateEnd:     time.Now().Add(3 * time.Hour),
@@ -136,7 +136,7 @@ func (s *SuiteTest) TestCreateEvent() {
 		defer res.Body.Close()
 		s.Require().NoError(err)
 
-		evtResponseJSON := event.Event{}
+		evtResponseJSON := events.Event{}
 		err = json.Unmarshal(response, &evtResponseJSON)
 		s.Require().NoError(err)
 		s.Require().Equal(newEvent.Title, evtResponseJSON.Title)
@@ -174,7 +174,7 @@ func (s *SuiteTest) TestUpdateEvent() {
 	s.Run("successful", func() {
 		client := &http.Client{}
 
-		newEvent := event.Event{
+		newEvent := events.Event{
 			Title:       "new event",
 			DateStart:   time.Now().Add(1 * time.Hour),
 			DateEnd:     time.Now().Add(3 * time.Hour),
@@ -219,7 +219,7 @@ func (s *SuiteTest) TestUpdateEvent() {
 		defer res.Body.Close()
 		s.Require().NoError(err)
 
-		evtResponseJSON := event.Event{}
+		evtResponseJSON := events.Event{}
 		err = json.Unmarshal(response, &evtResponseJSON)
 		s.Require().NoError(err)
 		s.Require().Equal(updatedEvent.Title, evtResponseJSON.Title)
@@ -229,7 +229,7 @@ func (s *SuiteTest) TestUpdateEvent() {
 	s.Run("bad request", func() {
 		client := &http.Client{}
 
-		newEvent := event.Event{
+		newEvent := events.Event{
 			Title:       "new event",
 			DateStart:   time.Now().Add(1 * time.Hour),
 			DateEnd:     time.Now().Add(3 * time.Hour),
@@ -269,7 +269,7 @@ func (s *SuiteTest) TestDeleteEvent() {
 	s.Run("successful", func() {
 		client := &http.Client{}
 
-		newEvent := event.Event{
+		newEvent := events.Event{
 			Title:       "new event",
 			DateStart:   time.Now().Add(1 * time.Hour),
 			DateEnd:     time.Now().Add(3 * time.Hour),
@@ -306,7 +306,7 @@ func (s *SuiteTest) TestDeleteEvent() {
 		response, err = io.ReadAll(res.Body)
 		s.Require().NoError(err)
 		defer res.Body.Close()
-		evtResponseJSON := event.Event{}
+		evtResponseJSON := events.Event{}
 		err = json.Unmarshal(response, &evtResponseJSON)
 		s.Require().NoError(err)
 		s.Require().Equal(true, evtResponseJSON.Deleted)
@@ -353,7 +353,7 @@ func (s *SuiteTest) TestGetEventList() {
 
 		for i := 0; i < 3; i++ {
 			start := time.Now().Add(time.Duration(i*multiplier) * week) // *3 week to separate
-			newEvent := event.Event{
+			newEvent := events.Event{
 				Title:       "test_" + fmt.Sprint(i),
 				DateStart:   start,
 				DateEnd:     start.Add(1 * time.Hour),

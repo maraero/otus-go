@@ -5,14 +5,14 @@ import (
 	"sort"
 	"time"
 
-	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 )
 
 func New() *Repository {
-	return &Repository{events: make(map[int64]evt.Event)}
+	return &Repository{events: make(map[int64]events.Event)}
 }
 
-func (s *Repository) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
+func (s *Repository) CreateEvent(_ context.Context, e events.Event) (int64, error) {
 	s.Lock()
 	defer s.Unlock()
 	id := s.next()
@@ -21,11 +21,11 @@ func (s *Repository) CreateEvent(_ context.Context, e evt.Event) (int64, error) 
 	return id, nil
 }
 
-func (s *Repository) UpdateEvent(_ context.Context, id int64, e evt.Event) error {
+func (s *Repository) UpdateEvent(_ context.Context, id int64, e events.Event) error {
 	s.Lock()
 	defer s.Unlock()
 	if _, ok := s.events[id]; !ok {
-		return evt.ErrNotFound
+		return events.ErrNotFound
 	}
 	s.events[id] = e
 	return nil
@@ -36,17 +36,17 @@ func (s *Repository) DeleteEvent(_ context.Context, id int64) error {
 	defer s.Unlock()
 	event, ok := s.events[id]
 	if !ok {
-		return evt.ErrNotFound
+		return events.ErrNotFound
 	}
 	event.Deleted = true
 	s.events[id] = event
 	return nil
 }
 
-func (s *Repository) GetEventListByDate(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *Repository) GetEventListByDate(_ context.Context, date time.Time) ([]events.Event, error) {
 	s.Lock()
 	defer s.Unlock()
-	var res []evt.Event
+	var res []events.Event
 	year, month, day := date.Date()
 
 	for _, event := range s.events {
@@ -62,10 +62,10 @@ func (s *Repository) GetEventListByDate(_ context.Context, date time.Time) ([]ev
 	return order(res), nil
 }
 
-func (s *Repository) GetEventListByWeek(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *Repository) GetEventListByWeek(_ context.Context, date time.Time) ([]events.Event, error) {
 	s.Lock()
 	defer s.Unlock()
-	var res []evt.Event
+	var res []events.Event
 	year, week := date.ISOWeek()
 
 	for _, event := range s.events {
@@ -81,10 +81,10 @@ func (s *Repository) GetEventListByWeek(_ context.Context, date time.Time) ([]ev
 	return order(res), nil
 }
 
-func (s *Repository) GetEventListByMonth(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *Repository) GetEventListByMonth(_ context.Context, date time.Time) ([]events.Event, error) {
 	s.Lock()
 	defer s.Unlock()
-	var res []evt.Event
+	var res []events.Event
 	year, month, _ := date.Date()
 
 	for _, event := range s.events {
@@ -100,13 +100,13 @@ func (s *Repository) GetEventListByMonth(_ context.Context, date time.Time) ([]e
 	return order(res), nil
 }
 
-func (s *Repository) GetEventByID(_ context.Context, id int64) (evt.Event, error) {
+func (s *Repository) GetEventByID(_ context.Context, id int64) (events.Event, error) {
 	res, ok := s.events[id]
 	if ok {
 		return res, nil
 	}
 
-	return evt.Event{}, evt.ErrNotFound
+	return events.Event{}, events.ErrNotFound
 }
 
 func (s *Repository) next() int64 {
@@ -114,7 +114,7 @@ func (s *Repository) next() int64 {
 	return s.last
 }
 
-func order(events []evt.Event) []evt.Event {
+func order(events []events.Event) []events.Event {
 	sort.Slice(events, func(i, j int) bool {
 		return events[i].DateStart.Before(events[j].DateStart)
 	})

@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
 	repository_memory "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/repository-memory"
 	repository_sql "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/repository-sql"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 	storage "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 )
 
@@ -17,7 +17,7 @@ func New(strg *storage.Storage) *EventService {
 	return &EventService{repository: repository_memory.New()}
 }
 
-func (es *EventService) CreateEvent(ctx context.Context, e event.Event) (id int64, err error) {
+func (es *EventService) CreateEvent(ctx context.Context, e events.Event) (id int64, err error) {
 	if err = e.Validate(); err != nil {
 		return 0, err
 	}
@@ -29,7 +29,7 @@ func (es *EventService) CreateEvent(ctx context.Context, e event.Event) (id int6
 	return id, nil
 }
 
-func (es *EventService) UpdateEvent(ctx context.Context, id int64, e event.Event) error {
+func (es *EventService) UpdateEvent(ctx context.Context, id int64, e events.Event) error {
 	if err := e.Validate(); err != nil {
 		return err
 	}
@@ -40,18 +40,18 @@ func (es *EventService) DeleteEvent(ctx context.Context, id int64) error {
 	return es.repository.DeleteEvent(ctx, id)
 }
 
-func (es *EventService) GetEventListByDate(ctx context.Context, date time.Time) ([]event.Event, error) {
+func (es *EventService) GetEventListByDate(ctx context.Context, date time.Time) ([]events.Event, error) {
 	return es.repository.GetEventListByDate(ctx, date)
 }
 
-func (es *EventService) GetEventListByWeek(ctx context.Context, date time.Time) ([]event.Event, error) {
+func (es *EventService) GetEventListByWeek(ctx context.Context, date time.Time) ([]events.Event, error) {
 	return es.repository.GetEventListByWeek(ctx, date)
 }
 
-func (es *EventService) GetEventListByMonth(ctx context.Context, date time.Time) ([]event.Event, error) {
+func (es *EventService) GetEventListByMonth(ctx context.Context, date time.Time) ([]events.Event, error) {
 	return es.repository.GetEventListByMonth(ctx, date)
 }
 
-func (es *EventService) GetEventByID(ctx context.Context, id int64) (event.Event, error) {
+func (es *EventService) GetEventByID(ctx context.Context, id int64) (events.Event, error) {
 	return es.repository.GetEventByID(ctx, id)
 }

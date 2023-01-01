@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
-	event "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 )
 
 type CreatedEvent struct {
@@ -17,7 +17,7 @@ type CreatedEvent struct {
 }
 
 type EventList struct {
-	List []event.Event `json:"list"`
+	List []events.Event `json:"list"`
 }
 
 func handleCreateEvent(app *app.App) http.HandlerFunc {
@@ -29,7 +29,7 @@ func handleCreateEvent(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		evt := event.Event{}
+		evt := events.Event{}
 		err = json.Unmarshal(body, &evt)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -55,7 +55,7 @@ func handleUpdateEvent(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		evt := event.Event{}
+		evt := events.Event{}
 		err = json.Unmarshal(body, &evt)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -106,7 +106,7 @@ func handleGetEventList(app *app.App, period string) http.HandlerFunc {
 			return
 		}
 
-		var list []event.Event
+		var list []events.Event
 
 		switch period {
 		case "date":

@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
 func TestCreateEvent(t *testing.T) {
 	storage := New()
-	newEvent := evt.Event{
+	newEvent := events.Event{
 		Title:     "create test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
@@ -26,7 +26,7 @@ func TestCreateEvent(t *testing.T) {
 
 func TestUpdateEvent(t *testing.T) {
 	storage := New()
-	initialEvent := evt.Event{
+	initialEvent := events.Event{
 		Title:     "update test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
@@ -34,7 +34,7 @@ func TestUpdateEvent(t *testing.T) {
 	}
 	err := storage.UpdateEvent(context.Background(), int64(5), initialEvent)
 	require.Error(t, err)
-	require.Equal(t, err, evt.ErrNotFound)
+	require.Equal(t, err, events.ErrNotFound)
 	id, err := storage.CreateEvent(context.Background(), initialEvent)
 	require.NoError(t, err)
 	require.Equal(t, id, int64(1))
@@ -48,7 +48,7 @@ func TestUpdateEvent(t *testing.T) {
 
 func TestDeleteEvent(t *testing.T) {
 	storage := New()
-	initialEvent := evt.Event{
+	initialEvent := events.Event{
 		Title:     "test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
@@ -56,7 +56,7 @@ func TestDeleteEvent(t *testing.T) {
 	}
 	err := storage.DeleteEvent(context.Background(), int64(5))
 	require.Error(t, err)
-	require.Equal(t, err, evt.ErrNotFound)
+	require.Equal(t, err, events.ErrNotFound)
 	id, err := storage.CreateEvent(context.Background(), initialEvent)
 	require.NoError(t, err)
 	err = storage.DeleteEvent(context.Background(), id)
@@ -78,7 +78,7 @@ var (
 func (m *MemoryStorageSuite) SetupTest() {
 	m.storage = New()
 
-	m.storage.events = map[int64]evt.Event{
+	m.storage.events = map[int64]events.Event{
 		1: {
 			ID:        int64(1),
 			Title:     "title 1",
