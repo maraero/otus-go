@@ -64,7 +64,7 @@ func TestDeleteEvent(t *testing.T) {
 	require.True(t, storage.events[id].Deleted)
 }
 
-type MemoryStorageSuite struct {
+type MemoryRepositorySuite struct {
 	suite.Suite
 	storage *MemoryRepository
 }
@@ -75,7 +75,7 @@ var (
 	monthDuration = 30 * dayDuration // not precisely
 )
 
-func (m *MemoryStorageSuite) SetupTest() {
+func (m *MemoryRepositorySuite) SetupTest() {
 	m.storage = newMemoryRepository()
 
 	m.storage.events = map[int64]events.Event{
@@ -103,7 +103,7 @@ func (m *MemoryStorageSuite) SetupTest() {
 	}
 }
 
-func (m *MemoryStorageSuite) TestGetEventListByDate() {
+func (m *MemoryRepositorySuite) TestGetEventListByDate() {
 	m.Run("success event list by date", func() {
 		res, err := m.storage.GetEventListByDate(context.Background(), time.Now())
 		require.NoError(m.T(), err)
@@ -118,7 +118,7 @@ func (m *MemoryStorageSuite) TestGetEventListByDate() {
 	})
 }
 
-func (m *MemoryStorageSuite) TestGetEventListByWeek() {
+func (m *MemoryRepositorySuite) TestGetEventListByWeek() {
 	m.Run("success event list by week", func() {
 		res, err := m.storage.GetEventListByWeek(context.Background(), time.Now().Add(2*weekDuration))
 		require.NoError(m.T(), err)
@@ -133,7 +133,7 @@ func (m *MemoryStorageSuite) TestGetEventListByWeek() {
 	})
 }
 
-func (m *MemoryStorageSuite) TestGetEventListByMonth() {
+func (m *MemoryRepositorySuite) TestGetEventListByMonth() {
 	m.Run("success event list by month", func() {
 		res, err := m.storage.GetEventListByMonth(context.Background(), time.Now().Add(2*monthDuration))
 		require.NoError(m.T(), err)
@@ -148,6 +148,6 @@ func (m *MemoryStorageSuite) TestGetEventListByMonth() {
 	})
 }
 
-func TestMemoryStorageSuite(t *testing.T) {
-	suite.Run(t, new(MemoryStorageSuite))
+func TestMemoryRepositorySuite(t *testing.T) {
+	suite.Run(t, new(MemoryRepositorySuite))
 }
