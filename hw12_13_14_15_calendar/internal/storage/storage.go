@@ -9,6 +9,11 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 )
 
+type Storage struct {
+	Source     Source
+	Connection *sqlx.DB
+}
+
 func New(ctx context.Context, logger *logger.Log, c config.Storage) *Storage {
 	if c.Type != config.StorageSQL {
 		return &Storage{

@@ -8,6 +8,8 @@ const (
 	connMaxLifetime = time.Minute
 )
 
+type Source = string
+
 const (
 	StorageInMemory Source = "in-memory"
 	StorageSQL      Source = "sql"
