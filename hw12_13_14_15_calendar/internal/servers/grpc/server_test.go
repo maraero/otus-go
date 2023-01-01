@@ -154,8 +154,8 @@ func (s *SuiteTest) TestUpdateEvent() {
 		updatedEvent := createdIn
 		updatedEvent.Title = "updated title"
 		updatedIn := &gges.UpdateEventRequest{
-			Id: createdOut.Id,
-			E:  updatedEvent,
+			Id:    createdOut.Id,
+			Event: updatedEvent,
 		}
 		out, err := s.client.UpdateEvent(ctx, updatedIn)
 		s.Require().NoError(err)
@@ -175,8 +175,8 @@ func (s *SuiteTest) TestUpdateEvent() {
 			Deleted:          false,
 		}
 		in := &gges.UpdateEventRequest{
-			Id: 0,
-			E:  event,
+			Id:    0,
+			Event: event,
 		}
 		out, err := s.client.UpdateEvent(ctx, in)
 		s.Require().Error(err)

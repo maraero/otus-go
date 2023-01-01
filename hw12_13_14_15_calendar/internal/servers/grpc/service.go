@@ -29,7 +29,7 @@ func (s *Service) CreateEvent(ctx context.Context, req *gges.Event) (*gges.Creat
 }
 
 func (s *Service) UpdateEvent(ctx context.Context, req *gges.UpdateEventRequest) (*gges.UpdateEventResponse, error) {
-	err := s.app.EventService.UpdateEvent(ctx, req.Id, grpcEventToDomainEvent(req.E))
+	err := s.app.EventService.UpdateEvent(ctx, req.Id, grpcEventToDomainEvent(req.Event))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}

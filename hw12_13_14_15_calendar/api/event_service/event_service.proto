@@ -34,7 +34,7 @@ message CreateEventResponse {
 
 message UpdateEventRequest {
     int64 id = 1;
-    Event e = 2;
+    Event event = 2;
 }
 message UpdateEventResponse {}
 
