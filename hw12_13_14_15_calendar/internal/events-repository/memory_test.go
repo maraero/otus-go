@@ -1,4 +1,4 @@
-package eventrepositorymemory
+package eventsrepository
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestCreateEvent(t *testing.T) {
-	storage := New()
+	storage := newMemoryRepository()
 	newEvent := events.Event{
 		Title:     "create test event",
 		DateStart: time.Now(),
@@ -25,7 +25,7 @@ func TestCreateEvent(t *testing.T) {
 }
 
 func TestUpdateEvent(t *testing.T) {
-	storage := New()
+	storage := newMemoryRepository()
 	initialEvent := events.Event{
 		Title:     "update test event",
 		DateStart: time.Now(),
@@ -47,7 +47,7 @@ func TestUpdateEvent(t *testing.T) {
 }
 
 func TestDeleteEvent(t *testing.T) {
-	storage := New()
+	storage := newMemoryRepository()
 	initialEvent := events.Event{
 		Title:     "test event",
 		DateStart: time.Now(),
@@ -66,7 +66,7 @@ func TestDeleteEvent(t *testing.T) {
 
 type MemoryStorageSuite struct {
 	suite.Suite
-	storage *Repository
+	storage *MemoryRepository
 }
 
 var (
@@ -76,7 +76,7 @@ var (
 )
 
 func (m *MemoryStorageSuite) SetupTest() {
-	m.storage = New()
+	m.storage = newMemoryRepository()
 
 	m.storage.events = map[int64]events.Event{
 		1: {

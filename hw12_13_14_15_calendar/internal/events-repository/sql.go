@@ -1,4 +1,4 @@
-package eventrepositorysql
+package eventsrepository
 
 import (
 	"context"
@@ -8,11 +8,15 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 )
 
-func New(dbConn *sqlx.DB) *Repository {
-	return &Repository{db: dbConn}
+type SqlRepository struct {
+	db *sqlx.DB
 }
 
-func (s *Repository) CreateEvent(ctx context.Context, e events.Event) (int64, error) {
+func newSqlRepository(dbConn *sqlx.DB) *SqlRepository {
+	return &SqlRepository{db: dbConn}
+}
+
+func (s *SqlRepository) CreateEvent(ctx context.Context, e events.Event) (int64, error) {
 	sql := `
 		INSERT INTO events (
 			title,
@@ -48,7 +52,7 @@ func (s *Repository) CreateEvent(ctx context.Context, e events.Event) (int64, er
 	return result.LastInsertId()
 }
 
-func (s *Repository) UpdateEvent(ctx context.Context, id int64, e events.Event) error {
+func (s *SqlRepository) UpdateEvent(ctx context.Context, id int64, e events.Event) error {
 	sql := `
 		UPDATE events
 		SET
@@ -81,7 +85,7 @@ func (s *Repository) UpdateEvent(ctx context.Context, id int64, e events.Event) 
 	return nil
 }
 
-func (s *Repository) DeleteEvent(ctx context.Context, id int64) error {
+func (s *SqlRepository) DeleteEvent(ctx context.Context, id int64) error {
 	sql := "UPDATE events SET deleted = :deleted WHERE id = :id"
 	result, err := s.db.NamedExecContext(ctx, sql, map[string]interface{}{"id": id})
 	if err != nil {
@@ -97,7 +101,7 @@ func (s *Repository) DeleteEvent(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (s *Repository) GetEventListByDate(ctx context.Context, date time.Time) ([]events.Event, error) {
+func (s *SqlRepository) GetEventListByDate(ctx context.Context, date time.Time) ([]events.Event, error) {
 	year, month, day := date.Date()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -120,7 +124,7 @@ func (s *Repository) GetEventListByDate(ctx context.Context, date time.Time) ([]
 	return parseRows(rows)
 }
 
-func (s *Repository) GetEventListByWeek(ctx context.Context, date time.Time) ([]events.Event, error) {
+func (s *SqlRepository) GetEventListByWeek(ctx context.Context, date time.Time) ([]events.Event, error) {
 	year, week := date.ISOWeek()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -141,7 +145,7 @@ func (s *Repository) GetEventListByWeek(ctx context.Context, date time.Time) ([]
 	return parseRows(rows)
 }
 
-func (s *Repository) GetEventListByMonth(ctx context.Context, date time.Time) ([]events.Event, error) {
+func (s *SqlRepository) GetEventListByMonth(ctx context.Context, date time.Time) ([]events.Event, error) {
 	year, month, _ := date.Date()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -159,7 +163,7 @@ func (s *Repository) GetEventListByMonth(ctx context.Context, date time.Time) ([
 	return parseRows(rows)
 }
 
-func (s *Repository) GetEventByID(ctx context.Context, id int64) (events.Event, error) {
+func (s *SqlRepository) GetEventByID(ctx context.Context, id int64) (events.Event, error) {
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
 		FROM events
