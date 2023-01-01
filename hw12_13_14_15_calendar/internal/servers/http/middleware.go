@@ -1,8 +1,9 @@
-package internalhttp
+package serverhttp
 
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
@@ -20,4 +21,16 @@ func (s *Server) loggingMiddleware(next http.Handler) http.Handler {
 				userAgent(r),
 			))
 	})
+}
+
+func requestAddr(r *http.Request) string {
+	return strings.Split(r.RemoteAddr, ":")[0]
+}
+
+func userAgent(r *http.Request) string {
+	userAgents := r.Header["User-Agent"]
+	if len(userAgents) > 0 {
+		return "\"" + userAgents[0] + "\""
+	}
+	return ""
 }

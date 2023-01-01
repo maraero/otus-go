@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package event;
+
+option go_package = "./;generated_grpc_event_service";
+
+import "google/protobuf/timestamp.proto";
+
+message Event {
+    int64 id = 1;
+    string title = 2;
+    google.protobuf.Timestamp date_start = 3;
+    google.protobuf.Timestamp date_end = 4;
+    string description = 5;
+    string user_id = 6;
+    google.protobuf.Timestamp date_notification = 7;
+    bool deleted = 8;
+}
+
+
+service EventService {
+    rpc CreateEvent(Event) returns (CreateEventResponse) {}
+    rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResponse) {}
+    rpc DeleteEvent(DeleteEventRequest) returns (DeleteEventResponse) {}
+    rpc GetEventListByDate(EventListRequest) returns (EventListResponse) {}
+    rpc GetEventListByWeek(EventListRequest) returns (EventListResponse) {}
+    rpc GetEventListByMonth(EventListRequest) returns (EventListResponse) {}
+    rpc GetEventByID(GetEventByIDRequest) returns (Event) {}
+}
+
+message CreateEventResponse {
+    int64 id = 1;
+}
+
+message UpdateEventRequest {
+    int64 id = 1;
+    Event event = 2;
+}
+message UpdateEventResponse {}
+
+message DeleteEventRequest {
+    int64 id = 1;
+}
+message DeleteEventResponse {}
+
+message EventListRequest {
+    google.protobuf.Timestamp date = 1;
+}
+message EventListResponse {
+    repeated Event events = 1;
+}
+
+message GetEventByIDRequest {
+    int64 id = 1;
+}

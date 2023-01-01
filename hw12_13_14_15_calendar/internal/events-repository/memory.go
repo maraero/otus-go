@@ -1,4 +1,4 @@
-package memorystorage
+package eventsrepository
 
 import (
 	"context"
@@ -6,20 +6,20 @@ import (
 	"sync"
 	"time"
 
-	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 )
 
-type Storage struct {
+type MemoryRepository struct {
 	sync.RWMutex
-	events map[int64]evt.Event
+	events map[int64]events.Event
 	last   int64
 }
 
-func New() *Storage {
-	return &Storage{events: make(map[int64]evt.Event)}
+func newMemoryRepository() *MemoryRepository {
+	return &MemoryRepository{events: make(map[int64]events.Event)}
 }
 
-func (s *Storage) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
+func (s *MemoryRepository) CreateEvent(_ context.Context, e events.Event) (int64, error) {
 	s.Lock()
 	defer s.Unlock()
 	id := s.next()
@@ -28,32 +28,32 @@ func (s *Storage) CreateEvent(_ context.Context, e evt.Event) (int64, error) {
 	return id, nil
 }
 
-func (s *Storage) UpdateEvent(_ context.Context, id int64, e evt.Event) error {
+func (s *MemoryRepository) UpdateEvent(_ context.Context, id int64, e events.Event) error {
 	s.Lock()
 	defer s.Unlock()
 	if _, ok := s.events[id]; !ok {
-		return evt.ErrNotFound
+		return events.ErrNotFound
 	}
 	s.events[id] = e
 	return nil
 }
 
-func (s *Storage) DeleteEvent(_ context.Context, id int64) error {
+func (s *MemoryRepository) DeleteEvent(_ context.Context, id int64) error {
 	s.Lock()
 	defer s.Unlock()
 	event, ok := s.events[id]
 	if !ok {
-		return evt.ErrNotFound
+		return events.ErrNotFound
 	}
 	event.Deleted = true
 	s.events[id] = event
 	return nil
 }
 
-func (s *Storage) GetEventListByDate(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *MemoryRepository) GetEventListByDate(_ context.Context, date time.Time) ([]events.Event, error) {
 	s.Lock()
 	defer s.Unlock()
-	var res []evt.Event
+	var res []events.Event
 	year, month, day := date.Date()
 
 	for _, event := range s.events {
@@ -69,10 +69,10 @@ func (s *Storage) GetEventListByDate(_ context.Context, date time.Time) ([]evt.E
 	return order(res), nil
 }
 
-func (s *Storage) GetEventListByWeek(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *MemoryRepository) GetEventListByWeek(_ context.Context, date time.Time) ([]events.Event, error) {
 	s.Lock()
 	defer s.Unlock()
-	var res []evt.Event
+	var res []events.Event
 	year, week := date.ISOWeek()
 
 	for _, event := range s.events {
@@ -88,10 +88,10 @@ func (s *Storage) GetEventListByWeek(_ context.Context, date time.Time) ([]evt.E
 	return order(res), nil
 }
 
-func (s *Storage) GetEventListByMonth(_ context.Context, date time.Time) ([]evt.Event, error) {
+func (s *MemoryRepository) GetEventListByMonth(_ context.Context, date time.Time) ([]events.Event, error) {
 	s.Lock()
 	defer s.Unlock()
-	var res []evt.Event
+	var res []events.Event
 	year, month, _ := date.Date()
 
 	for _, event := range s.events {
@@ -107,12 +107,21 @@ func (s *Storage) GetEventListByMonth(_ context.Context, date time.Time) ([]evt.
 	return order(res), nil
 }
 
-func (s *Storage) next() int64 {
+func (s *MemoryRepository) GetEventByID(_ context.Context, id int64) (events.Event, error) {
+	res, ok := s.events[id]
+	if ok {
+		return res, nil
+	}
+
+	return events.Event{}, events.ErrNotFound
+}
+
+func (s *MemoryRepository) next() int64 {
 	s.last++
 	return s.last
 }
 
-func order(events []evt.Event) []evt.Event {
+func order(events []events.Event) []events.Event {
 	sort.Slice(events, func(i, j int) bool {
 		return events[i].DateStart.Before(events[j].DateStart)
 	})

@@ -1,19 +1,18 @@
-package memorystorage
+package eventsrepository
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
-	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
 func TestCreateEvent(t *testing.T) {
-	storage := New()
-	newEvent := evt.Event{
+	storage := newMemoryRepository()
+	newEvent := events.Event{
 		Title:     "create test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
@@ -22,13 +21,12 @@ func TestCreateEvent(t *testing.T) {
 	id, err := storage.CreateEvent(context.Background(), newEvent)
 	require.NoError(t, err)
 	require.Equal(t, id, int64(1))
-	fmt.Println(storage.events)
 	require.Equal(t, newEvent.Title, storage.events[id].Title)
 }
 
 func TestUpdateEvent(t *testing.T) {
-	storage := New()
-	initialEvent := evt.Event{
+	storage := newMemoryRepository()
+	initialEvent := events.Event{
 		Title:     "update test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
@@ -36,7 +34,7 @@ func TestUpdateEvent(t *testing.T) {
 	}
 	err := storage.UpdateEvent(context.Background(), int64(5), initialEvent)
 	require.Error(t, err)
-	require.Equal(t, err, evt.ErrNotFound)
+	require.Equal(t, err, events.ErrNotFound)
 	id, err := storage.CreateEvent(context.Background(), initialEvent)
 	require.NoError(t, err)
 	require.Equal(t, id, int64(1))
@@ -49,8 +47,8 @@ func TestUpdateEvent(t *testing.T) {
 }
 
 func TestDeleteEvent(t *testing.T) {
-	storage := New()
-	initialEvent := evt.Event{
+	storage := newMemoryRepository()
+	initialEvent := events.Event{
 		Title:     "test event",
 		DateStart: time.Now(),
 		DateEnd:   time.Now().Add(2 * time.Hour),
@@ -58,7 +56,7 @@ func TestDeleteEvent(t *testing.T) {
 	}
 	err := storage.DeleteEvent(context.Background(), int64(5))
 	require.Error(t, err)
-	require.Equal(t, err, evt.ErrNotFound)
+	require.Equal(t, err, events.ErrNotFound)
 	id, err := storage.CreateEvent(context.Background(), initialEvent)
 	require.NoError(t, err)
 	err = storage.DeleteEvent(context.Background(), id)
@@ -66,9 +64,9 @@ func TestDeleteEvent(t *testing.T) {
 	require.True(t, storage.events[id].Deleted)
 }
 
-type MemoryStorageSuite struct {
+type MemoryRepositorySuite struct {
 	suite.Suite
-	storage *Storage
+	storage *MemoryRepository
 }
 
 var (
@@ -77,10 +75,10 @@ var (
 	monthDuration = 30 * dayDuration // not precisely
 )
 
-func (m *MemoryStorageSuite) SetupTest() {
-	m.storage = New()
+func (m *MemoryRepositorySuite) SetupTest() {
+	m.storage = newMemoryRepository()
 
-	m.storage.events = map[int64]evt.Event{
+	m.storage.events = map[int64]events.Event{
 		1: {
 			ID:        int64(1),
 			Title:     "title 1",
@@ -105,7 +103,7 @@ func (m *MemoryStorageSuite) SetupTest() {
 	}
 }
 
-func (m *MemoryStorageSuite) TestGetEventListByDate() {
+func (m *MemoryRepositorySuite) TestGetEventListByDate() {
 	m.Run("success event list by date", func() {
 		res, err := m.storage.GetEventListByDate(context.Background(), time.Now())
 		require.NoError(m.T(), err)
@@ -120,7 +118,7 @@ func (m *MemoryStorageSuite) TestGetEventListByDate() {
 	})
 }
 
-func (m *MemoryStorageSuite) TestGetEventListByWeek() {
+func (m *MemoryRepositorySuite) TestGetEventListByWeek() {
 	m.Run("success event list by week", func() {
 		res, err := m.storage.GetEventListByWeek(context.Background(), time.Now().Add(2*weekDuration))
 		require.NoError(m.T(), err)
@@ -135,7 +133,7 @@ func (m *MemoryStorageSuite) TestGetEventListByWeek() {
 	})
 }
 
-func (m *MemoryStorageSuite) TestGetEventListByMonth() {
+func (m *MemoryRepositorySuite) TestGetEventListByMonth() {
 	m.Run("success event list by month", func() {
 		res, err := m.storage.GetEventListByMonth(context.Background(), time.Now().Add(2*monthDuration))
 		require.NoError(m.T(), err)
@@ -150,6 +148,6 @@ func (m *MemoryStorageSuite) TestGetEventListByMonth() {
 	})
 }
 
-func TestMemoryStorageSuite(t *testing.T) {
-	suite.Run(t, new(MemoryStorageSuite))
+func TestMemoryRepositorySuite(t *testing.T) {
+	suite.Run(t, new(MemoryRepositorySuite))
 }

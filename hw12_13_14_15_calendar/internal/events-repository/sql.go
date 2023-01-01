@@ -1,22 +1,22 @@
-package sqlstorage
+package eventsrepository
 
 import (
 	"context"
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	evt "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/domain"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
 )
 
-type Storage struct {
+type SQLRepository struct {
 	db *sqlx.DB
 }
 
-func New(dbConn *sqlx.DB) *Storage {
-	return &Storage{db: dbConn}
+func newSQLRepository(dbConn *sqlx.DB) *SQLRepository {
+	return &SQLRepository{db: dbConn}
 }
 
-func (s *Storage) CreateEvent(ctx context.Context, e evt.Event) (int64, error) {
+func (s *SQLRepository) CreateEvent(ctx context.Context, e events.Event) (int64, error) {
 	sql := `
 		INSERT INTO events (
 			title,
@@ -41,7 +41,7 @@ func (s *Storage) CreateEvent(ctx context.Context, e evt.Event) (int64, error) {
 		"title":             e.Title,
 		"date_start":        e.DateStart,
 		"date_end":          e.DateEnd,
-		"description":       e.Descripion,
+		"description":       e.Description,
 		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
 		"deleted":           e.Deleted,
@@ -52,7 +52,7 @@ func (s *Storage) CreateEvent(ctx context.Context, e evt.Event) (int64, error) {
 	return result.LastInsertId()
 }
 
-func (s *Storage) UpdateEvent(ctx context.Context, id int64, e evt.Event) error {
+func (s *SQLRepository) UpdateEvent(ctx context.Context, id int64, e events.Event) error {
 	sql := `
 		UPDATE events
 		SET
@@ -67,7 +67,7 @@ func (s *Storage) UpdateEvent(ctx context.Context, id int64, e evt.Event) error 
 		"title":             e.Title,
 		"date_start":        e.DateStart,
 		"date_end":          e.DateEnd,
-		"description":       e.Descripion,
+		"description":       e.Description,
 		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
 		"deleted":           e.Deleted,
@@ -80,12 +80,12 @@ func (s *Storage) UpdateEvent(ctx context.Context, id int64, e evt.Event) error 
 		return err
 	}
 	if count == 0 {
-		return evt.ErrNotFound
+		return events.ErrNotFound
 	}
 	return nil
 }
 
-func (s *Storage) DeleteEvent(ctx context.Context, id int64) error {
+func (s *SQLRepository) DeleteEvent(ctx context.Context, id int64) error {
 	sql := "UPDATE events SET deleted = :deleted WHERE id = :id"
 	result, err := s.db.NamedExecContext(ctx, sql, map[string]interface{}{"id": id})
 	if err != nil {
@@ -96,12 +96,12 @@ func (s *Storage) DeleteEvent(ctx context.Context, id int64) error {
 		return err
 	}
 	if count == 0 {
-		return evt.ErrNotFound
+		return events.ErrNotFound
 	}
 	return nil
 }
 
-func (s *Storage) GetEventListByDate(ctx context.Context, date time.Time) ([]evt.Event, error) {
+func (s *SQLRepository) GetEventListByDate(ctx context.Context, date time.Time) ([]events.Event, error) {
 	year, month, day := date.Date()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -119,12 +119,12 @@ func (s *Storage) GetEventListByDate(ctx context.Context, date time.Time) ([]evt
 		"day":   day,
 	})
 	if err != nil {
-		return []evt.Event{}, err
+		return []events.Event{}, err
 	}
 	return parseRows(rows)
 }
 
-func (s *Storage) GetEventListByWeek(ctx context.Context, date time.Time) ([]evt.Event, error) {
+func (s *SQLRepository) GetEventListByWeek(ctx context.Context, date time.Time) ([]events.Event, error) {
 	year, week := date.ISOWeek()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -140,12 +140,12 @@ func (s *Storage) GetEventListByWeek(ctx context.Context, date time.Time) ([]evt
 		"week": week,
 	})
 	if err != nil {
-		return []evt.Event{}, err
+		return []events.Event{}, err
 	}
 	return parseRows(rows)
 }
 
-func (s *Storage) GetEventListByMonth(ctx context.Context, date time.Time) ([]evt.Event, error) {
+func (s *SQLRepository) GetEventListByMonth(ctx context.Context, date time.Time) ([]events.Event, error) {
 	year, month, _ := date.Date()
 	sql := `
 		SELECT id, title, date_start, date_end, description, user_id, date_notification
@@ -156,25 +156,36 @@ func (s *Storage) GetEventListByMonth(ctx context.Context, date time.Time) ([]ev
 			deleted = false
 		ORDER BY date_start
 	`
-	rows, err := s.db.NamedQueryContext(ctx, sql, map[string]interface{}{
-		"year":  year,
-		"month": month,
-	})
+	rows, err := s.db.NamedQueryContext(ctx, sql, map[string]interface{}{"year": year, "month": month})
 	if err != nil {
-		return []evt.Event{}, err
+		return []events.Event{}, err
 	}
 	return parseRows(rows)
 }
 
-func parseRows(rows *sqlx.Rows) ([]evt.Event, error) {
-	var events []evt.Event
+func (s *SQLRepository) GetEventByID(ctx context.Context, id int64) (events.Event, error) {
+	sql := `
+		SELECT id, title, date_start, date_end, description, user_id, date_notification
+		FROM events
+		WHERE id = $1
+	`
+	event := events.Event{}
+	err := s.db.Get(&event, sql, id)
+	if err != nil {
+		return events.Event{}, err
+	}
+	return event, nil
+}
+
+func parseRows(rows *sqlx.Rows) ([]events.Event, error) {
+	var eventList []events.Event
 	for rows.Next() {
-		var e evt.Event
+		var e events.Event
 		err := rows.StructScan(e)
 		if err != nil {
-			return []evt.Event{}, err
+			return []events.Event{}, err
 		}
-		events = append(events, e)
+		eventList = append(eventList, e)
 	}
-	return events, nil
+	return eventList, nil
 }

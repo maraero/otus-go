@@ -2,18 +2,23 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"log"
-	"os"
+	"net/http"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
-	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/event-service/service"
+	er "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events-repository"
+	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events-service"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
-	internalhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/server/http"
+	servergrpc "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc"
+	serverhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/http"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 )
 
 var configFile string
@@ -43,40 +48,74 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	dbConnection := newDBConnection(ctx, logger, config.Storage)
-	defer func() {
-		if dbConnection != nil {
-			err := dbConnection.Close()
-			if err != nil {
-				log.Fatal("can not close database connection: %w", err)
-			}
+	strg := storage.New(ctx, logger, config.Storage)
+	eventsRepository := er.New(strg)
+	eventsService := es.New(eventsRepository)
+	calendar := app.New(eventsService, logger)
+
+	httpServer := serverhttp.New(calendar, config.Server)
+	go func() {
+		err = httpServer.Start()
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			logger.Error("http server closed:", err)
+			cancel()
 		}
 	}()
 
-	if dbConnection != nil {
-		migrate(dbConnection.DB, logger)
-	}
-
-	eventService := es.New(dbConnection)
-	calendar := app.New(logger, eventService)
-	server := internalhttp.New(logger, calendar, config.Server)
-
+	grpcServer := servergrpc.New(calendar, config.Server)
 	go func() {
-		<-ctx.Done()
-
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-		defer cancel()
-
-		if err := server.Stop(ctx); err != nil {
-			logger.Error("failed to stop http server: " + err.Error())
+		err = grpcServer.Start()
+		if err != nil {
+			logger.Error("grpc server closed:", err)
+			cancel()
 		}
 	}()
 
 	logger.Info("calendar is running...")
+	<-ctx.Done()
+	shutDown(strg, httpServer, grpcServer, logger)
+}
 
-	if err := server.Start(); err != nil {
-		logger.Error("failed to start http server: " + err.Error())
-		cancel()
-		os.Exit(1) //nolint:gocritic
-	}
+func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *servergrpc.Server, logger *l.Log) {
+	logger.Info("calendar is turning off...")
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+
+	wg := &sync.WaitGroup{}
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if strg.Connection != nil {
+			err := strg.Connection.Close()
+			if err != nil {
+				logger.Error("can not close database connection: %w", err)
+			} else {
+				logger.Info("database connection closed")
+			}
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := httpServer.Stop(ctx); err != nil {
+			logger.Error("failed to stop http server: " + err.Error())
+		} else {
+			logger.Info("http server closed")
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if err := grpcServer.Stop(); err != nil {
+			logger.Error("failed to stop grpc server: " + err.Error())
+		} else {
+			logger.Info("grpc server closed")
+		}
+	}()
+
+	wg.Wait()
+	logger.Info("calendar stopped")
 }
