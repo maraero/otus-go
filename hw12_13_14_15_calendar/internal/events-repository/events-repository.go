@@ -23,7 +23,7 @@ func New(strg *storage.Storage) EventsRepository {
 	case storage.StorageInMemory:
 		return newMemoryRepository()
 	case storage.StorageSQL:
-		return newSqlRepository(strg.Connection)
+		return newSQLRepository(strg.Connection)
 	default:
 		return newMemoryRepository()
 	}
