@@ -20,12 +20,7 @@ func (es *EventsService) CreateEvent(ctx context.Context, e events.Event) (id in
 	if err = e.Validate(); err != nil {
 		return 0, err
 	}
-
-	id, err = es.repository.CreateEvent(ctx, e)
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
+	return es.repository.CreateEvent(ctx, e)
 }
 
 func (es *EventsService) UpdateEvent(ctx context.Context, id int64, e events.Event) error {
