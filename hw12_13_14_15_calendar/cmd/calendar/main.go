@@ -6,7 +6,6 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"os"
 	"os/signal"
 	"sync"
 	"syscall"
@@ -45,8 +44,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	go watchSignals(cancel)
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
 	strg := storage.New(ctx, logger, config.Storage)
@@ -74,14 +72,6 @@ func main() {
 	logger.Info("calendar is running...")
 	<-ctx.Done()
 	shutDown(strg, httpServer, grpcServer, logger)
-}
-
-func watchSignals(cancel context.CancelFunc) {
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
-
-	<-signals
-	cancel()
 }
 
 func shutDown(strg *storage.Storage, httpServer *serverhttp.Server, grpcServer *servergrpc.Server, logger *l.Log) {
