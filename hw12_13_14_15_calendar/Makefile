@@ -13,9 +13,9 @@ build-migrator:
 
 # Run
 run-app: build-app
-	$(BIN_APP) -config ./configs/config.json
+	$(BIN_APP) -config ./configs/calendar_config.json
 run-migrator: build-migrator
-	$(BIN_MIGRATOR) -config ./configs/config.json
+	$(BIN_MIGRATOR) -config ./configs/calendar_config.json
 
 # Docker
 build-img:
