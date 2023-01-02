@@ -9,3 +9,14 @@ services:
       - ./dev-data/postgres:/data/postgres
     env_file:
       - docker.env
+
+  message-broker:
+    image: rabbitmq:3-management-alpine
+    container_name: message-broker
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./dev-data/rabbitmq/data/:/var/lib/rabbitmq
+      - ./dev-data/rabbitmq/log/:/var/log/rabbitmq
+    restart: always
