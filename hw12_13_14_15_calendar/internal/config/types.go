@@ -1,6 +1,6 @@
 package config
 
-type Config struct {
+type CalendarConfig struct {
 	Logger  Logger  `json:"logger"`
 	Server  Server  `json:"server"`
 	Storage Storage `json:"storage"`

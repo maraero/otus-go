@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewConfig(t *testing.T) {
+func TestNewCalendarConfig(t *testing.T) {
 	t.Run("valid", func(t *testing.T) {
-		c := Config{
+		c := CalendarConfig{
 			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
@@ -24,13 +24,13 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		config, err := New(tmpFilename)
+		config, err := NewCalendarConfig(tmpFilename)
 		require.NoError(t, err)
 		require.Equal(t, c, config)
 	})
 
 	t.Run("invalid storage type - used default", func(t *testing.T) {
-		c := Config{
+		c := CalendarConfig{
 			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
@@ -43,7 +43,7 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		config, err := New(tmpFilename)
+		config, err := NewCalendarConfig(tmpFilename)
 		require.NoError(t, err)
 		require.Equal(t, config.Logger, c.Logger)
 		require.Equal(t, config.Server, c.Server)
@@ -51,7 +51,7 @@ func TestNewConfig(t *testing.T) {
 	})
 
 	t.Run("can not open conig file", func(t *testing.T) {
-		_, err := New("UNKNOWN_PATH")
+		_, err := NewCalendarConfig("UNKNOWN_PATH")
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrFailedOpenConfigFile)
 	})
@@ -59,7 +59,7 @@ func TestNewConfig(t *testing.T) {
 	t.Run("can not read config (not json)", func(t *testing.T) {
 		tmpFilename := createTmpFile(t, "")
 		defer os.Remove(tmpFilename)
-		_, err := New(tmpFilename)
+		_, err := NewCalendarConfig(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrFailedReadConfig)
 	})
@@ -68,13 +68,13 @@ func TestNewConfig(t *testing.T) {
 		c := "\"{\"Logger\":{\"Level\":\"debug\"},\"Server\":{},\"Storage\":{}}\""
 		tmpFilename := createTmpFile(t, c)
 		defer os.Remove(tmpFilename)
-		_, err := New(tmpFilename)
+		_, err := NewCalendarConfig(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrFailedReadConfig)
 	})
 
 	t.Run("missing DSN for SQL storage", func(t *testing.T) {
-		c := Config{
+		c := CalendarConfig{
 			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout", "/tmp/logs"},
@@ -87,13 +87,13 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		_, err = New(tmpFilename)
+		_, err = NewCalendarConfig(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrMissingDSN)
 	})
 
 	t.Run("missing output paths for logger", func(t *testing.T) {
-		c := Config{
+		c := CalendarConfig{
 			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{},
@@ -106,13 +106,13 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		_, err = New(tmpFilename)
+		_, err = NewCalendarConfig(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrMissingOutputPaths)
 	})
 
 	t.Run("missing output paths for logger", func(t *testing.T) {
-		c := Config{
+		c := CalendarConfig{
 			Logger: Logger{
 				Level:            "debug",
 				OutputPaths:      []string{"stdout"},
@@ -125,7 +125,7 @@ func TestNewConfig(t *testing.T) {
 		require.NoError(t, err)
 		tmpFilename := createTmpFile(t, string(b))
 		defer os.Remove(tmpFilename)
-		_, err = New(tmpFilename)
+		_, err = NewCalendarConfig(tmpFilename)
 		require.Error(t, err)
 		require.ErrorContains(t, err, ErrMissingErrOutputPaths)
 	})

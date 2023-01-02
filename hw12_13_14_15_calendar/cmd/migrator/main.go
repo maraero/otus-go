@@ -19,7 +19,7 @@ func init() {
 func main() {
 	flag.Parse()
 
-	config, err := config.New(configFile)
+	config, err := config.NewCalendarConfig(configFile)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -35,7 +35,7 @@ func main() {
 		return
 	}
 
-	config, err := config.New(configFile)
+	config, err := config.NewCalendarConfig(configFile)
 	if err != nil {
 		log.Fatal(err)
 	}

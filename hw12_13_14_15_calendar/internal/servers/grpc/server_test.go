@@ -28,7 +28,7 @@ type SuiteTest struct {
 	closer func()
 }
 
-func buildTestConfig() config.Config {
+func buildTestConfig() config.CalendarConfig {
 	loggerConfig := config.Logger{
 		Level:            "info",
 		OutputPaths:      []string{"stdout"},
@@ -44,7 +44,7 @@ func buildTestConfig() config.Config {
 		Driver: "postgres",
 		DSN:    "postgresql://admin:admin@localhost:5432/calendar?sslmode=disable",
 	}
-	return config.Config{
+	return config.CalendarConfig{
 		Logger:  loggerConfig,
 		Server:  serverConfig,
 		Storage: storageConfig,

@@ -7,21 +7,21 @@ import (
 	"os"
 )
 
-func New(configFilePath string) (Config, error) {
+func NewCalendarConfig(configFilePath string) (CalendarConfig, error) {
 	file, err := os.Open(configFilePath)
 	if err != nil {
-		return Config{}, fmt.Errorf("%v: %w", ErrFailedOpenConfigFile, err)
+		return CalendarConfig{}, fmt.Errorf("%v: %w", ErrFailedOpenConfigFile, err)
 	}
 	defer file.Close()
 
-	c, err := parseConfigFromFile(file)
+	c, err := parseCalendarConfigFromFile(file)
 	if err != nil {
-		return Config{}, err
+		return CalendarConfig{}, err
 	}
 
-	err = validateConfig(c)
+	err = validateCalendarConfig(c)
 	if err != nil {
-		return Config{}, err
+		return CalendarConfig{}, err
 	}
 
 	return c, nil
@@ -35,17 +35,17 @@ func getStorageType(t string) string {
 	return StorageInMemory
 }
 
-func parseConfigFromFile(f *os.File) (Config, error) {
-	var config Config
+func parseCalendarConfigFromFile(f *os.File) (CalendarConfig, error) {
+	var config CalendarConfig
 	err := json.NewDecoder(f).Decode(&config)
 	if err != nil {
-		return Config{}, fmt.Errorf("%v: %w", ErrFailedReadConfig, err)
+		return CalendarConfig{}, fmt.Errorf("%v: %w", ErrFailedReadConfig, err)
 	}
 	config.Storage.Type = getStorageType(config.Storage.Type)
 	return config, nil
 }
 
-func validateConfig(c Config) error {
+func validateCalendarConfig(c CalendarConfig) error {
 	err := validateConfigLogger(c.Logger)
 	if err != nil {
 		return err
