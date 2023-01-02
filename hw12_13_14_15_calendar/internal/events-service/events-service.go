@@ -20,6 +20,9 @@ func (es *EventsService) CreateEvent(ctx context.Context, e events.Event) (id in
 	if err = e.Validate(); err != nil {
 		return 0, err
 	}
+	if !e.DateNotification.IsZero() && (e.DateNotification.Before(e.DateStart) || e.DateNotification.Before(time.Now())) {
+		e.DateNotification = time.Time{}
+	}
 	return es.repository.CreateEvent(ctx, e)
 }
 
