@@ -1,0 +1,16 @@
+{
+  "logger": {
+    "level": "info",
+    "outputPaths": ["./logs/log.log", "stdout"],
+    "errorOutputPaths": ["./logs/log.log", "stderr"]
+  },
+  "rmq": {
+    "uri": "amqp://guest:guest@message-broker:5672/",
+    "exchange": "calendar-exchange",
+    "exchangeType": "topic",
+    "queue": "calendar-sender",
+    "bindingKey": "notification.send.cmd",
+    "consumerTag": "calendar-sender",
+    "lifetime": "0s"
+  }
+}
