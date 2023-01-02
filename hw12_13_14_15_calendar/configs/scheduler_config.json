@@ -7,10 +7,6 @@
   "rmq": {
     "uri": "amqp://guest:guest@message-broker:5672/",
     "exchange": "calendar-exchange",
-    "exchangeType": "topic",
-    "queue": "calendar-scheduler",
-    "bindingKey": "notification.send.cmd",
-    "consumerTag": "calendar-scheduler",
-    "lifetime": "0s"
+    "exchangeType": "topic"
   }
 }

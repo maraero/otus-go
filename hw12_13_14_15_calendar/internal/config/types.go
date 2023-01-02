@@ -1,7 +1,5 @@
 package config
 
-import "time"
-
 type CalendarConfig struct {
 	Logger  Logger  `json:"logger"`
 	Server  Server  `json:"server"`
@@ -9,13 +7,13 @@ type CalendarConfig struct {
 }
 
 type SchedulerConfig struct {
-	Logger Logger `json:"logger"`
-	RMQ    RMQ    `json:"rmq"`
+	Logger Logger       `json:"logger"`
+	RMQ    RMQScheduler `json:"rmq"`
 }
 
 type SenderConfig struct {
-	Logger Logger `json:"logger"`
-	RMQ    RMQ    `json:"rmq"`
+	Logger Logger    `json:"logger"`
+	RMQ    RMQSender `json:"rmq"`
 }
 
 type Logger struct {
@@ -37,11 +35,17 @@ type Storage struct {
 }
 
 type RMQ struct {
-	URI          string    `json:"uri"`
-	Exchange     string    `json:"exchange"`
-	ExchangeType string    `json:"exchangeType"`
-	Queue        string    `json:"queue"`
-	BindingKey   string    `json:"bindingKey"`
-	ConsumerTag  string    `json:"consumerTag"`
-	Lifetime     time.Time `json:"lifetime"`
+	URI          string `json:"uri"`
+	Exchange     string `json:"exchange"`
+	ExchangeType string `json:"exchangeType"`
+}
+
+type RMQScheduler struct {
+	RMQ
+}
+
+type RMQSender struct {
+	RMQ
+	Queue       string `json:"queue"`
+	ConsumerTag string `json:"consumerTag"`
 }

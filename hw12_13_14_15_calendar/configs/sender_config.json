@@ -9,8 +9,6 @@
     "exchange": "calendar-exchange",
     "exchangeType": "topic",
     "queue": "calendar-sender",
-    "bindingKey": "notification.send.cmd",
-    "consumerTag": "calendar-sender",
-    "lifetime": "0s"
+    "consumerTag": "calendar-sender"
   }
 }
