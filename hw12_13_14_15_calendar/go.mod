@@ -4,9 +4,11 @@ go 1.16
 
 require (
 	github.com/gorilla/mux v1.8.0
+	github.com/isayme/go-amqp-reconnect v0.0.0-20210303120416-fc811b0bcda2
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/pressly/goose/v3 v3.7.0
+	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.1
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
