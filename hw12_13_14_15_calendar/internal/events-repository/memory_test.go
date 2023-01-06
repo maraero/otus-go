@@ -61,7 +61,8 @@ func TestDeleteEvent(t *testing.T) {
 	require.NoError(t, err)
 	err = storage.DeleteEvent(context.Background(), id)
 	require.NoError(t, err)
-	require.True(t, storage.events[id].Deleted)
+	_, ok := storage.events[id]
+	require.False(t, ok)
 }
 
 type MemoryRepositorySuite struct {

@@ -89,7 +89,6 @@ func grpcEventToDomainEvent(grpcEvent *gges.Event) events.Event {
 		Description:      grpcEvent.Description,
 		UserID:           grpcEvent.UserId,
 		DateNotification: grpcEvent.DateNotification.AsTime(),
-		Deleted:          grpcEvent.Deleted,
 	}
 }
 
@@ -102,7 +101,6 @@ func domainEventToGrpcEvent(domainEvent events.Event) gges.Event {
 		Description:      domainEvent.Description,
 		UserId:           domainEvent.UserID,
 		DateNotification: timestamppb.New(domainEvent.DateNotification),
-		Deleted:          domainEvent.Deleted,
 	}
 }
 

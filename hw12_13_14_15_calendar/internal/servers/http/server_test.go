@@ -305,13 +305,7 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
-		response, err = io.ReadAll(res.Body)
-		s.Require().NoError(err)
-		defer res.Body.Close()
-		evtResponseJSON := events.Event{}
-		err = json.Unmarshal(response, &evtResponseJSON)
-		s.Require().NoError(err)
-		s.Require().Equal(true, evtResponseJSON.Deleted)
+		s.Require().Equal(http.StatusNotFound, res.StatusCode)
 	})
 
 	s.Run("bad request", func() {

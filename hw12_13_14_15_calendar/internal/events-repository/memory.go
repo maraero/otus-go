@@ -41,12 +41,11 @@ func (s *MemoryRepository) UpdateEvent(_ context.Context, id int64, e events.Eve
 func (s *MemoryRepository) DeleteEvent(_ context.Context, id int64) error {
 	s.Lock()
 	defer s.Unlock()
-	event, ok := s.events[id]
+	_, ok := s.events[id]
 	if !ok {
 		return events.ErrNotFound
 	}
-	event.Deleted = true
-	s.events[id] = event
+	delete(s.events, id)
 	return nil
 }
 
@@ -57,9 +56,6 @@ func (s *MemoryRepository) GetEventListByDate(_ context.Context, date time.Time)
 	year, month, day := date.Date()
 
 	for _, event := range s.events {
-		if event.Deleted {
-			continue
-		}
 		eYear, eMonth, eDay := event.DateStart.Date()
 		if eDay == day && eMonth == month && eYear == year {
 			res = append(res, event)
@@ -76,9 +72,6 @@ func (s *MemoryRepository) GetEventListByWeek(_ context.Context, date time.Time)
 	year, week := date.ISOWeek()
 
 	for _, event := range s.events {
-		if event.Deleted {
-			continue
-		}
 		eYear, eWeek := event.DateStart.ISOWeek()
 		if eWeek == week && eYear == year {
 			res = append(res, event)
@@ -95,9 +88,6 @@ func (s *MemoryRepository) GetEventListByMonth(_ context.Context, date time.Time
 	year, month, _ := date.Date()
 
 	for _, event := range s.events {
-		if event.Deleted {
-			continue
-		}
 		eYear, eMonth, _ := event.DateStart.Date()
 		if eMonth == month && eYear == year {
 			res = append(res, event)

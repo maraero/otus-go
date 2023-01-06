@@ -14,7 +14,6 @@ message Event {
     string description = 5;
     string user_id = 6;
     google.protobuf.Timestamp date_notification = 7;
-    bool deleted = 8;
 }
 
 

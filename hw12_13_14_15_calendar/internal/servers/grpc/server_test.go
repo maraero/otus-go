@@ -113,7 +113,6 @@ func (s *SuiteTest) TestCreateEvent() {
 			Description:      "test description",
 			UserId:           "test user id",
 			DateNotification: timestamppb.New(time.Time{}),
-			Deleted:          false,
 		}
 		out, err := s.client.CreateEvent(ctx, in)
 		s.Require().NoError(err)
@@ -130,7 +129,6 @@ func (s *SuiteTest) TestCreateEvent() {
 			Description:      "test description",
 			UserId:           "test user id",
 			DateNotification: timestamppb.New(time.Time{}),
-			Deleted:          false,
 		}
 		out, err := s.client.CreateEvent(ctx, in)
 		s.Require().Error(err)
@@ -149,7 +147,6 @@ func (s *SuiteTest) TestUpdateEvent() {
 			Description:      "test description",
 			UserId:           "test user id",
 			DateNotification: timestamppb.New(time.Time{}),
-			Deleted:          false,
 		}
 		createdOut, err := s.client.CreateEvent(ctx, createdIn)
 		s.Require().NoError(err)
@@ -174,7 +171,6 @@ func (s *SuiteTest) TestUpdateEvent() {
 			Description:      "test description",
 			UserId:           "test user id",
 			DateNotification: timestamppb.New(time.Time{}),
-			Deleted:          false,
 		}
 		in := &gges.UpdateEventRequest{
 			Id:    0,
@@ -197,7 +193,6 @@ func (s *SuiteTest) TestDeleteEvent() {
 			Description:      "test description",
 			UserId:           "test user id",
 			DateNotification: timestamppb.New(time.Time{}),
-			Deleted:          false,
 		}
 		createdOut, err := s.client.CreateEvent(ctx, createdIn)
 		s.Require().NoError(err)
@@ -209,10 +204,8 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().NotNil(out)
 
 		getEventIn := &gges.GetEventByIDRequest{Id: createdOut.Id}
-		getEventOut, err := s.client.GetEventByID(ctx, getEventIn)
-		s.Require().NoError(err)
-		s.Require().NotNil(getEventOut)
-		s.Require().Equal(true, getEventOut.Deleted)
+		_, err = s.client.GetEventByID(ctx, getEventIn)
+		s.Require().Error(err)
 	})
 
 	s.Run("invalid argument", func() {
@@ -254,7 +247,6 @@ func (s *SuiteTest) TestGetEventListByDate() {
 				Description:      "test description",
 				UserId:           "test user id",
 				DateNotification: timestamppb.New(time.Time{}),
-				Deleted:          false,
 			}
 			_, err := s.client.CreateEvent(ctx, evt)
 			s.Require().NoError(err)
@@ -299,7 +291,6 @@ func (s *SuiteTest) TestGetEventListByWeek() {
 				Description:      "test description",
 				UserId:           "test user id",
 				DateNotification: timestamppb.New(time.Time{}),
-				Deleted:          false,
 			}
 			_, err := s.client.CreateEvent(ctx, evt)
 			s.Require().NoError(err)
@@ -344,7 +335,6 @@ func (s *SuiteTest) TestGetEventListByMonth() {
 				Description:      "test description",
 				UserId:           "test user id",
 				DateNotification: timestamppb.New(time.Time{}),
-				Deleted:          false,
 			}
 			_, err := s.client.CreateEvent(ctx, evt)
 			s.Require().NoError(err)

@@ -25,7 +25,6 @@ func (s *SQLRepository) CreateEvent(ctx context.Context, e events.Event) (int64,
 			description,
 			user_id,
 			date_notification,
-			deleted
 		)
 		VALUES (
 			:title,
@@ -34,7 +33,6 @@ func (s *SQLRepository) CreateEvent(ctx context.Context, e events.Event) (int64,
 			:description,
 			:user_id,
 			:date_notification,
-			:deleted
 		)
 	`
 	result, err := s.db.NamedExecContext(ctx, sql, map[string]interface{}{
@@ -44,7 +42,6 @@ func (s *SQLRepository) CreateEvent(ctx context.Context, e events.Event) (int64,
 		"description":       e.Description,
 		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
-		"deleted":           e.Deleted,
 	})
 	if err != nil {
 		return 0, err
@@ -60,7 +57,6 @@ func (s *SQLRepository) UpdateEvent(ctx context.Context, id int64, e events.Even
 			date_start = :date_start,
 			date_end = :date_end,
 			description = :description,
-			deleted = :deleted
 		WHERE id = :id
 	`
 	result, err := s.db.NamedExecContext(ctx, sql, map[string]interface{}{
@@ -70,7 +66,6 @@ func (s *SQLRepository) UpdateEvent(ctx context.Context, id int64, e events.Even
 		"description":       e.Description,
 		"user_id":           e.UserID,
 		"date_notification": e.DateNotification,
-		"deleted":           e.Deleted,
 	})
 	if err != nil {
 		return err
@@ -86,7 +81,7 @@ func (s *SQLRepository) UpdateEvent(ctx context.Context, id int64, e events.Even
 }
 
 func (s *SQLRepository) DeleteEvent(ctx context.Context, id int64) error {
-	sql := "UPDATE events SET deleted = :deleted WHERE id = :id"
+	sql := "DELETE FROM events WHERE id = :id"
 	result, err := s.db.NamedExecContext(ctx, sql, map[string]interface{}{"id": id})
 	if err != nil {
 		return err
@@ -109,8 +104,7 @@ func (s *SQLRepository) GetEventListByDate(ctx context.Context, date time.Time) 
 		WHERE
 			YEAR(date_start) = :year AND
 			MONTH(date_start) = :month AND
-			DAY(date_start) = :day AND
-			deleted = false
+			DAY(date_start) = :day
 		ORDER BY date_start
 	`
 	rows, err := s.db.NamedQueryContext(ctx, sql, map[string]interface{}{
@@ -131,8 +125,7 @@ func (s *SQLRepository) GetEventListByWeek(ctx context.Context, date time.Time) 
 		FROM events
 		WHERE
 			YEAR(date_start) = :year AND
-			WEEK(date_start) = :week AND
-			deleted = false
+			WEEK(date_start) = :week
 		ORDER BY date_start
 	`
 	rows, err := s.db.NamedQueryContext(ctx, sql, map[string]interface{}{
@@ -152,8 +145,7 @@ func (s *SQLRepository) GetEventListByMonth(ctx context.Context, date time.Time)
 		FROM events
 		WHERE
 			YEAR(date_start) = :year AND
-			MONTH(date_start) = :month AND
-			deleted = false
+			MONTH(date_start) = :month
 		ORDER BY date_start
 	`
 	rows, err := s.db.NamedQueryContext(ctx, sql, map[string]interface{}{"year": year, "month": month})

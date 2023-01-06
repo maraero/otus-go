@@ -10,7 +10,6 @@ type Event struct {
 	Description      string    `db:"description" json:"description"`
 	UserID           string    `db:"user_id" json:"userId"`
 	DateNotification time.Time `db:"date_notification" json:"dateNotification"`
-	Deleted          bool      `db:"deleted" json:"deleted"`
 }
 
 func (e *Event) Validate() error {
