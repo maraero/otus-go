@@ -305,6 +305,7 @@ func (s *SuiteTest) TestDeleteEvent() {
 		s.Require().NoError(err)
 		res, err = client.Do(req)
 		s.Require().NoError(err)
+		defer res.Body.Close()
 		s.Require().Equal(http.StatusNotFound, res.StatusCode)
 	})
 
