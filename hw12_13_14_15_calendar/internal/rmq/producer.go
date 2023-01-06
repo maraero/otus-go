@@ -6,12 +6,12 @@ import (
 )
 
 type RMQProducer struct {
-	rmqc         *RMQConnection
+	rmqc         *Connection
 	channel      *rabbitmq.Channel
 	exchangeName string
 }
 
-func NewRMQProducer(rmqc *RMQConnection, exchangeName, exchangeType string) (*RMQProducer, error) {
+func NewRMQProducer(rmqc *Connection, exchangeName, exchangeType string) (*RMQProducer, error) {
 	channel, err := rmqc.OpenChannel()
 	if err != nil {
 		return nil, err

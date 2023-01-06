@@ -10,7 +10,7 @@ import (
 )
 
 type RMQConsumer struct {
-	rmqc        *RMQConnection
+	rmqc        *Connection
 	channel     *rabbitmq.Channel
 	consumerTag string
 	queueName   string
@@ -20,7 +20,7 @@ type Worker func(ctx context.Context, d amqp.Delivery) error
 
 func NewRMQConsumer(
 	ctx context.Context,
-	rmqc *RMQConnection,
+	rmqc *Connection,
 	exchangeName,
 	exchangeType,
 	queueName,

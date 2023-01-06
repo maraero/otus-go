@@ -7,21 +7,21 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 )
 
-type RMQConnection struct {
+type Connection struct {
 	conn        *rabbitmq.Connection
 	channelList []*rabbitmq.Channel
 	logger      *logger.Log
 }
 
-func NewRMQConnection(uri string, lggr *logger.Log) (*RMQConnection, error) {
+func NewRMQConnection(uri string, lggr *logger.Log) (*Connection, error) {
 	conn, err := rabbitmq.Dial(uri)
 	if err != nil {
 		return nil, fmt.Errorf("can not set up RMQ connection: %w", err)
 	}
-	return &RMQConnection{conn: conn}, nil
+	return &Connection{conn: conn}, nil
 }
 
-func (rmqc *RMQConnection) OpenChannel() (*rabbitmq.Channel, error) {
+func (rmqc *Connection) OpenChannel() (*rabbitmq.Channel, error) {
 	channel, err := rmqc.conn.Channel()
 	if err != nil {
 		return nil, fmt.Errorf("can not open RMQ channel: %w", err)
@@ -30,7 +30,7 @@ func (rmqc *RMQConnection) OpenChannel() (*rabbitmq.Channel, error) {
 	return channel, nil
 }
 
-func (rmqc *RMQConnection) Shutdown() {
+func (rmqc *Connection) Shutdown() {
 	for _, ch := range rmqc.channelList {
 		if err := ch.Close(); err != nil {
 			rmqc.logger.Error("can not close RMQ channel")
