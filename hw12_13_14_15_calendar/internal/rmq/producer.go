@@ -5,13 +5,13 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type RMQProducer struct {
+type Producer struct {
 	rmqc         *Connection
 	channel      *rabbitmq.Channel
 	exchangeName string
 }
 
-func NewRMQProducer(rmqc *Connection, exchangeName, exchangeType string) (*RMQProducer, error) {
+func NewRMQProducer(rmqc *Connection, exchangeName, exchangeType string) (*Producer, error) {
 	channel, err := rmqc.OpenChannel()
 	if err != nil {
 		return nil, err
@@ -21,10 +21,10 @@ func NewRMQProducer(rmqc *Connection, exchangeName, exchangeType string) (*RMQPr
 		return nil, err
 	}
 
-	return &RMQProducer{rmqc: rmqc, channel: channel, exchangeName: exchangeName}, nil
+	return &Producer{rmqc: rmqc, channel: channel, exchangeName: exchangeName}, nil
 }
 
-func (rmqp *RMQProducer) Publish(key string, body string) error {
+func (rmqp *Producer) Publish(key string, body string) error {
 	return rmqp.channel.Publish(rmqp.exchangeName, key, false, false, amqp.Publishing{
 		ContentType:     "text/plain",
 		ContentEncoding: "application/json",

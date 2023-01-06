@@ -41,8 +41,7 @@ func (s *MemoryRepository) UpdateEvent(_ context.Context, id int64, e events.Eve
 func (s *MemoryRepository) DeleteEvent(_ context.Context, id int64) error {
 	s.Lock()
 	defer s.Unlock()
-	_, ok := s.events[id]
-	if !ok {
+	if _, ok := s.events[id]; !ok {
 		return events.ErrNotFound
 	}
 	delete(s.events, id)

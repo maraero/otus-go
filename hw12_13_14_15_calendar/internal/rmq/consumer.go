@@ -9,9 +9,8 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type RMQConsumer struct {
+type Consumer struct {
 	rmqc        *Connection
-	channel     *rabbitmq.Channel
 	consumerTag string
 	queueName   string
 }
@@ -28,7 +27,7 @@ func NewRMQConsumer(
 	consumerTag string,
 	logger *logger.Log,
 	worker Worker,
-) (*RMQConsumer, error) {
+) (*Consumer, error) {
 	channel, err := rmqc.OpenChannel()
 	if err != nil {
 		return nil, err
@@ -61,7 +60,7 @@ func NewRMQConsumer(
 
 	go handle(ctx, deliveries, logger, worker)
 
-	return &RMQConsumer{rmqc: rmqc, consumerTag: consumerTag, queueName: queueName}, nil
+	return &Consumer{rmqc: rmqc, consumerTag: consumerTag, queueName: queueName}, nil
 }
 
 func handle(ctx context.Context, deliveries <-chan amqp.Delivery, logger *logger.Log, worker Worker) {
