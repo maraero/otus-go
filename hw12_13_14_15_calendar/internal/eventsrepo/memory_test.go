@@ -11,7 +11,7 @@ import (
 )
 
 func TestCreateEvent(t *testing.T) {
-	storage := newMemoryRepository()
+	storage := NewMemoryRepository()
 	newEvent := events.Event{
 		Title:     "create test event",
 		DateStart: time.Now(),
@@ -21,11 +21,13 @@ func TestCreateEvent(t *testing.T) {
 	id, err := storage.CreateEvent(context.Background(), newEvent)
 	require.NoError(t, err)
 	require.Equal(t, id, int64(1))
-	require.Equal(t, newEvent.Title, storage.events[id].Title)
+	event, err := storage.GetEventByID(context.Background(), id)
+	require.NoError(t, err)
+	require.Equal(t, newEvent.Title, event.Title)
 }
 
 func TestUpdateEvent(t *testing.T) {
-	storage := newMemoryRepository()
+	storage := NewMemoryRepository()
 	initialEvent := events.Event{
 		Title:     "update test event",
 		DateStart: time.Now(),
@@ -43,11 +45,13 @@ func TestUpdateEvent(t *testing.T) {
 	updatedInitialEvent.Title = newTitle
 	err = storage.UpdateEvent(context.Background(), id, updatedInitialEvent)
 	require.NoError(t, err)
-	require.Equal(t, newTitle, storage.events[id].Title)
+	event, err := storage.GetEventByID(context.Background(), id)
+	require.NoError(t, err)
+	require.Equal(t, newTitle, event.Title)
 }
 
 func TestDeleteEvent(t *testing.T) {
-	storage := newMemoryRepository()
+	storage := NewMemoryRepository()
 	initialEvent := events.Event{
 		Title:     "test event",
 		DateStart: time.Now(),
@@ -61,13 +65,13 @@ func TestDeleteEvent(t *testing.T) {
 	require.NoError(t, err)
 	err = storage.DeleteEvent(context.Background(), id)
 	require.NoError(t, err)
-	_, ok := storage.events[id]
-	require.False(t, ok)
+	_, err = storage.GetEventByID(context.Background(), id)
+	require.Error(t, err)
 }
 
-type MemoryRepositorySuite struct {
+type MemoryRepoSuite struct {
 	suite.Suite
-	storage *MemoryRepository
+	storage Repository
 }
 
 var (
@@ -76,10 +80,9 @@ var (
 	monthDuration = 30 * dayDuration // not precisely
 )
 
-func (m *MemoryRepositorySuite) SetupTest() {
-	m.storage = newMemoryRepository()
-
-	m.storage.events = map[int64]events.Event{
+func (m *MemoryRepoSuite) SetupTest() {
+	m.storage = NewMemoryRepository()
+	events := map[int64]events.Event{
 		1: {
 			ID:        int64(1),
 			Title:     "title 1",
@@ -102,9 +105,13 @@ func (m *MemoryRepositorySuite) SetupTest() {
 			UserID:    "user id 1",
 		},
 	}
+	for _, event := range events {
+		_, err := m.storage.CreateEvent(context.Background(), event)
+		require.NoError(m.T(), err)
+	}
 }
 
-func (m *MemoryRepositorySuite) TestGetEventListByDate() {
+func (m *MemoryRepoSuite) TestGetEventListByDate() {
 	m.Run("success event list by date", func() {
 		res, err := m.storage.GetEventListByDate(context.Background(), time.Now())
 		require.NoError(m.T(), err)
@@ -119,7 +126,7 @@ func (m *MemoryRepositorySuite) TestGetEventListByDate() {
 	})
 }
 
-func (m *MemoryRepositorySuite) TestGetEventListByWeek() {
+func (m *MemoryRepoSuite) TestGetEventListByWeek() {
 	m.Run("success event list by week", func() {
 		res, err := m.storage.GetEventListByWeek(context.Background(), time.Now().Add(2*weekDuration))
 		require.NoError(m.T(), err)
@@ -134,7 +141,7 @@ func (m *MemoryRepositorySuite) TestGetEventListByWeek() {
 	})
 }
 
-func (m *MemoryRepositorySuite) TestGetEventListByMonth() {
+func (m *MemoryRepoSuite) TestGetEventListByMonth() {
 	m.Run("success event list by month", func() {
 		res, err := m.storage.GetEventListByMonth(context.Background(), time.Now().Add(2*monthDuration))
 		require.NoError(m.T(), err)
@@ -150,5 +157,5 @@ func (m *MemoryRepositorySuite) TestGetEventListByMonth() {
 }
 
 func TestMemoryRepositorySuite(t *testing.T) {
-	suite.Run(t, new(MemoryRepositorySuite))
+	suite.Run(t, new(MemoryRepoSuite))
 }

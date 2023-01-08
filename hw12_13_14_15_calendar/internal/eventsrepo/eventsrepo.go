@@ -21,10 +21,10 @@ type Repository interface {
 func New(strg *storage.Storage) Repository {
 	switch strg.Source {
 	case storage.StorageInMemory:
-		return newMemoryRepository()
+		return NewMemoryRepository()
 	case storage.StorageSQL:
-		return newSQLRepository(strg.Connection)
+		return NewSQLRepository(strg.Connection)
 	default:
-		return newMemoryRepository()
+		return NewMemoryRepository()
 	}
 }
