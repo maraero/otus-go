@@ -13,8 +13,8 @@ import (
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
-	er "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events-repository"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events-service"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/eventsrepo"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 	"github.com/stretchr/testify/suite"
@@ -55,7 +55,7 @@ func (s *SuiteTest) SetupTest() {
 	s.Require().NoError(err)
 
 	storage := storage.Storage{Source: storage.StorageInMemory, Connection: nil}
-	eventsRepository := er.New(&storage)
+	eventsRepository := eventsrepo.New(&storage)
 	eventsService := es.New(eventsRepository)
 	calendar := app.New(eventsService, logger)
 	s.ts = httptest.NewServer(New(calendar, config.Server).router)

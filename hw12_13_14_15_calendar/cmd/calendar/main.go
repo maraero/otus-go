@@ -13,8 +13,8 @@ import (
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/app"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/config"
-	er "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events-repository"
 	es "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events-service"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/eventsrepo"
 	l "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/logger"
 	servergrpc "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/grpc"
 	serverhttp "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/servers/http"
@@ -49,7 +49,7 @@ func main() {
 	defer cancel()
 
 	strg := storage.New(ctx, logger, config.Storage)
-	eventsRepository := er.New(strg)
+	eventsRepository := eventsrepo.New(strg)
 	eventsService := es.New(eventsRepository)
 	calendar := app.New(eventsService, logger)
 

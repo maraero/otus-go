@@ -1,4 +1,4 @@
-package eventsrepository
+package eventsrepo
 
 import (
 	"context"

@@ -5,14 +5,14 @@ import (
 	"time"
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
-	er "github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events-repository"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/eventsrepo"
 )
 
 type EventsService struct {
-	repository er.EventsRepository
+	repository eventsrepo.Repository
 }
 
-func New(repository er.EventsRepository) *EventsService {
+func New(repository eventsrepo.Repository) *EventsService {
 	return &EventsService{repository: repository}
 }
 
