@@ -3,12 +3,10 @@ package repoutils
 import (
 	"context"
 	"database/sql"
-
-	"github.com/jmoiron/sqlx"
 )
 
 type DBExecutor interface {
-	Get(dest interface{}, query string, args ...interface{}) error
-	NamedExecContext(ctx context.Context, query string, arg interface{}) (sql.Result, error)
-	NamedQueryContext(ctx context.Context, query string, arg interface{}) (*sqlx.Rows, error)
+	ExecContext(ctx context.Context, query string, arg ...any) (sql.Result, error)
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
 }
