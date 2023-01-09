@@ -6,10 +6,11 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/reporegistry"
 )
 
 type SQLRepo struct {
-	db *sqlx.DB
+	db reporegistry.DBExecutor
 }
 
 func NewSQLRepository(dbConn *sqlx.DB) Repository {
