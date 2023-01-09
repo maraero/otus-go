@@ -1,4 +1,4 @@
-package reporegistry
+package repoutils
 
 import (
 	"context"
