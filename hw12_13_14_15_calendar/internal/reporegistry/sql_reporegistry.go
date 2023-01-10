@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/eventsrepo"
-	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/repoutils"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 )
 
 type sqlRepoRegistry struct {
 	db         *sql.DB
-	dbexecutor repoutils.DBExecutor
+	dbexecutor storage.DBExecutor
 }
 
 func NewSQL(db *sql.DB) RepoRegistry {
@@ -35,15 +35,17 @@ func (r sqlRepoRegistry) DoInTransaction(txFunc InTransaction) (out any, err err
 		}
 
 		defer func() {
-			if p := recover(); p != nil {
+			p := recover()
+			switch {
+			case p != nil:
 				_ = tx.Rollback()
 				panic(p) // re-throw panic afterr Rollback
-			} else if err != nil {
+			case err != nil:
 				xerr := tx.Rollback() // err is non-nil; don't change it
 				if xerr != nil {
 					err = fmt.Errorf("%w, %s", err, xerr.Error())
 				}
-			} else {
+			default:
 				err = tx.Commit() // err is nil; if Commit returns errror update err
 			}
 		}()

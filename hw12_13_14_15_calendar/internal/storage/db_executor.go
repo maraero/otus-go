@@ -1,4 +1,4 @@
-package repoutils
+package storage
 
 import (
 	"context"

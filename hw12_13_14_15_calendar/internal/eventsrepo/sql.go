@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/events"
-	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/repoutils"
+	"github.com/maraero/otus-go/hw12_13_14_15_calendar/internal/storage"
 )
 
 type SQLRepo struct {
-	db repoutils.DBExecutor
+	db storage.DBExecutor
 }
 
-func NewSQLRepository(dbConn repoutils.DBExecutor) Repository {
+func NewSQLRepository(dbConn storage.DBExecutor) Repository {
 	return &SQLRepo{db: dbConn}
 }
 
